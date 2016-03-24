@@ -1,0 +1,16 @@
+{
+  "name": "node-version",
+  "version": "0.0.1-snapshot",
+  "dependencies": {
+    "minimist": {
+      "version": "1.2.0",
+      "from": "minimist@latest",
+      "resolved": "https://registry.npmjs.org/minimist/-/minimist-1.2.0.tgz"
+    },
+    "semver": {
+      "version": "5.1.0",
+      "from": "semver@latest",
+      "resolved": "https://registry.npmjs.org/semver/-/semver-5.1.0.tgz"
+    }
+  }
+}
