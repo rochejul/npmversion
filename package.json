@@ -3,7 +3,13 @@
   "version": "0.0.1-snapshot",
   "description": "A command line node module to deal with \"bumping\" and \"npm version\"",
   "main": "lib/index.js",
+  "files": [
+    "bin",
+    "lib",
+    "npm-shrinkwrap.json"
+  ],
   "scripts": {
+    "start": "node ./lib/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -28,6 +34,9 @@
   },
   "devDependencies": {
     "eslint": "2.4.0"
+  },
+  "bin": {
+    "version": "./bin/version"
   },
   "engines": {
     "node": ">=4.0.0",

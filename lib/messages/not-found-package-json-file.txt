@@ -1,0 +1,4 @@
+No package.json file was found into the current folder
+
+Please check where have you launch the command and / or read
+the documentation. For that, please do 'version --help'
