@@ -2,6 +2,11 @@
   "name": "node-version",
   "version": "0.0.1-snapshot",
   "dependencies": {
+    "json5": {
+      "version": "0.5.0",
+      "from": "json5@latest",
+      "resolved": "https://registry.npmjs.org/json5/-/json5-0.5.0.tgz"
+    },
     "minimist": {
       "version": "1.2.0",
       "from": "minimist@latest",
