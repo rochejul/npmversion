@@ -35,3 +35,6 @@ Options:
 
    --no-git-tag
         No git tag
+
+   --git-push
+        Push the commit and the tags if needed
