@@ -2,4 +2,14 @@
 
 'use strict';
 
-require('../lib/cli');
+// Nota Bene: do not use es6 syntax here to deal with a fallback
+var semver = require('semver');
+
+
+if (semver.lt(process.version, '4.0.0')) {
+    require('../lib-e5/cli');
+
+} else {
+    // Use ES6 modules
+    require('../lib/cli');
+}
