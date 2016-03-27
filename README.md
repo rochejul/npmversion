@@ -1,4 +1,4 @@
-# node-version
+# npmversion
 
 A command line node module to deal with "bumping" and "npm version"
 
@@ -19,7 +19,9 @@ The "version" command will:
         be one of: major, minor, patch, premajor, preminor,
         prepatch, or prerelease.  Default level is 'patch'.
         Only one version may be specified. A Git commit and
-        tag will be created
+        tag will be created.
+        Nota Bene: it will use the "npm version" command if the option
+        "read-only" is not activated.
 
     -p --preid <identifier>
         Identifier to be used to prefix premajor, preminor,
@@ -49,12 +51,14 @@ The "version" command will:
 
 ## How to import it ?
 
+Type the command "npm install --save-dev --save-exact npmversion
+
 ````json
 {
   "name": "my-app",
   "version": "0.0.1",
   "deveDependencies": {
-      "@rochejul/node-version": "latest"
+      "npmversion": "latest"
   }
 }
 ````
@@ -68,15 +72,15 @@ The "version" command will:
   "scripts": {
       "test": "node ./node_modules/mocha/bin/mocha --recursive --ui bdd --colors ./test",
       
-      "bump-release": "test && version --unpreid --git-push",
+      "bump-release": "test && npmversion --unpreid --git-push",
   
-      "bump-major": "test && version --increment major --git-push",
-      "bump-minor": "test && version --increment minor --git-push",
-      "bump-patch": "test && version --increment major --git-push",
+      "bump-major": "test && npmversion --increment major --git-push",
+      "bump-minor": "test && npmversion --increment minor --git-push",
+      "bump-patch": "test && npmversion --increment major --git-push",
       
-      "bump-major-beta": "version --increment major --preid beta --nogit-tag --git-push",
-      "bump-minor-beta": "version --increment minor --preid beta --nogit-tag --git-push",
-      "bump-patch-beta": "version --increment major --preid beta --nogit-tag --git-push"
+      "bump-major-beta": "npmversion --increment major --preid beta --nogit-tag --git-push",
+      "bump-minor-beta": "npmversion --increment minor --preid beta --nogit-tag --git-push",
+      "bump-patch-beta": "npmversion --increment major --preid beta --nogit-tag --git-push"
   }
 }
 ````
