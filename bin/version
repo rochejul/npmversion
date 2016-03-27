@@ -7,7 +7,7 @@ var semver = require('semver');
 
 
 if (semver.lt(process.version, '4.0.0')) {
-    require('../lib-e5/cli');
+    require('../lib-es5/cli');
 
 } else {
     // Use ES6 modules

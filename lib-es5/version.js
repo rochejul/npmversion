@@ -29,8 +29,11 @@ var messages = require('./messages');
 // Constants
 var PACKAGE_JSON_FILENAME = 'package.json';
 var PACKAGE_JSON = require('../' + PACKAGE_JSON_FILENAME);
+
 var PREFIX_SEPARATOR = '-';
 var PRE_LEVEL_SUFFIX = 'pre';
+var POST_LEVEL_SUFFIX = '.';
+
 var LEVEL_ENUM = {
     'major': 'major',
     'minor': 'minor',
@@ -40,6 +43,8 @@ var LEVEL_ENUM = {
     'prepatch': 'prepatch',
     'prerelease': 'prerelease'
 };
+
+var NUMBER_REGEXP = /^\d+$/;
 
 // Class documentation
 
@@ -269,7 +274,7 @@ module.exports = function () {
          * > semver 1.2.3 --preid beta --increment preminor              1.3.0-beta.0
          * > semver 1.2.3 --preid beta --increment premajor              2.0.0-beta.0
          *
-         * > semver 1.2.3-0 --preid beta --increment patch               1.2.4-beta
+         * > semver 1.2.3-0 --preid beta --increment patch               1.2.3-beta
          * > semver 1.2.3-0 --preid beta --increment minor               1.3.0-beta
          * > semver 1.2.3-0 --preid beta --increment major               2.0.0-beta
          * > semver 1.2.3-0 --preid beta --increment prerelease          1.2.3-beta.0
@@ -299,7 +304,20 @@ module.exports = function () {
         value: function incrementPackageVersion(packageVersion, level, preid, forceAddPreid) {
             if (forceAddPreid) {
                 if (preid && !level.startsWith(PRE_LEVEL_SUFFIX)) {
-                    var version = semver.inc(packageVersion, level);
+                    var versionToUse = packageVersion;
+
+                    if (level === LEVEL_ENUM.patch && packageVersion) {
+                        var splitting = packageVersion.split(PREFIX_SEPARATOR);
+                        var currentVersion = splitting[0];
+                        var currentPre = splitting[1];
+
+                        if (currentPre && !currentPre.match(NUMBER_REGEXP)) {
+                            // We have a package version like 1.2.3-beta
+                            versionToUse = currentVersion;
+                        }
+                    }
+
+                    var version = semver.inc(versionToUse, level);
                     return '' + version + PREFIX_SEPARATOR + preid;
                 }
             }

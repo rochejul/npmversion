@@ -365,7 +365,7 @@ describe('VersionUtils - ', function () {
 
             describe('With preid - ', function () {
                 it('1.2.3-beta --preid beta --increment patch', function () {
-                    expect(VersionUtils.incrementPackageVersion('1.2.3-beta', 'patch', 'beta', true)).equals('1.2.3-beta');
+                    expect(VersionUtils.incrementPackageVersion('1.2.3-beta', 'patch', 'beta', true)).equals('1.2.4-beta');
                 });
 
                 it('1.2.3-beta --preid beta --increment minor', function () {
@@ -395,7 +395,7 @@ describe('VersionUtils - ', function () {
 
             describe('With prenumber and preid - ', function () {
                 it('1.2.3-beta.0 --preid beta --increment patch', function () {
-                    expect(VersionUtils.incrementPackageVersion('1.2.3-beta.0', 'patch', 'beta', true)).equals('1.2.3-beta');
+                    expect(VersionUtils.incrementPackageVersion('1.2.3-beta.0', 'patch', 'beta', true)).equals('1.2.4-beta');
                 });
 
                 it('1.2.3-beta.0 --preid beta --increment minor', function () {
