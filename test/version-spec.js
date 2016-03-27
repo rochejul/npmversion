@@ -53,7 +53,7 @@ describe('VersionUtils - ', function () {
         });
     });
 
-    describe.only('and the method "incrementPackageVersion" ', function () {
+    describe('and the method "incrementPackageVersion" ', function () {
         it('should exist', function () {
             expect(VersionUtils.incrementPackageVersion).to.exist;
         });
@@ -298,6 +298,128 @@ describe('VersionUtils - ', function () {
 
                 it('1.2.3-beta.0 --preid beta --increment premajor', function () {
                     expect(VersionUtils.incrementPackageVersion('1.2.3-beta.0', 'premajor', 'beta')).equals('2.0.0-beta.0');
+                });
+            });
+        });
+
+        describe('should increment with the following options (where a preid flag to "beta" is set) and where we force to add the preid if needed: ', function () {
+            describe('Basics - ', function () {
+                it('1.2.3 --preid beta --increment patch', function () {
+                    expect(VersionUtils.incrementPackageVersion('1.2.3', 'patch', 'beta', true)).equals('1.2.4-beta');
+                });
+
+                it('1.2.3 --preid beta --increment minor', function () {
+                    expect(VersionUtils.incrementPackageVersion('1.2.3', 'minor', 'beta', true)).equals('1.3.0-beta');
+                });
+
+                it('1.2.3 --preid beta --increment major', function () {
+                    expect(VersionUtils.incrementPackageVersion('1.2.3', 'major', 'beta', true)).equals('2.0.0-beta');
+                });
+
+                it('1.2.3 --preid beta --increment prerelease', function () {
+                    expect(VersionUtils.incrementPackageVersion('1.2.3', 'prerelease', 'beta', true)).equals('1.2.4-beta.0');
+                });
+
+                it('1.2.3 --preid beta --increment prepatch', function () {
+                    expect(VersionUtils.incrementPackageVersion('1.2.3', 'prepatch', 'beta', true)).equals('1.2.4-beta.0');
+                });
+
+                it('1.2.3 --preid beta --increment preminor', function () {
+                    expect(VersionUtils.incrementPackageVersion('1.2.3', 'preminor', 'beta', true)).equals('1.3.0-beta.0');
+                });
+
+                it('1.2.3 --preid beta --increment premajor', function () {
+                    expect(VersionUtils.incrementPackageVersion('1.2.3', 'premajor', 'beta', true)).equals('2.0.0-beta.0');
+                });
+            });
+
+            describe('With prenumber - ', function () {
+                it('1.2.3-0 --preid beta --increment patch', function () {
+                    expect(VersionUtils.incrementPackageVersion('1.2.3-0', 'patch', 'beta', true)).equals('1.2.3-beta');
+                });
+
+                it('1.2.3-0 --preid beta --increment minor', function () {
+                    expect(VersionUtils.incrementPackageVersion('1.2.3-0', 'minor', 'beta', true)).equals('1.3.0-beta');
+                });
+
+                it('1.2.3-0 --preid beta --increment major', function () {
+                    expect(VersionUtils.incrementPackageVersion('1.2.3-0', 'major', 'beta', true)).equals('2.0.0-beta');
+                });
+
+                it('1.2.3-0 --preid beta --increment prerelease', function () {
+                    expect(VersionUtils.incrementPackageVersion('1.2.3-0', 'prerelease', 'beta', true)).equals('1.2.3-beta.0');
+                });
+
+                it('1.2.3-0 --preid beta --increment prepatch', function () {
+                    expect(VersionUtils.incrementPackageVersion('1.2.3-0', 'prepatch', 'beta', true)).equals('1.2.4-beta.0');
+                });
+
+                it('1.2.3-0 --preid beta --increment preminor', function () {
+                    expect(VersionUtils.incrementPackageVersion('1.2.3-0', 'preminor', 'beta', true)).equals('1.3.0-beta.0');
+                });
+
+                it('1.2.3-0 --preid beta --increment premajor', function () {
+                    expect(VersionUtils.incrementPackageVersion('1.2.3-0', 'premajor', 'beta', true)).equals('2.0.0-beta.0');
+                });
+            });
+
+            describe('With preid - ', function () {
+                it('1.2.3-beta --preid beta --increment patch', function () {
+                    expect(VersionUtils.incrementPackageVersion('1.2.3-beta', 'patch', 'beta', true)).equals('1.2.3-beta');
+                });
+
+                it('1.2.3-beta --preid beta --increment minor', function () {
+                    expect(VersionUtils.incrementPackageVersion('1.2.3-beta', 'minor', 'beta', true)).equals('1.3.0-beta');
+                });
+
+                it('1.2.3-beta --preid beta --increment major', function () {
+                    expect(VersionUtils.incrementPackageVersion('1.2.3-beta', 'major', 'beta', true)).equals('2.0.0-beta');
+                });
+
+                it('1.2.3-beta --preid beta --increment prerelease', function () {
+                    expect(VersionUtils.incrementPackageVersion('1.2.3-beta', 'prerelease', 'beta', true)).equals('1.2.3-beta.0');
+                });
+
+                it('1.2.3-beta --preid beta --increment prepatch', function () {
+                    expect(VersionUtils.incrementPackageVersion('1.2.3-beta', 'prepatch', 'beta', true)).equals('1.2.4-beta.0');
+                });
+
+                it('1.2.3-beta --preid beta --increment preminor', function () {
+                    expect(VersionUtils.incrementPackageVersion('1.2.3-beta', 'preminor', 'beta', true)).equals('1.3.0-beta.0');
+                });
+
+                it('1.2.3-beta --preid beta --increment premajor', function () {
+                    expect(VersionUtils.incrementPackageVersion('1.2.3-beta', 'premajor', 'beta', true)).equals('2.0.0-beta.0');
+                });
+            });
+
+            describe('With prenumber and preid - ', function () {
+                it('1.2.3-beta.0 --preid beta --increment patch', function () {
+                    expect(VersionUtils.incrementPackageVersion('1.2.3-beta.0', 'patch', 'beta', true)).equals('1.2.3-beta');
+                });
+
+                it('1.2.3-beta.0 --preid beta --increment minor', function () {
+                    expect(VersionUtils.incrementPackageVersion('1.2.3-beta.0', 'minor', 'beta', true)).equals('1.3.0-beta');
+                });
+
+                it('1.2.3-beta.0 --preid beta --increment major', function () {
+                    expect(VersionUtils.incrementPackageVersion('1.2.3-beta.0', 'major', 'beta', true)).equals('2.0.0-beta');
+                });
+
+                it('1.2.3-beta.0 --preid beta --increment prerelease', function () {
+                    expect(VersionUtils.incrementPackageVersion('1.2.3-beta.0', 'prerelease', 'beta', true)).equals('1.2.3-beta.1');
+                });
+
+                it('1.2.3-beta.0 --preid beta --increment prepatch', function () {
+                    expect(VersionUtils.incrementPackageVersion('1.2.3-beta.0', 'prepatch', 'beta', true)).equals('1.2.4-beta.0');
+                });
+
+                it('1.2.3-beta.0 --preid beta --increment preminor', function () {
+                    expect(VersionUtils.incrementPackageVersion('1.2.3-beta.0', 'preminor', 'beta', true)).equals('1.3.0-beta.0');
+                });
+
+                it('1.2.3-beta.0 --preid beta --increment premajor', function () {
+                    expect(VersionUtils.incrementPackageVersion('1.2.3-beta.0', 'premajor', 'beta', true)).equals('2.0.0-beta.0');
                 });
             });
         });

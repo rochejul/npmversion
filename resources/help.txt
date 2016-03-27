@@ -21,6 +21,9 @@ Options:
         prepatch or prerelease version increments. It could
         be 'snapshot', 'beta' or 'alpha' for example.
 
+    --force-preid
+        If specified, we force to add if needed the specified preid
+
 -u  --unpreid
         Remove the prefix. The increment and preid option will be ignored.
         Only a Git commit will be created
