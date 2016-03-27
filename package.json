@@ -12,13 +12,7 @@
     "build-es5": "npm run delete lib-es5 && node ./node_modules/babel-cli/bin/babel.js lib --presets es2015 --out-dir lib-es5",
     "delete": "node node_modules/rimraf/bin.js",
     "start": "node ./lib/index.js",
-    "test": "node ./node_modules/mocha/bin/mocha --recursive --ui bdd --colors ./test",
-    "bump-major": "npm version major -m \"Upgrade to major version: %s\"",
-    "bump-minor": "npm version minor -m \"Upgrade to minor version: %s\"",
-    "bump-patch": "npm version patch -m \"Upgrade to version: %s\"",
-    "preversion": "npm test",
-    "version": "npm run build-es5 && git add -A lib-es5",
-    "postversion": "git push && git push --tags"
+    "test": "node ./node_modules/mocha/bin/mocha --recursive --ui bdd --colors ./test"
   },
   "repository": {
     "type": "git",
