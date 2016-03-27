@@ -16,7 +16,7 @@ var minimist = require('minimist');
 
 // Constants
 var MINIMIST_OPTIONS = {
-    'boolean': ['help', 'unpreid', 'read-only', 'no-git-commit', 'no-git-tag', 'git-push'],
+    'boolean': ['help', 'unpreid', 'force-preid', 'read-only', 'nogit-commit', 'nogit-tag', 'git-push'],
     'string': ['increment', 'preid'],
     'alias': {
         'i': 'increment',
@@ -27,8 +27,9 @@ var MINIMIST_OPTIONS = {
         'help': false,
         'unpreid': false,
         'read-only': false,
-        'no-git-commit': false,
-        'no-git-tag': false,
+        'force-preid': false,
+        'nogit-commit': false,
+        'nogit-tag': false,
         'git-push': false,
         'increment': 'patch',
         'preid': null
