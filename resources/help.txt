@@ -33,10 +33,10 @@ Options:
         nor the npm-shrinkwrap.json file, don't create a commit and don't
         create a git tag
 
-   --no-git-commit
+   --nogit-commit
         No git commit
 
-   --no-git-tag
+   --nogit-tag
         No git tag
 
    --git-push
