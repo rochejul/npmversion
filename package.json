@@ -1,5 +1,5 @@
 {
-  "name": "node-version",
+  "name": "@rochejul/node-version",
   "version": "0.0.1",
   "description": "A command line node module to deal with \"bumping\" and \"npm version\"",
   "main": "lib/index.js",
