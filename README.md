@@ -90,6 +90,7 @@ Type the command "npm install --save-dev --save-exact npmversion
 
 ### In a classical way
 
+````
 > semver 1.2.3 --increment patch                             1.2.4
 > semver 1.2.3 --increment minor                             1.3.0
 > semver 1.2.3 --increment major                             2.0.0
@@ -219,3 +220,4 @@ Type the command "npm install --save-dev --save-exact npmversion
 > semver 1.2.3-beta.0 --preid beta --increment prepatch       1.2.4-beta.0
 > semver 1.2.3-beta.0 --preid beta --increment preminor       1.3.0-beta.0
 > semver 1.2.3-beta.0 --preid beta --increment premajor       2.0.0-beta.0
+````
