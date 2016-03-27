@@ -47,6 +47,18 @@ The "version" command will:
     --git-push
         Push the commit and the tags if needed
 
+## How to import it ?
+
+````json
+{
+  "name": "my-app",
+  "version": "0.0.1",
+  "deveDependencies": {
+      "@rochejul/node-version": "latest"
+  }
+}
+````
+
 ## Possible NPM-RUN configuration
 
 ````json
