@@ -32,7 +32,6 @@ var PACKAGE_JSON = require('../' + PACKAGE_JSON_FILENAME);
 
 var PREFIX_SEPARATOR = '-';
 var PRE_LEVEL_SUFFIX = 'pre';
-var POST_LEVEL_SUFFIX = '.';
 
 var LEVEL_ENUM = {
     'major': 'major',
@@ -393,7 +392,7 @@ module.exports = function () {
     }, {
         key: 'updatePackageVersion',
         value: function updatePackageVersion(packageVersion) {
-            return Utils.promisedExec('git commit --all --message "Release version: ' + packageVersion + '"').then(function () {
+            return Utils.promisedExec('npm --no-git-tag-version version ' + packageVersion).then(function () {
                 return packageVersion;
             });
         }

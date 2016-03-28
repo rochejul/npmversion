@@ -13,6 +13,7 @@
 // Imports
 
 var minimist = require('minimist');
+var _ = require('lodash');
 
 // Constants
 var MINIMIST_OPTIONS = {
@@ -40,8 +41,15 @@ var MINIMIST_OPTIONS = {
 /**
  * @name versionOptionsAnalyzer
  * @param {string[]} cliParameters
+ * @param {Object} [defaultOptions]
  * @returns {versionOptions}
  */
-module.exports = function (cliParameters) {
-    return minimist(cliParameters, MINIMIST_OPTIONS);
+module.exports = function (cliParameters, defaultOptions) {
+    var options = MINIMIST_OPTIONS;
+
+    if (defaultOptions) {
+        options = _.merge({}, MINIMIST_OPTIONS, { 'default': defaultOptions });
+    }
+
+    return minimist(cliParameters, options);
 };

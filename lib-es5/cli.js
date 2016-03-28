@@ -11,8 +11,10 @@
 
 // Imports
 
-var versionOptionsAnalyzer = require('./cli-params');
+var Utils = require('./utils');
 var VersionUtils = require('./version');
 
 // Do it !
-VersionUtils.doIt(versionOptionsAnalyzer(process.argv.slice(2)));
+var argv = process.argv.slice(2);
+
+VersionUtils.doIt(argv && argv.length > 0 ? Utils.paramsLoader(argv) : null);

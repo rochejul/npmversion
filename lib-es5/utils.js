@@ -18,6 +18,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var exec = require('child_process').exec;
 
+var versionOptionsAnalyzer = require('./cli-params');
+var rcOptionsRetriever = require('./rc');
+
 // Here the class
 module.exports = function () {
     function Utils() {
@@ -25,12 +28,25 @@ module.exports = function () {
     }
 
     _createClass(Utils, null, [{
-        key: 'promisedExec',
+        key: 'paramsLoader',
+
+        /**
+         * Load the application parameters
+         * @param {string[]} cliParams
+         * @return {VersionOptions}
+         */
+        value: function paramsLoader(cliParams) {
+            var baseOptions = rcOptionsRetriever();
+            return versionOptionsAnalyzer(cliParams, baseOptions);;
+        }
 
         /**
          * @param {string} command
          * @returns {Promise}
          */
+
+    }, {
+        key: 'promisedExec',
         value: function promisedExec(command) {
             return new Promise(function (resolve, reject) {
                 var instance = exec(command, function (error) {

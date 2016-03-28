@@ -62,7 +62,7 @@ Type the command "npm install --save-dev --save-exact npmversion
 ````json
 {
   "name": "my-app",
-  "version": "0.0.1",
+  "version": "1.1.0",
   "deveDependencies": {
       "npmversion": "latest"
   }
@@ -91,6 +91,17 @@ Type the command "npm install --save-dev --save-exact npmversion
 }
 ````
 
+## Possible .npmversionrc configuration
+
+````json
+{
+    "force-preid": false,
+    "nogit-commit": false,
+    "nogit-tag": true,
+    "git-push": false,
+    "increment": "minor"
+}
+````
 
 ## Possible outputs
 

@@ -1,0 +1,29 @@
+/**
+ * RC parameters loader tests
+ *
+ * @module test/rc-spec
+ * @author Julien Roche
+ * @version 0.0.1
+ * @since 0.0.1
+ */
+
+'use strict';
+
+describe('RC retriever - ', function () {
+    const expect = require('chai').expect;
+    const rcOptionsRetriever = require('../lib/rc');
+
+    it('should exports a function', function () {
+        expect(typeof rcOptionsRetriever).equals('function');
+    });
+
+    it('should load the rc file from the root of the npmversion module', function () {
+        expect(rcOptionsRetriever()).deep.equals({
+            'force-preid': false,
+            'nogit-commit': false,
+            'nogit-tag': true,
+            'git-push': false,
+            'increment': 'minor'
+        });
+    });
+});
