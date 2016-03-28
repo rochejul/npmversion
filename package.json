@@ -1,6 +1,6 @@
 {
   "name": "npmversion",
-  "version": "1.0.1",
+  "version": "1.1.0-snapshot",
   "description": "A command line node module to deal with \"bumping\" and \"npm version\"",
   "main": "lib/index.js",
   "files": [
@@ -35,6 +35,7 @@
   "dependencies": {
     "json5": "0.5.0",
     "minimist": "1.2.0",
+    "rc": "1.1.6",
     "semver": "5.1.0"
   },
   "devDependencies": {
