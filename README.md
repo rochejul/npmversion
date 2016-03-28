@@ -1,5 +1,11 @@
 # npmversion
 
+[![Build Status](https://travis-ci.org/rochejul/npmversion.svg?branch=master)](https://travis-ci.org/rochejul/npmversion)[![Dependency Status](https://david-dm.org/rochejul/npmversion.svg)](https://david-dm.org/rochejul/npmversion)
+[![devDependency Status](https://david-dm.org/rochejul/npmversion/dev-status.svg)](https://david-dm.org/rochejul/npmversion#info=devDependencies)
+
+[![NPM](https://nodei.co/npm/npmversion.png?downloads=true&downloadRank=true)](https://nodei.co/npm/npmversion/)
+[![NPM](https://nodei.co/npm-dl/npmversion.png?&months=6&height=3)](https://nodei.co/npm/npmversion/)
+
 A command line node module to deal with "bumping" and "npm version"
 
 The "version" command will:
