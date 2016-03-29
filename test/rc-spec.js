@@ -22,7 +22,9 @@ describe('RC retriever - ', function () {
             'force-preid': false,
             'nogit-commit': false,
             'nogit-tag': true,
+            'git-commit-message': 'Release version: %s',
             'git-push': false,
+            'git-tag-message': 'v%s',
             'increment': 'minor'
         });
     });

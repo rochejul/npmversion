@@ -113,6 +113,8 @@ Type the command "npm install --save-dev --save-exact npmversion
     "nogit-commit": false,
     "nogit-tag": true,
     "git-push": false,
+    "git-commit-message": "Release version: %s",
+    "git-tag-message": "v%s",
     "increment": "minor"
 }
 ````

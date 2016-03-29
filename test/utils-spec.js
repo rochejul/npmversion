@@ -9,7 +9,7 @@
 
 'use strict';
 
-describe.only('Utils - ', function () {
+describe('Utils - ', function () {
     const expect = require('chai').expect;
     const Utils = require('../lib/utils');
 
@@ -26,7 +26,9 @@ describe.only('Utils - ', function () {
             expect(Utils.paramsLoader([])).deep.equals({
                 '_': [],
                 'force-preid': false,
+                'git-commit-message': 'Release version: %s',
                 'git-push': false,
+                'git-tag-message': 'v%s',
                 'help': false,
                 'i': 'minor',
                 'increment': 'minor',
@@ -44,7 +46,9 @@ describe.only('Utils - ', function () {
             expect(Utils.paramsLoader(['--force-preid'])).deep.equals({
                 '_': [],
                 'force-preid': true,
+                'git-commit-message': 'Release version: %s',
                 'git-push': false,
+                'git-tag-message': 'v%s',
                 'help': false,
                 'i': 'minor',
                 'increment': 'minor',
@@ -62,7 +66,9 @@ describe.only('Utils - ', function () {
             expect(Utils.paramsLoader(['--force-preid', '--increment', 'minor', '--nogit-commit'])).deep.equals({
                 '_': [],
                 'force-preid': true,
+                'git-commit-message': 'Release version: %s',
                 'git-push': false,
+                'git-tag-message': 'v%s',
                 'help': false,
                 'i': 'minor',
                 'increment': 'minor',
