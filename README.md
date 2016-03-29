@@ -29,31 +29,45 @@ The "version" command will:
         Nota Bene: it will use the "npm version" command if the option
         "read-only" is not activated.
 
-    -p --preid <identifier>
-        Identifier to be used to prefix premajor, preminor,
-        prepatch or prerelease version increments. It could
-        be 'snapshot', 'beta' or 'alpha' for example.
-
-    --force-preid
-        If specified, we force to add if needed the specified preid
+        -p --preid <identifier>
+            Identifier to be used to prefix premajor, preminor,
+            prepatch or prerelease version increments. It could
+            be 'snapshot', 'beta' or 'alpha' for example.
+    
+        --force-preid
+            If specified, we force to add if needed the specified preid
+            
+        --read-only
+                Print only the future version. Don't modify the package.json file,
+                nor the npm-shrinkwrap.json file, don't create a commit and don't
+                create a git tag
+        
+        --nogit-commit
+            No git commit
+    
+        --nogit-tag
+            No git tag
+    
+        --git-push
+            Push the commit and the tags if needed
 
     -u  --unpreid
         Remove the prefix. The increment and preid option will be ignored.
         Only a Git commit will be created
 
-    --read-only
-        Print only the future version. Don't modify the package.json file,
-        nor the npm-shrinkwrap.json file, don't create a commit and don't
-        create a git tag
-
-    --nogit-commit
-        No git commit
-
-    --nogit-tag
-        No git tag
-
-    --git-push
-        Push the commit and the tags if needed
+        --read-only
+               Print only the future version. Don't modify the package.json file,
+               nor the npm-shrinkwrap.json file, don't create a commit and don't
+               create a git tag
+       
+       --nogit-commit
+           No git commit
+   
+       --nogit-tag
+           No git tag
+   
+       --git-push
+           Push the commit and the tags if needed
 
 ## How to import it ?
 
