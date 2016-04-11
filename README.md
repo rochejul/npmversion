@@ -76,7 +76,7 @@ Type the command "npm install --save-dev --save-exact npmversion
 ````json
 {
   "name": "my-app",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "deveDependencies": {
       "npmversion": "latest"
   }
@@ -101,6 +101,34 @@ Type the command "npm install --save-dev --save-exact npmversion
       "bump-major-beta": "npmversion --increment major --preid beta --nogit-tag --git-push",
       "bump-minor-beta": "npmversion --increment minor --preid beta --nogit-tag --git-push",
       "bump-patch-beta": "npmversion --increment major --preid beta --nogit-tag --git-push"
+  }
+}
+````
+
+## Pre and Post NPM-RUN
+
+As other base npm commands, you can have now a pre and a post npmversion command
+
+
+````json
+{
+  "name": "my-app",
+  "version": "0.0.1",
+  "scripts": {
+      "test": "node ./node_modules/mocha/bin/mocha --recursive --ui bdd --colors ./test",
+      
+      "bump-release": "test && npmversion --unpreid --git-push",
+  
+      "bump-major": "test && npmversion --increment major --git-push",
+      "bump-minor": "test && npmversion --increment minor --git-push",
+      "bump-patch": "test && npmversion --increment major --git-push",
+      
+      "bump-major-beta": "npmversion --increment major --preid beta --nogit-tag --git-push",
+      "bump-minor-beta": "npmversion --increment minor --preid beta --nogit-tag --git-push",
+      "bump-patch-beta": "npmversion --increment major --preid beta --nogit-tag --git-push",
+      
+      "prenpmversion": "echo \"Pre npmversion\"",
+      "postnpmversion": "echo \"Post npmversion\""
   }
 }
 ````

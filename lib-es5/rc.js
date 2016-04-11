@@ -13,15 +13,19 @@
 // Imports
 
 var rc = require('rc');
+
 var PACKAGE_JSON = require('../package.json');
+var messages = require('./messages');
 
 // Constants
 var RC_OPTIONS = {
-  'force-preid': false,
-  'nogit-commit': false,
-  'nogit-tag': false,
-  'git-push': false,
-  'increment': 'patch'
+    'force-preid': false,
+    'nogit-commit': false,
+    'nogit-tag': false,
+    'git-push': false,
+    'git-commit-message': messages.GIT_COMMIT_MESSAGE,
+    'git-tag-message': messages.GIT_TAG_MESSAGE,
+    'increment': 'patch'
 };
 
 /**
@@ -29,10 +33,10 @@ var RC_OPTIONS = {
  * @returns {VersionOptions}
  */
 module.exports = function () {
-  var appCfg = rc(PACKAGE_JSON.name, RC_OPTIONS, []);
+    var appCfg = rc(PACKAGE_JSON.name, RC_OPTIONS, []);
 
-  delete appCfg.config;
-  delete appCfg.configs;
+    delete appCfg.config;
+    delete appCfg.configs;
 
-  return appCfg;
+    return appCfg;
 };

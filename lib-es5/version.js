@@ -4,7 +4,7 @@
  * @module lib/version
  * @exports VersionUtils
  * @author Julien Roche
- * @version 0.0.1
+ * @version 1.2.0
  * @since 0.0.1
  */
 
@@ -58,6 +58,8 @@ var NUMBER_REGEXP = /^\d+$/;
  * @property {boolean} [git-push=false]
  * @property {string} [increment=LEVEL_ENUM.patch]
  * @property {string} [preid]
+ * @property {string} [git-commit-message]
+ * @property {string} [git-tag-message]
  */
 
 // Here the class
@@ -82,7 +84,8 @@ module.exports = function () {
                 if (VersionUtils.hasFoundPackageJsonFile()) {
                     (function () {
                         // Version manipulation !
-                        var packageJsonVersion = VersionUtils.getCurrentPackageJsonVersion();
+                        var packageJson = VersionUtils.getCurrentPackageJson();
+                        var packageJsonVersion = VersionUtils.getCurrentPackageJsonVersion(packageJson);
 
                         if (options.unpreid) {
                             // We want to only remove the prefix
@@ -103,21 +106,37 @@ module.exports = function () {
                             VersionUtils.printVersion(packageJsonVersion);
                         } else {
                             // Bumping !!
-                            VersionUtils.updatePackageVersion(packageJsonVersion).then(function () {
+                            var firstPromise = void 0;
+
+                            if (VersionUtils.isPrenpmversionRunScriptDetectedInPackageJson(packageJson)) {
+                                firstPromise = VersionUtils.runScriptPrenpmversion().then(function () {
+                                    return VersionUtils.updatePackageVersion(packageJsonVersion);
+                                });
+                            } else {
+                                firstPromise = VersionUtils.updatePackageVersion(packageJsonVersion);
+                            }
+
+                            firstPromise.then(function () {
                                 if (!options['no-git-commit']) {
-                                    return GitUtils.createCommit(packageJsonVersion);
+                                    return GitUtils.createCommit(packageJsonVersion, options['git-commit-message']);
                                 }
 
                                 return packageJsonVersion;
                             }).then(function () {
                                 if (!options['no-git-tag']) {
-                                    return GitUtils.createTag(packageJsonVersion);
+                                    return GitUtils.createTag(packageJsonVersion, options['git-tag-message']);
                                 }
 
                                 return packageJsonVersion;
                             }).then(function () {
                                 if (options['git-push']) {
                                     return GitUtils.push(options['no-git-tag']);
+                                }
+
+                                return packageJsonVersion;
+                            }).then(function () {
+                                if (VersionUtils.isPostnpmversionRunScriptDetectedInPackageJson(packageJson)) {
+                                    return VersionUtils.runScriptPostnpmversion();
                                 }
 
                                 return packageJsonVersion;
@@ -134,16 +153,33 @@ module.exports = function () {
         }
 
         /**
+         * Get the content of the package.json file from the CWD path
+         * @returns {Object}
+         */
+
+    }, {
+        key: 'getCurrentPackageJson',
+        value: function getCurrentPackageJson() {
+            var packageJsonContent = fs.readFileSync(path.join(process.cwd(), PACKAGE_JSON_FILENAME));
+            return json5.parse(packageJsonContent);
+        }
+
+        /**
          * Get the version of the package.json file from the CWD path
+         * @param {Object} [packageJson]
          * @returns {string}
          */
 
     }, {
         key: 'getCurrentPackageJsonVersion',
-        value: function getCurrentPackageJsonVersion() {
+        value: function getCurrentPackageJsonVersion(packageJson) {
+            if (packageJson) {
+                return packageJson.version;
+            }
+
             var packageJsonContent = fs.readFileSync(path.join(process.cwd(), PACKAGE_JSON_FILENAME));
-            var packageJson = json5.parse(packageJsonContent);
-            return packageJson.version;
+            var packageJsonParsed = json5.parse(packageJsonContent);
+            return packageJsonParsed.version;
         }
 
         /**
@@ -325,6 +361,30 @@ module.exports = function () {
         }
 
         /**
+         * Check if we have a "postnpmversion" as run-script into the package.json file
+         * @param {Object} packageJson
+         * @returns {Boolean}
+         */
+
+    }, {
+        key: 'isPostnpmversionRunScriptDetectedInPackageJson',
+        value: function isPostnpmversionRunScriptDetectedInPackageJson(packageJson) {
+            return !!(packageJson && packageJson.scripts && packageJson.scripts.postnpmversion);
+        }
+
+        /**
+         * Check if we have a "prenpmversion" as run-script into the package.json file
+         * @param {Object} packageJson
+         * @returns {Boolean}
+         */
+
+    }, {
+        key: 'isPrenpmversionRunScriptDetectedInPackageJson',
+        value: function isPrenpmversionRunScriptDetectedInPackageJson(packageJson) {
+            return !!(packageJson && packageJson.scripts && packageJson.scripts.prenpmversion);
+        }
+
+        /**
          * Print the error
          */
 
@@ -365,6 +425,32 @@ module.exports = function () {
         key: 'printVersion',
         value: function printVersion(packageVersion) {
             console.log('Nearest version: ', packageVersion);
+        }
+
+        /**
+         * Run the "prenpmversion" npm scripts
+         *
+         * @method
+         * @returns {Promise}
+         */
+
+    }, {
+        key: 'runScriptPrenpmversion',
+        value: function runScriptPrenpmversion() {
+            return Utils.promisedExec('npm run prenpmversion');
+        }
+
+        /**
+         * Run the "postnpmversion" npm scripts
+         *
+         * @method
+         * @returns {Promise}
+         */
+
+    }, {
+        key: 'runScriptPrenpmversion',
+        value: function runScriptPrenpmversion() {
+            return Utils.promisedExec('npm run postnpmversion');
         }
 
         /**

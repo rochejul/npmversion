@@ -18,48 +18,91 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var Utils = require('./utils');
 
+// Constants
+var ESCAPE_DOUBLE_QUOTE = '\\"';
+var REGEX = {
+    'PURCENTAGE_STRING': /%s/g,
+    'DOUBLE_QUOTE': /"/g
+};
+
 // Here the class
 module.exports = function () {
-  function GitUtils() {
-    _classCallCheck(this, GitUtils);
-  }
-
-  _createClass(GitUtils, null, [{
-    key: 'createCommit',
-
-    /**
-     * Create a commit git
-     * @param {string} packageVersion
-     * @returns {Promise}
-     */
-    value: function createCommit(packageVersion) {
-      return Utils.promisedExec('git commit --all --message "Release version: ' + packageVersion + '"');
+    function GitUtils() {
+        _classCallCheck(this, GitUtils);
     }
 
-    /**
-     * Create a tag git
-     * @param {string} packageVersion
-     * @returns {Promise}
-     */
+    _createClass(GitUtils, null, [{
+        key: 'createCommit',
 
-  }, {
-    key: 'createTag',
-    value: function createTag(packageVersion) {
-      return Utils.promisedExec('git tag "v' + packageVersion + '"');
-    }
+        /**
+         * Create a commit git
+         * @param {string} packageVersion
+         * @param {string} [label]
+         * @returns {Promise}
+         */
+        value: function createCommit(packageVersion, label) {
+            return Utils.promisedExec('git commit --all --message "' + GitUtils.createCommitLabel(packageVersion, label) + '"');
+        }
 
-    /**
-     * Push the commits and the tags if needed
-     * @param {boolean} [tags=false]
-     * @returns {Promise}
-     */
+        /**
+         * Generate the commit description
+         * @param {string} packageVersion
+         * @param {string} [label]
+         * @returns {string}
+         */
 
-  }, {
-    key: 'push',
-    value: function push(tags) {
-      return Utils.promisedExec('git push' + (tags ? ' && git push --tags' : ''));
-    }
-  }]);
+    }, {
+        key: 'createCommitLabel',
+        value: function createCommitLabel(packageVersion, label) {
+            if (label) {
+                return label.replace(REGEX.PURCENTAGE_STRING, packageVersion).replace(REGEX.DOUBLE_QUOTE, ESCAPE_DOUBLE_QUOTE);
+            }
 
-  return GitUtils;
+            return 'Release version: ' + packageVersion;
+        }
+
+        /**
+         * Create a tag git
+         * @param {string} packageVersion
+         * @param {string} [label]
+         * @returns {Promise}
+         */
+
+    }, {
+        key: 'createTag',
+        value: function createTag(packageVersion, label) {
+            return Utils.promisedExec('git tag "' + GitUtils.createTagLabel(packageVersion, label) + '"');
+        }
+
+        /**
+         * Generate the tag description
+         * @param {string} packageVersion
+         * @param {string} [label]
+         * @returns {string}
+         */
+
+    }, {
+        key: 'createTagLabel',
+        value: function createTagLabel(packageVersion, label) {
+            if (label) {
+                return label.replace(REGEX.PURCENTAGE_STRING, packageVersion).replace(REGEX.DOUBLE_QUOTE, ESCAPE_DOUBLE_QUOTE);
+            }
+
+            return 'v' + packageVersion;
+        }
+
+        /**
+         * Push the commits and the tags if needed
+         * @param {boolean} [tags=false]
+         * @returns {Promise}
+         */
+
+    }, {
+        key: 'push',
+        value: function push(tags) {
+            return Utils.promisedExec('git push' + (tags ? ' && git push --tags' : ''));
+        }
+    }]);
+
+    return GitUtils;
 }();
