@@ -424,4 +424,58 @@ describe('VersionUtils - ', function () {
             });
         });
     });
+
+    describe('and the method "isPostnpmversionRunScriptDetectedInPackageJson" ', function () {
+        it('should exist', function () {
+            expect(VersionUtils.isPostnpmversionRunScriptDetectedInPackageJson).to.exist;
+        });
+
+        it('should return false if no content into the package.json', function () {
+            expect(VersionUtils.isPostnpmversionRunScriptDetectedInPackageJson()).to.be.false;
+            expect(VersionUtils.isPostnpmversionRunScriptDetectedInPackageJson(null)).to.be.false;
+        });
+
+        it('should return false there is no "scripts" property', function () {
+            expect(VersionUtils.isPostnpmversionRunScriptDetectedInPackageJson({ })).to.be.false;
+        });
+
+        it('should return false there is no "postnpmversion" property into the scripts part', function () {
+            expect(VersionUtils.isPostnpmversionRunScriptDetectedInPackageJson({ 'scripts': { } })).to.be.false;
+        });
+
+        it('should return false if "postnpmversion" is empty', function () {
+            expect(VersionUtils.isPostnpmversionRunScriptDetectedInPackageJson({ 'scripts': { 'postnpmversion': '' } })).to.be.false;
+        });
+
+        it('should return true otherwise', function () {
+            expect(VersionUtils.isPostnpmversionRunScriptDetectedInPackageJson({ 'scripts': { 'postnpmversion': 'echo "test"' } })).to.be.true;
+        });
+    });
+
+    describe('and the method "isPrenpmversionRunScriptDetectedInPackageJson" ', function () {
+        it('should exist', function () {
+            expect(VersionUtils.isPrenpmversionRunScriptDetectedInPackageJson).to.exist;
+        });
+
+        it('should return false if no content into the package.json', function () {
+            expect(VersionUtils.isPrenpmversionRunScriptDetectedInPackageJson()).to.be.false;
+            expect(VersionUtils.isPrenpmversionRunScriptDetectedInPackageJson(null)).to.be.false;
+        });
+
+        it('should return false there is no "scripts" property', function () {
+            expect(VersionUtils.isPrenpmversionRunScriptDetectedInPackageJson({ })).to.be.false;
+        });
+
+        it('should return false there is no "prenpmversion" property into the scripts part', function () {
+            expect(VersionUtils.isPrenpmversionRunScriptDetectedInPackageJson({ 'scripts': { } })).to.be.false;
+        });
+
+        it('should return false if "prenpmversion" is empty', function () {
+            expect(VersionUtils.isPrenpmversionRunScriptDetectedInPackageJson({ 'scripts': { 'prenpmversion': '' } })).to.be.false;
+        });
+
+        it('should return true otherwise', function () {
+            expect(VersionUtils.isPrenpmversionRunScriptDetectedInPackageJson({ 'scripts': { 'prenpmversion': 'echo "test"' } })).to.be.true;
+        });
+    });
 });
