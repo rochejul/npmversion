@@ -1,6 +1,6 @@
 {
   "name": "npmversion",
-  "version": "1.1.0",
+  "version": "1.2.0-snpashot",
   "description": "A command line node module to deal with \"bumping\" and \"npm version\"",
   "main": "lib/index.js",
   "files": [
