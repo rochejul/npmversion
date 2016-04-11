@@ -11,10 +11,143 @@
 
 describe('VersionUtils - ', function () {
     const expect = require('chai').expect;
+    const sinon = require('sinon');
+
     const VersionUtils = require('../lib/version');
+    const noop = function () { };
+    let sinonSandBox = null;
 
     it('should exports something', function () {
         expect(VersionUtils).to.exist;
+    });
+
+    beforeEach(function () {
+        sinonSandBox = sinon.sandbox.create();
+    });
+
+    afterEach(function () {
+        if (sinonSandBox) {
+            sinonSandBox.restore();
+            sinonSandBox = null;
+        }
+    });
+
+    describe.only('and the method "doIt" ', function () {
+        it('should exist', function () {
+            expect(VersionUtils.doIt).to.exist;
+        });
+
+        describe('should print the help', function () {
+            it('no options are passed ', function () {
+                let printHelpStub = sinonSandBox.stub(VersionUtils, 'printHelp', noop);
+
+                VersionUtils.doIt();
+
+                expect(printHelpStub.called).to.be.true;
+                expect(printHelpStub.calledOnce).to.be.true;
+            });
+
+            it('if the help option is passed ', function () {
+                let printHelpStub = sinonSandBox.stub(VersionUtils, 'printHelp', noop);
+
+                VersionUtils.doIt({ 'help': true });
+
+                expect(printHelpStub.called).to.be.true;
+                expect(printHelpStub.calledOnce).to.be.true;
+            });
+        });
+
+        it('should print an error message if no package.json file was detected', function () {
+            sinonSandBox.stub(VersionUtils, 'hasFoundPackageJsonFile', () => false);
+            let printNotFoundStub = sinonSandBox.stub(VersionUtils, 'printNotFoundPackageJsonFile', noop);
+
+            VersionUtils.doIt({ 'increment': 'patch' });
+
+            expect(printNotFoundStub.called).to.be.true;
+            expect(printNotFoundStub.calledOnce).to.be.true;
+        });
+
+        it('should print the bump result if read only is set', function () {
+            sinonSandBox.stub(VersionUtils, 'hasFoundPackageJsonFile', () => true);
+            sinonSandBox.stub(VersionUtils, 'getCurrentPackageJson', () => {
+                return { 'version': '0.0.1' };
+            });
+
+            let printVersionStub = sinonSandBox.stub(VersionUtils, 'printVersion', noop);
+
+            VersionUtils.doIt({ 'increment': 'patch', 'read-only': true });
+
+            expect(printVersionStub.called).to.be.true;
+            expect(printVersionStub.calledOnce).to.be.true;
+            expect(printVersionStub.calledWithExactly('0.0.2')).to.be.true;
+        });
+
+        describe('should increment the version ', function () {
+            it('if the option is set', function () {
+                sinonSandBox.stub(VersionUtils, 'hasFoundPackageJsonFile', () => true);
+                sinonSandBox.stub(VersionUtils, 'getCurrentPackageJson', () => {
+                    return { 'version': '0.0.1' };
+                });
+
+                let printVersionStub = sinonSandBox.stub(VersionUtils, 'printVersion', noop);
+
+                VersionUtils.doIt({ 'increment': 'patch', 'read-only': true });
+
+                expect(printVersionStub.called).to.be.true;
+                expect(printVersionStub.calledOnce).to.be.true;
+                expect(printVersionStub.calledWithExactly('0.0.2')).to.be.true;
+            });
+
+            it('to "patch" if the level is not recognized', function () {
+                sinonSandBox.stub(VersionUtils, 'hasFoundPackageJsonFile', () => true);
+                sinonSandBox.stub(VersionUtils, 'getCurrentPackageJson', () => {
+                    return { 'version': '0.0.1' };
+                });
+
+                let printVersionStub = sinonSandBox.stub(VersionUtils, 'printVersion', noop);
+
+                VersionUtils.doIt({ 'increment': 'fake', 'read-only': true });
+
+                expect(printVersionStub.called).to.be.true;
+                expect(printVersionStub.calledOnce).to.be.true;
+                expect(printVersionStub.calledWithExactly('0.0.2')).to.be.true;
+            });
+
+            it('with all possible options', function () {
+                sinonSandBox.stub(VersionUtils, 'hasFoundPackageJsonFile', () => true);
+                sinonSandBox.stub(VersionUtils, 'getCurrentPackageJson', () => {
+                    return { 'version': '0.0.1' };
+                });
+
+                let incrementPackageVersionSpy = sinonSandBox.spy(VersionUtils, 'incrementPackageVersion');
+                let printVersionStub = sinonSandBox.stub(VersionUtils, 'printVersion', noop);
+
+                VersionUtils.doIt({ 'increment': 'PATCH', 'read-only': true, 'preid': 'beta', 'force-preid': true });
+
+                expect(incrementPackageVersionSpy.called).to.be.true;
+                expect(incrementPackageVersionSpy.calledOnce).to.be.true;
+                expect(incrementPackageVersionSpy.calledWithExactly('0.0.1', 'patch', 'beta', true)).to.be.true;
+
+                expect(printVersionStub.called).to.be.true;
+                expect(printVersionStub.calledOnce).to.be.true;
+                expect(printVersionStub.calledWithExactly('0.0.2-beta')).to.be.true;
+            });
+        });
+
+        it('should unpreid the version if the option is specified', function () {
+            sinonSandBox.stub(VersionUtils, 'hasFoundPackageJsonFile', () => true);
+            sinonSandBox.stub(VersionUtils, 'getCurrentPackageJson', () => {
+                return { 'version': '0.0.1-snapshot' };
+            });
+
+            let printVersionStub = sinonSandBox.stub(VersionUtils, 'printVersion', noop);
+
+            VersionUtils.doIt({ 'unpreid': true, 'read-only': true });
+
+            expect(printVersionStub.called).to.be.true;
+            expect(printVersionStub.calledOnce).to.be.true;
+            expect(printVersionStub.calledWithExactly('0.0.1')).to.be.true;
+        });
     });
 
     describe('and the method "unpreidPackageVersion" ', function () {
