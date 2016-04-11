@@ -10,10 +10,12 @@
 'use strict';
 
 describe('VersionUtils - ', function () {
-    const expect = require('chai').expect;
+    const chai = require('chai');
+    const expect = chai.expect;
     const sinon = require('sinon');
 
     const VersionUtils = require('../lib/version');
+    const Utils = require('../lib/utils');
     const noop = function () { };
     let sinonSandBox = null;
 
@@ -32,7 +34,7 @@ describe('VersionUtils - ', function () {
         }
     });
 
-    describe.only('and the method "doIt" ', function () {
+    describe('and the method "doIt" ', function () {
         it('should exist', function () {
             expect(VersionUtils.doIt).to.exist;
         });
@@ -147,6 +149,184 @@ describe('VersionUtils - ', function () {
             expect(printVersionStub.called).to.be.true;
             expect(printVersionStub.calledOnce).to.be.true;
             expect(printVersionStub.calledWithExactly('0.0.1')).to.be.true;
+        });
+
+        describe('should use git, ', function () {
+            it('and log an error if needed', function () {
+                sinonSandBox.stub(VersionUtils, 'updatePackageVersion', () => Promise.reject('an error'));
+                let printErrorSpy = sinonSandBox.stub(VersionUtils, 'printError', noop);
+
+                return VersionUtils
+                    .doIt({ 'increment': 'fake' })
+                    .then(function () {
+                        chai.fail('The then method should not be called');
+                    })
+                    .catch(function(err) {
+                        expect(printErrorSpy.called).to.be.true;
+                        expect(printErrorSpy.calledOnce).to.be.true;
+                        expect(printErrorSpy.calledWithExactly('an error')).to.be.true;
+                    });
+            });
+
+            describe('expecially ', function () {
+                let calls;
+
+                beforeEach(function () {
+                    calls = [];
+                    sinonSandBox.stub(VersionUtils, 'updatePackageVersion', function () {
+                        calls.push(['updatePackageVersion'].concat([].splice.apply(arguments, arguments)));
+                        return Promise.resolve();
+                    });
+
+                    sinonSandBox.stub(Utils, 'promisedExec', function () {
+                        calls.push(['promisedExec'].concat([].splice.apply(arguments, arguments)));
+                        return Promise.resolve();
+                    });
+                });
+
+                afterEach(function () {
+                    calls = null;
+                });
+
+                it('create by default a commit and a tag', function () {
+                    sinonSandBox.stub(VersionUtils, 'getCurrentPackageJson', () => {
+                        return { 'version': '1.2.0' };
+                    });
+
+                    return VersionUtils
+                        .doIt({ 'increment': 'fake' })
+                        .then(function () {
+                            expect(calls).deep.equals([
+                                [
+                                    "updatePackageVersion",
+                                    "1.2.1"
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git commit --all --message \"Release version: 1.2.1\""
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git tag \"v1.2.1\""
+                                ]
+                            ]);
+                        });
+                });
+
+                it('push the commit and the tag', function () {
+                    sinonSandBox.stub(VersionUtils, 'getCurrentPackageJson', () => {
+                        return { 'version': '1.2.0' };
+                    });
+
+                    return VersionUtils
+                        .doIt({ 'increment': 'fake', 'git-push': true })
+                        .then(function () {
+                            expect(calls).deep.equals([
+                                [
+                                    "updatePackageVersion",
+                                    "1.2.1"
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git commit --all --message \"Release version: 1.2.1\""
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git tag \"v1.2.1\""
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git push && git push --tags"
+                                ]
+                            ]);
+                        });
+                });
+
+                it('push only the commit if no tag is generated', function () {
+                    sinonSandBox.stub(VersionUtils, 'getCurrentPackageJson', () => {
+                        return { 'version': '1.2.0' };
+                    });
+
+                    return VersionUtils
+                        .doIt({ 'increment': 'fake', 'git-push': true, 'no-git-tag': true })
+                        .then(function () {
+                            expect(calls).deep.equals([
+                                [
+                                    "updatePackageVersion",
+                                    "1.2.1"
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git commit --all --message \"Release version: 1.2.1\""
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git push"
+                                ]
+                            ]);
+                        });
+                });
+
+                it('create no commit if specified', function () {
+                    sinonSandBox.stub(VersionUtils, 'getCurrentPackageJson', () => {
+                        return { 'version': '1.2.0' };
+                    });
+
+                    return VersionUtils
+                        .doIt({ 'increment': 'fake', 'no-git-commit': true, 'no-git-tag': true })
+                        .then(function () {
+                            expect(calls).deep.equals([
+                                [
+                                    "updatePackageVersion",
+                                    "1.2.1"
+                                ]
+                            ]);
+                        });
+                });
+
+                it('wrap with a pre and post npm-scripts command', function () {
+                    sinonSandBox.stub(VersionUtils, 'getCurrentPackageJson', () => {
+                        return {
+                            'version': '1.2.0',
+                            'scripts': {
+                                'prenpmversion': 'echo "Hello"',
+                                'postnpmversion': 'echo "Wordl"'
+                            }
+                        };
+                    });
+
+                    return VersionUtils
+                        .doIt({ 'increment': 'fake', 'git-push': true })
+                        .then(function () {
+                            expect(calls).deep.equals([
+                                [
+                                    "promisedExec",
+                                    "npm run prenpmversion"
+                                ],
+                                [
+                                    "updatePackageVersion",
+                                    "1.2.1"
+                                ],
+                                [
+                                    "promisedExec",
+                                    "npm run postnpmversion"
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git commit --all --message \"Release version: 1.2.1\""
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git tag \"v1.2.1\""
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git push && git push --tags"
+                                ]
+                            ]);
+                        });
+                });
+            });
         });
     });
 
