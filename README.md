@@ -107,7 +107,8 @@ Type the command "npm install --save-dev --save-exact npmversion
 
 ## Pre and Post NPM-RUN
 
-As other base npm commands, you can have now a pre and a post npmversion command
+As other base npm commands, you can have now a pre and a post npmversion command. The post command
+is called before create a git commit / tag and pushing.
 
 
 ````json

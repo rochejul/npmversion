@@ -12,6 +12,8 @@
 
 // Imports
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -75,6 +77,7 @@ module.exports = function () {
         /**
          * Analyze the options do the bumping / versionning
          * @param {VersionOptions} [options]
+         * @returns {Promise}
          */
         value: function doIt(options) {
             if (!options || options.help) {
@@ -82,7 +85,7 @@ module.exports = function () {
                 VersionUtils.printHelp();
             } else {
                 if (VersionUtils.hasFoundPackageJsonFile()) {
-                    (function () {
+                    var _ret = function () {
                         // Version manipulation !
                         var packageJson = VersionUtils.getCurrentPackageJson();
                         var packageJsonVersion = VersionUtils.getCurrentPackageJsonVersion(packageJson);
@@ -116,40 +119,46 @@ module.exports = function () {
                                 firstPromise = VersionUtils.updatePackageVersion(packageJsonVersion);
                             }
 
-                            firstPromise.then(function () {
-                                if (!options['no-git-commit']) {
-                                    return GitUtils.createCommit(packageJsonVersion, options['git-commit-message']);
-                                }
+                            return {
+                                v: firstPromise.then(function () {
+                                    if (VersionUtils.isPostnpmversionRunScriptDetectedInPackageJson(packageJson)) {
+                                        return VersionUtils.runScriptPostnpmversion();
+                                    }
 
-                                return packageJsonVersion;
-                            }).then(function () {
-                                if (!options['no-git-tag']) {
-                                    return GitUtils.createTag(packageJsonVersion, options['git-tag-message']);
-                                }
+                                    return packageJsonVersion;
+                                }).then(function () {
+                                    if (!options['no-git-commit']) {
+                                        return GitUtils.createCommit(packageJsonVersion, options['git-commit-message']);
+                                    }
 
-                                return packageJsonVersion;
-                            }).then(function () {
-                                if (options['git-push']) {
-                                    return GitUtils.push(options['no-git-tag']);
-                                }
+                                    return packageJsonVersion;
+                                }).then(function () {
+                                    if (!options['no-git-tag']) {
+                                        return GitUtils.createTag(packageJsonVersion, options['git-tag-message']);
+                                    }
 
-                                return packageJsonVersion;
-                            }).then(function () {
-                                if (VersionUtils.isPostnpmversionRunScriptDetectedInPackageJson(packageJson)) {
-                                    return VersionUtils.runScriptPostnpmversion();
-                                }
+                                    return packageJsonVersion;
+                                }).then(function () {
+                                    if (options['git-push']) {
+                                        return GitUtils.push(!options['no-git-tag']);
+                                    }
 
-                                return packageJsonVersion;
-                            }).catch(function (err) {
-                                VersionUtils.printError(err);
-                            });
+                                    return packageJsonVersion;
+                                }).catch(function (err) {
+                                    VersionUtils.printError(err);
+                                })
+                            };
                         }
-                    })();
+                    }();
+
+                    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
                 } else {
                     // Hummmm, are you sure we are into a NPM module folder?
                     VersionUtils.printNotFoundPackageJsonFile();
                 }
             }
+
+            return Promise.resolve();
         }
 
         /**
@@ -448,8 +457,8 @@ module.exports = function () {
          */
 
     }, {
-        key: 'runScriptPrenpmversion',
-        value: function runScriptPrenpmversion() {
+        key: 'runScriptPostnpmversion',
+        value: function runScriptPostnpmversion() {
             return Utils.promisedExec('npm run postnpmversion');
         }
 
