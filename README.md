@@ -96,11 +96,11 @@ Type the command "npm install --save-dev --save-exact npmversion
   
       "bump-major": "test && npmversion --increment major --git-push",
       "bump-minor": "test && npmversion --increment minor --git-push",
-      "bump-patch": "test && npmversion --increment major --git-push",
+      "bump-patch": "test && npmversion --increment patch --git-push",
       
       "bump-major-beta": "npmversion --increment major --preid beta --nogit-tag --git-push",
       "bump-minor-beta": "npmversion --increment minor --preid beta --nogit-tag --git-push",
-      "bump-patch-beta": "npmversion --increment major --preid beta --nogit-tag --git-push"
+      "bump-patch-beta": "npmversion --increment patch --preid beta --nogit-tag --git-push"
   }
 }
 ````
