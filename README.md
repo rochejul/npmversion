@@ -3,6 +3,8 @@
 [![Build Status](https://travis-ci.org/rochejul/npmversion.svg?branch=master)](https://travis-ci.org/rochejul/npmversion)[![Dependency Status](https://david-dm.org/rochejul/npmversion.svg)](https://david-dm.org/rochejul/npmversion)
 [![devDependency Status](https://david-dm.org/rochejul/npmversion/dev-status.svg)](https://david-dm.org/rochejul/npmversion#info=devDependencies)
 
+[![Known Vulnerabilities](https://snyk.io/test/github/rochejul/npmversion/badge.svg)](https://snyk.io/test/github/rochejul/npmversion)
+
 [![NPM](https://nodei.co/npm/npmversion.png?downloads=true&downloadRank=true)](https://nodei.co/npm/npmversion/)
 [![NPM](https://nodei.co/npm-dl/npmversion.png?&months=6&height=3)](https://nodei.co/npm/npmversion/)
 
