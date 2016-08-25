@@ -1,6 +1,6 @@
 {
   "name": "npmversion",
-  "version": "1.2.1-beta",
+  "version": "1.2.1",
   "description": "A command line node module to deal with \"bumping\" and \"npm version\"",
   "main": "lib/index.js",
   "files": [
