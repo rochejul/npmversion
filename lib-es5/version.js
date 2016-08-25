@@ -72,13 +72,45 @@ module.exports = function () {
     }
 
     _createClass(VersionUtils, null, [{
-        key: 'doIt',
+        key: 'createCommitGitIfNeeded',
+
+        /**
+         * @param {string} packageJsonVersion
+         * @param {VersionOptions} options
+         * @returns {Promise}
+         */
+        value: function createCommitGitIfNeeded(packageJsonVersion, options) {
+            if (VersionUtils.hashCreateCommitGit(options)) {
+                return GitUtils.createCommit(packageJsonVersion, options['git-commit-message'] ? options['git-commit-message'] : messages.GIT_COMMIT_MESSAGE);
+            }
+
+            return Promise.resolve();
+        }
+
+        /**
+         * @param {string} packageJsonVersion
+         * @param {VersionOptions} options
+         * @returns {Promise}
+         */
+
+    }, {
+        key: 'createTagGitIfNeeded',
+        value: function createTagGitIfNeeded(packageJsonVersion, options) {
+            if (VersionUtils.hashCreateTagGit(options)) {
+                return GitUtils.createTag(packageJsonVersion, options['git-tag-message'] ? options['git-tag-message'] : messages.GIT_TAG_MESSAGE);
+            }
+
+            return Promise.resolve();
+        }
 
         /**
          * Analyze the options do the bumping / versionning
          * @param {VersionOptions} [options]
-         * @returns {Promise}
+         * @returns {Promise.<string>} Will contain the updated package version
          */
+
+    }, {
+        key: 'doIt',
         value: function doIt(options) {
             if (!options || options.help) {
                 // Basic: display the help message
@@ -107,45 +139,32 @@ module.exports = function () {
                         if (options['read-only']) {
                             // Display the future version
                             VersionUtils.printVersion(packageJsonVersion);
+
+                            // Return the updated package version
+                            return {
+                                v: Promise.resolve(packageJsonVersion)
+                            };
                         } else {
                             // Bumping !!
-                            var firstPromise = void 0;
-
-                            if (VersionUtils.isPrenpmversionRunScriptDetectedInPackageJson(packageJson)) {
-                                firstPromise = VersionUtils.runScriptPrenpmversion().then(function () {
-                                    return VersionUtils.updatePackageVersion(packageJsonVersion);
-                                });
-                            } else {
-                                firstPromise = VersionUtils.updatePackageVersion(packageJsonVersion);
-                            }
-
                             return {
-                                v: firstPromise.then(function () {
-                                    if (VersionUtils.isPostnpmversionRunScriptDetectedInPackageJson(packageJson)) {
-                                        return VersionUtils.runScriptPostnpmversion();
-                                    }
-
-                                    return packageJsonVersion;
+                                v: Promise.resolve().then(function () {
+                                    return VersionUtils.doPrenpmVersionRunScriptIfNeeded(packageJson);
                                 }).then(function () {
-                                    if (!options['no-git-commit']) {
-                                        return GitUtils.createCommit(packageJsonVersion, options['git-commit-message']);
-                                    }
-
-                                    return packageJsonVersion;
+                                    return VersionUtils.updatePackageVersion(packageJsonVersion);
                                 }).then(function () {
-                                    if (!options['no-git-tag']) {
-                                        return GitUtils.createTag(packageJsonVersion, options['git-tag-message']);
-                                    }
-
-                                    return packageJsonVersion;
+                                    return VersionUtils.doPostnpmVersionRunScriptIfNeeded(packageJson);
                                 }).then(function () {
-                                    if (options['git-push']) {
-                                        return GitUtils.push(!options['no-git-tag']);
-                                    }
-
+                                    return VersionUtils.createCommitGitIfNeeded(packageJsonVersion, options);
+                                }).then(function () {
+                                    return VersionUtils.createTagGitIfNeeded(packageJsonVersion, options);
+                                }).then(function () {
+                                    return VersionUtils.doPushGitIfNeeded(options);
+                                }).then(function () {
                                     return packageJsonVersion;
-                                }).catch(function (err) {
+                                }) // Return the updated package version
+                                .catch(function (err) {
                                     VersionUtils.printError(err);
+                                    return Promise.reject(err);
                                 })
                             };
                         }
@@ -156,6 +175,51 @@ module.exports = function () {
                     // Hummmm, are you sure we are into a NPM module folder?
                     VersionUtils.printNotFoundPackageJsonFile();
                 }
+            }
+
+            return Promise.resolve();
+        }
+
+        /**
+         * @param {Object} packageJson
+         * @returns {Promise}
+         */
+
+    }, {
+        key: 'doPostnpmVersionRunScriptIfNeeded',
+        value: function doPostnpmVersionRunScriptIfNeeded(packageJson) {
+            if (VersionUtils.isPostnpmversionRunScriptDetectedInPackageJson(packageJson)) {
+                return VersionUtils.runScriptPostnpmversion();
+            }
+
+            return Promise.resolve();
+        }
+
+        /**
+         * @param {Object} packageJson
+         * @returns {Promise}
+         */
+
+    }, {
+        key: 'doPrenpmVersionRunScriptIfNeeded',
+        value: function doPrenpmVersionRunScriptIfNeeded(packageJson) {
+            if (VersionUtils.isPrenpmversionRunScriptDetectedInPackageJson(packageJson)) {
+                return VersionUtils.runScriptPrenpmversion();
+            }
+
+            return Promise.resolve();
+        }
+
+        /**
+         * @param {VersionOptions} options
+         * @returns {Promise}
+         */
+
+    }, {
+        key: 'doPushGitIfNeeded',
+        value: function doPushGitIfNeeded(options) {
+            if (VersionUtils.hashPushCommitsGit(options)) {
+                return GitUtils.push(VersionUtils.hashCreateTagGit(options));
             }
 
             return Promise.resolve();
@@ -200,6 +264,39 @@ module.exports = function () {
         key: 'hasFoundPackageJsonFile',
         value: function hasFoundPackageJsonFile() {
             return fs.existsSync(path.join(process.cwd(), PACKAGE_JSON_FILENAME));
+        }
+
+        /**
+         * @param {VersionOptions} [options]
+         * @returns {boolean}
+         */
+
+    }, {
+        key: 'hashCreateCommitGit',
+        value: function hashCreateCommitGit(options) {
+            return !!(!options || !options['nogit-commit']);
+        }
+
+        /**
+         * @param {VersionOptions} [options]
+         * @returns {boolean}
+         */
+
+    }, {
+        key: 'hashCreateTagGit',
+        value: function hashCreateTagGit(options) {
+            return !!(!options || !options['nogit-tag']);
+        }
+
+        /**
+         * @param {VersionOptions} [options]
+         * @returns {boolean}
+         */
+
+    }, {
+        key: 'hashPushCommitsGit',
+        value: function hashPushCommitsGit(options) {
+            return !!(options && options['git-push']);
         }
 
         /**

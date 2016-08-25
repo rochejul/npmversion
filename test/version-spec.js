@@ -15,7 +15,9 @@ describe('VersionUtils - ', function () {
     const sinon = require('sinon');
 
     const VersionUtils = require('../lib/version');
+    const GitUtils = require('../lib/git');
     const Utils = require('../lib/utils');
+    const Messages = require('../lib/messages');
     const noop = function () { };
     let sinonSandBox = null;
 
@@ -248,7 +250,7 @@ describe('VersionUtils - ', function () {
                     });
 
                     return VersionUtils
-                        .doIt({ 'increment': 'fake', 'git-push': true, 'no-git-tag': true })
+                        .doIt({ 'increment': 'fake', 'git-push': true, 'nogit-tag': true })
                         .then(function () {
                             expect(calls).deep.equals([
                                 [
@@ -273,7 +275,7 @@ describe('VersionUtils - ', function () {
                     });
 
                     return VersionUtils
-                        .doIt({ 'increment': 'fake', 'no-git-commit': true, 'no-git-tag': true })
+                        .doIt({ 'increment': 'fake', 'nogit-commit': true, 'nogit-tag': true })
                         .then(function () {
                             expect(calls).deep.equals([
                                 [
@@ -327,6 +329,71 @@ describe('VersionUtils - ', function () {
                         });
                 });
             });
+        });
+
+        it('shoud deal with an arbitrary options set', function () {
+            let calls = [];
+            sinonSandBox.stub(VersionUtils, 'updatePackageVersion', function () {
+                calls.push(['updatePackageVersion'].concat([].splice.apply(arguments, arguments)));
+                return Promise.resolve();
+            });
+
+            sinonSandBox.stub(Utils, 'promisedExec', function () {
+                calls.push(['promisedExec'].concat([].splice.apply(arguments, arguments)));
+                return Promise.resolve();
+            });
+
+            sinonSandBox.stub(VersionUtils, 'getCurrentPackageJson', () => {
+                return { 'version': '1.2.0' };
+            });
+
+            // Case:
+            //  > npm run npmversion -- --increment patch --preid beta --nogit-tag --git-push
+            // {
+            //     "force-preid": false,
+            //     "nogit-commit": false,
+            //     "nogit-tag": true,
+            //     "git-push": false,
+            //     "git-commit-message": "Release version: %s",
+            //     "git-tag-message": "v%s",
+            //     "increment": "minor"
+            // }
+
+            return VersionUtils
+                .doIt({
+                    '_': [],
+                    'help': false,
+                    'unpreid': false,
+                    'u': false,
+                    'force-preid': true,
+                    'read-only': false,
+                    'nogit-commit': false,
+                    'nogit-tag': true,
+                    'git-push': true,
+                    'increment': 'patch',
+                    'i': 'patch',
+                    'preid': 'beta',
+                    'p': 'beta',
+                    'git-commit-message': 'Release version: %s',
+                    'git-tag-message': 'v%s'
+                })
+                .then((updatedPackageVersion) => {
+                    expect(updatedPackageVersion).to.equal('1.2.1-beta');
+                    expect(calls).to.deep.equals([
+                        [
+                            "updatePackageVersion",
+                            "1.2.1-beta"
+                        ],
+                        [
+                            "promisedExec",
+                            "git commit --all --message \"Release version: 1.2.1-beta\""
+                        ],
+                        [
+                            "promisedExec",
+                            "git push"
+                        ]
+                    ]);
+                });
         });
     });
 
@@ -789,6 +856,192 @@ describe('VersionUtils - ', function () {
 
         it('should return true otherwise', function () {
             expect(VersionUtils.isPrenpmversionRunScriptDetectedInPackageJson({ 'scripts': { 'prenpmversion': 'echo "test"' } })).to.be.true;
+        });
+    });
+
+    describe('and the method "hashCreateCommitGit" ', function () {
+        it('should exist', function () {
+            expect(VersionUtils.hashCreateCommitGit).to.exist;
+        });
+
+        it('should return true if no options are passed', function () {
+            expect(VersionUtils.hashCreateCommitGit()).to.be.true;
+        });
+
+        it('should return true if the option "nogit-commit" is omitted', function () {
+            expect(VersionUtils.hashCreateCommitGit({ })).to.be.true;
+        });
+
+        it('should return true if the option "nogit-commit" is set to false', function () {
+            expect(VersionUtils.hashCreateCommitGit({ 'nogit-commit': false })).to.be.true;
+        });
+
+        it('should return false otherwise', function () {
+            expect(VersionUtils.hashCreateCommitGit({ 'nogit-commit': true })).to.be.false;
+        });
+    });
+
+    describe('and the method "hashCreateTagGit" ', function () {
+        it('should exist', function () {
+            expect(VersionUtils.hashCreateTagGit).to.exist;
+        });
+
+        it('should return true if no options are passed', function () {
+            expect(VersionUtils.hashCreateTagGit()).to.be.true;
+        });
+
+        it('should return true if the option "nogit-tag" is omitted', function () {
+            expect(VersionUtils.hashCreateTagGit({ })).to.be.true;
+        });
+
+        it('should return true if the option "nogit-tag" is set to false', function () {
+            expect(VersionUtils.hashCreateTagGit({ 'nogit-tag': false })).to.be.true;
+        });
+
+        it('should return false otherwise', function () {
+            expect(VersionUtils.hashCreateTagGit({ 'nogit-tag': true })).to.be.false;
+        });
+    });
+
+    describe('and the method "hashPushCommitsGit" ', function () {
+        it('should exist', function () {
+            expect(VersionUtils.hashPushCommitsGit).to.exist;
+        });
+
+        it('should return false if no options are passed', function () {
+            expect(VersionUtils.hashPushCommitsGit()).to.be.false;
+        });
+
+        it('should return false if the option "nogit-tag" is omitted', function () {
+            expect(VersionUtils.hashPushCommitsGit({ })).to.be.false;
+        });
+
+        it('should return false if the option "git-push" is set to false', function () {
+            expect(VersionUtils.hashPushCommitsGit({ 'git-push': false })).to.be.false;
+        });
+
+        it('should return true otherwise', function () {
+            expect(VersionUtils.hashPushCommitsGit({ 'git-push': true })).to.be.true;
+        });
+    });
+
+    describe('and the method "createCommitGitIfNeeded" ', function () {
+        it('should exist', function () {
+            expect(VersionUtils.createCommitGitIfNeeded).to.exist;
+        });
+
+        it('should not create the git commit', function () {
+            let hashCreateCommitGitSpy = sinonSandBox.stub(VersionUtils, 'hashCreateCommitGit', () => false);
+            let createCommitSpy = sinonSandBox.stub(GitUtils, 'createCommit', () => Promise.resolve());
+            let fakeOptions = { 'preid': true };
+
+            return VersionUtils
+                .createCommitGitIfNeeded('1.2.3', fakeOptions)
+                .then(() => {
+                    expect(hashCreateCommitGitSpy.called).to.be.true;
+                    expect(hashCreateCommitGitSpy.calledOnce).to.be.true;
+                    expect(hashCreateCommitGitSpy.calledWithExactly(fakeOptions)).to.be.true;
+
+                    expect(createCommitSpy.called).to.be.false;
+                });
+        });
+
+        describe('should create the commit git', function () {
+            it('with the default message', function () {
+                let hashCreateCommitGitSpy = sinonSandBox.stub(VersionUtils, 'hashCreateCommitGit', () => true);
+                let createCommitSpy = sinonSandBox.stub(GitUtils, 'createCommit', () => Promise.resolve());
+                let fakeOptions = { 'preid': true };
+
+                return VersionUtils
+                    .createCommitGitIfNeeded('1.2.3', fakeOptions)
+                    .then(() => {
+                        expect(hashCreateCommitGitSpy.called).to.be.true;
+                        expect(hashCreateCommitGitSpy.calledOnce).to.be.true;
+                        expect(hashCreateCommitGitSpy.calledWithExactly(fakeOptions)).to.be.true;
+
+                        expect(createCommitSpy.called).to.be.true;
+                        expect(createCommitSpy.calledOnce).to.be.true;
+                        expect(createCommitSpy.calledWithExactly('1.2.3', Messages.GIT_COMMIT_MESSAGE)).to.be.true;
+                    });
+            });
+
+            it('with the specified message', function () {
+                let hashCreateCommitGitSpy = sinonSandBox.stub(VersionUtils, 'hashCreateCommitGit', () => true);
+                let createCommitSpy = sinonSandBox.stub(GitUtils, 'createCommit', () => Promise.resolve());
+                let fakeOptions = { 'preid': true, 'git-commit-message': 'my custom message' };
+
+                return VersionUtils
+                    .createCommitGitIfNeeded('1.2.3', fakeOptions)
+                    .then(() => {
+                        expect(hashCreateCommitGitSpy.called).to.be.true;
+                        expect(hashCreateCommitGitSpy.calledOnce).to.be.true;
+                        expect(hashCreateCommitGitSpy.calledWithExactly(fakeOptions)).to.be.true;
+
+                        expect(createCommitSpy.called).to.be.true;
+                        expect(createCommitSpy.calledOnce).to.be.true;
+                        expect(createCommitSpy.calledWithExactly('1.2.3', 'my custom message')).to.be.true;
+                    });
+            });
+        });
+    });
+
+    describe('and the method "createTagGitIfNeeded" ', function () {
+        it('should exist', function () {
+            expect(VersionUtils.createTagGitIfNeeded).to.exist;
+        });
+
+        it('should not create the git commit', function () {
+            let hahsTagGitSpy = sinonSandBox.stub(VersionUtils, 'hashCreateTagGit', () => false);
+            let createTagSpy = sinonSandBox.stub(GitUtils, 'createTag', () => Promise.resolve());
+            let fakeOptions = { 'preid': true };
+
+            return VersionUtils
+                .createTagGitIfNeeded('1.2.3', fakeOptions)
+                .then(() => {
+                    expect(hahsTagGitSpy.called).to.be.true;
+                    expect(hahsTagGitSpy.calledOnce).to.be.true;
+                    expect(hahsTagGitSpy.calledWithExactly(fakeOptions)).to.be.true;
+
+                    expect(createTagSpy.called).to.be.false;
+                });
+        });
+
+        describe('should create the commit git', function () {
+            it('with the default message', function () {
+                let hahsTagGitSpy = sinonSandBox.stub(VersionUtils, 'hashCreateTagGit', () => true);
+                let createTagSpy = sinonSandBox.stub(GitUtils, 'createTag', () => Promise.resolve());
+                let fakeOptions = { 'preid': true };
+
+                return VersionUtils
+                    .createTagGitIfNeeded('1.2.3', fakeOptions)
+                    .then(() => {
+                        expect(hahsTagGitSpy.called).to.be.true;
+                        expect(hahsTagGitSpy.calledOnce).to.be.true;
+                        expect(hahsTagGitSpy.calledWithExactly(fakeOptions)).to.be.true;
+
+                        expect(createTagSpy.called).to.be.true;
+                        expect(createTagSpy.calledOnce).to.be.true;
+                        expect(createTagSpy.calledWithExactly('1.2.3', Messages.GIT_TAG_MESSAGE)).to.be.true;
+                    });
+            });
+
+            it('with the specified message', function () {
+                let hahsTagGitSpy = sinonSandBox.stub(VersionUtils, 'hashCreateTagGit', () => true);
+                let createTagSpy = sinonSandBox.stub(GitUtils, 'createTag', () => Promise.resolve());
+                let fakeOptions = { 'preid': true, 'git-tag-message': 'my custom message' };
+
+                return VersionUtils
+                    .createTagGitIfNeeded('1.2.3', fakeOptions)
+                    .then(() => {
+                        expect(hahsTagGitSpy.called).to.be.true;
+                        expect(hahsTagGitSpy.calledOnce).to.be.true;
+                        expect(hahsTagGitSpy.calledWithExactly(fakeOptions)).to.be.true;
+
+                        expect(createTagSpy.called).to.be.true;
+                        expect(createTagSpy.calledOnce).to.be.true;
+                        expect(createTagSpy.calledWithExactly('1.2.3', 'my custom message')).to.be.true;
+                    });
+            });
         });
     });
 });
