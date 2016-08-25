@@ -37,7 +37,7 @@ module.exports = function () {
          */
         value: function paramsLoader(cliParams) {
             var baseOptions = rcOptionsRetriever();
-            return versionOptionsAnalyzer(cliParams, baseOptions);;
+            return versionOptionsAnalyzer(cliParams, baseOptions);
         }
 
         /**
