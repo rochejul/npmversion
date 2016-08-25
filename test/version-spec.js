@@ -350,7 +350,7 @@ describe('VersionUtils - ', function () {
             // Case:
             //  > npm run npmversion -- --increment patch --preid beta --nogit-tag --git-push
             // {
-            //     "force-preid": false,
+            //     "force-preid": true,
             //     "nogit-commit": false,
             //     "nogit-tag": true,
             //     "git-push": false,

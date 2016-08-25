@@ -140,7 +140,7 @@ is called before create a git commit / tag and pushing.
 
 ````json
 {
-    "force-preid": false,
+    "force-preid": true,
     "nogit-commit": false,
     "nogit-tag": true,
     "git-push": false,
