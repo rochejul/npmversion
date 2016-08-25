@@ -274,7 +274,7 @@ module.exports = function () {
     }, {
         key: 'hashCreateCommitGit',
         value: function hashCreateCommitGit(options) {
-            return !!(!options || !options['no-git-commit']);
+            return !!(!options || !options['nogit-commit']);
         }
 
         /**
@@ -285,7 +285,7 @@ module.exports = function () {
     }, {
         key: 'hashCreateTagGit',
         value: function hashCreateTagGit(options) {
-            return !!(!options || !options['no-git-tag']);
+            return !!(!options || !options['nogit-tag']);
         }
 
         /**

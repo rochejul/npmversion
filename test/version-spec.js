@@ -250,7 +250,7 @@ describe('VersionUtils - ', function () {
                     });
 
                     return VersionUtils
-                        .doIt({ 'increment': 'fake', 'git-push': true, 'no-git-tag': true })
+                        .doIt({ 'increment': 'fake', 'git-push': true, 'nogit-tag': true })
                         .then(function () {
                             expect(calls).deep.equals([
                                 [
@@ -275,7 +275,7 @@ describe('VersionUtils - ', function () {
                     });
 
                     return VersionUtils
-                        .doIt({ 'increment': 'fake', 'no-git-commit': true, 'no-git-tag': true })
+                        .doIt({ 'increment': 'fake', 'nogit-commit': true, 'nogit-tag': true })
                         .then(function () {
                             expect(calls).deep.equals([
                                 [
@@ -329,6 +329,71 @@ describe('VersionUtils - ', function () {
                         });
                 });
             });
+        });
+
+        it('shoud deal with an arbitrary options set', function () {
+            let calls = [];
+            sinonSandBox.stub(VersionUtils, 'updatePackageVersion', function () {
+                calls.push(['updatePackageVersion'].concat([].splice.apply(arguments, arguments)));
+                return Promise.resolve();
+            });
+
+            sinonSandBox.stub(Utils, 'promisedExec', function () {
+                calls.push(['promisedExec'].concat([].splice.apply(arguments, arguments)));
+                return Promise.resolve();
+            });
+
+            sinonSandBox.stub(VersionUtils, 'getCurrentPackageJson', () => {
+                return { 'version': '1.2.0' };
+            });
+
+            // Case:
+            //  > npm run npmversion -- --increment patch --preid beta --nogit-tag --git-push
+            // {
+            //     "force-preid": false,
+            //     "nogit-commit": false,
+            //     "nogit-tag": true,
+            //     "git-push": false,
+            //     "git-commit-message": "Release version: %s",
+            //     "git-tag-message": "v%s",
+            //     "increment": "minor"
+            // }
+
+            return VersionUtils
+                .doIt({
+                    '_': [],
+                    'help': false,
+                    'unpreid': false,
+                    'u': false,
+                    'force-preid': true,
+                    'read-only': false,
+                    'nogit-commit': false,
+                    'nogit-tag': true,
+                    'git-push': true,
+                    'increment': 'patch',
+                    'i': 'patch',
+                    'preid': 'beta',
+                    'p': 'beta',
+                    'git-commit-message': 'Release version: %s',
+                    'git-tag-message': 'v%s'
+                })
+                .then((updatedPackageVersion) => {
+                    expect(updatedPackageVersion).to.equal('1.2.1-beta');
+                    expect(calls).to.deep.equals([
+                        [
+                            "updatePackageVersion",
+                            "1.2.1-beta"
+                        ],
+                        [
+                            "promisedExec",
+                            "git commit --all --message \"Release version: 1.2.1-beta\""
+                        ],
+                        [
+                            "promisedExec",
+                            "git push"
+                        ]
+                    ]);
+                });
         });
     });
 
@@ -803,16 +868,16 @@ describe('VersionUtils - ', function () {
             expect(VersionUtils.hashCreateCommitGit()).to.be.true;
         });
 
-        it('should return true if the option "no-git-commit" is omitted', function () {
+        it('should return true if the option "nogit-commit" is omitted', function () {
             expect(VersionUtils.hashCreateCommitGit({ })).to.be.true;
         });
 
-        it('should return true if the option "no-git-commit" is set to false', function () {
-            expect(VersionUtils.hashCreateCommitGit({ 'no-git-commit': false })).to.be.true;
+        it('should return true if the option "nogit-commit" is set to false', function () {
+            expect(VersionUtils.hashCreateCommitGit({ 'nogit-commit': false })).to.be.true;
         });
 
         it('should return false otherwise', function () {
-            expect(VersionUtils.hashCreateCommitGit({ 'no-git-commit': true })).to.be.false;
+            expect(VersionUtils.hashCreateCommitGit({ 'nogit-commit': true })).to.be.false;
         });
     });
 
@@ -825,16 +890,16 @@ describe('VersionUtils - ', function () {
             expect(VersionUtils.hashCreateTagGit()).to.be.true;
         });
 
-        it('should return true if the option "no-git-tag" is omitted', function () {
+        it('should return true if the option "nogit-tag" is omitted', function () {
             expect(VersionUtils.hashCreateTagGit({ })).to.be.true;
         });
 
-        it('should return true if the option "no-git-tag" is set to false', function () {
-            expect(VersionUtils.hashCreateTagGit({ 'no-git-tag': false })).to.be.true;
+        it('should return true if the option "nogit-tag" is set to false', function () {
+            expect(VersionUtils.hashCreateTagGit({ 'nogit-tag': false })).to.be.true;
         });
 
         it('should return false otherwise', function () {
-            expect(VersionUtils.hashCreateTagGit({ 'no-git-tag': true })).to.be.false;
+            expect(VersionUtils.hashCreateTagGit({ 'nogit-tag': true })).to.be.false;
         });
     });
 
@@ -847,7 +912,7 @@ describe('VersionUtils - ', function () {
             expect(VersionUtils.hashPushCommitsGit()).to.be.false;
         });
 
-        it('should return false if the option "no-git-tag" is omitted', function () {
+        it('should return false if the option "nogit-tag" is omitted', function () {
             expect(VersionUtils.hashPushCommitsGit({ })).to.be.false;
         });
 
