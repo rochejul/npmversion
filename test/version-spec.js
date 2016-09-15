@@ -36,6 +36,34 @@ describe('VersionUtils - ', function () {
         }
     });
 
+    describe('and the method "checkForGitIfNeeded" ', function () {
+        it('should exist', function () {
+            expect(VersionUtils.checkForGitIfNeeded).to.exist;
+        });
+
+        it('should raise a specific error if no git is installed', function () {
+            sinonSandBox.stub(GitUtils, 'hasGitInstalled', () => Promise.resolve(false));
+
+            return VersionUtils
+                .checkForGitIfNeeded({ 'git-push': true })
+                .then(function () {
+                    expect(true).to.be.false;
+                })
+                .catch(function (err) {
+                    expect(err).to.exist;
+                    expect(err instanceof Error).to.be.true;
+                    expect(err.message).equal('Git seems not be installed');
+                });
+        });
+
+        it('should do nothing otherwise', function () {
+            sinonSandBox.stub(GitUtils, 'hasGitInstalled', () => Promise.resolve(true));
+
+            return VersionUtils
+                .checkForGitIfNeeded({ 'git-push': true });
+        });
+    });
+
     describe('and the method "doIt" ', function () {
         it('should exist', function () {
             expect(VersionUtils.doIt).to.exist;
@@ -200,6 +228,10 @@ describe('VersionUtils - ', function () {
                         .then(function () {
                             expect(calls).deep.equals([
                                 [
+                                    "promisedExec",
+                                    "git --help"
+                                ],
+                                [
                                     "updatePackageVersion",
                                     "1.2.1"
                                 ],
@@ -224,6 +256,10 @@ describe('VersionUtils - ', function () {
                         .doIt({ 'increment': 'fake', 'git-push': true })
                         .then(function () {
                             expect(calls).deep.equals([
+                                [
+                                    "promisedExec",
+                                    "git --help"
+                                ],
                                 [
                                     "updatePackageVersion",
                                     "1.2.1"
@@ -253,6 +289,10 @@ describe('VersionUtils - ', function () {
                         .doIt({ 'increment': 'fake', 'git-push': true, 'nogit-tag': true })
                         .then(function () {
                             expect(calls).deep.equals([
+                                [
+                                    "promisedExec",
+                                    "git --help"
+                                ],
                                 [
                                     "updatePackageVersion",
                                     "1.2.1"
@@ -301,6 +341,10 @@ describe('VersionUtils - ', function () {
                         .doIt({ 'increment': 'fake', 'git-push': true })
                         .then(function () {
                             expect(calls).deep.equals([
+                                [
+                                    "promisedExec",
+                                    "git --help"
+                                ],
                                 [
                                     "promisedExec",
                                     "npm run prenpmversion"
@@ -380,6 +424,10 @@ describe('VersionUtils - ', function () {
                 .then((updatedPackageVersion) => {
                     expect(updatedPackageVersion).to.equal('1.2.1-beta');
                     expect(calls).to.deep.equals([
+                        [
+                            "promisedExec",
+                            "git --help"
+                        ],
                         [
                             "updatePackageVersion",
                             "1.2.1-beta"
@@ -856,6 +904,29 @@ describe('VersionUtils - ', function () {
 
         it('should return true otherwise', function () {
             expect(VersionUtils.isPrenpmversionRunScriptDetectedInPackageJson({ 'scripts': { 'prenpmversion': 'echo "test"' } })).to.be.true;
+        });
+    });
+
+    describe('and the method "hasUseGit" ', function () {
+        it('should exist', function () {
+            expect(VersionUtils.hasUseGit).to.exist;
+        });
+
+        it('should return false if no options are passed', function () {
+            expect(VersionUtils.hasUseGit()).to.be.false;
+        });
+
+        it('should return false if both committing, tagging and pushing are disabled', function () {
+            expect(VersionUtils.hasUseGit({ 'nogit-commit': true, 'nogit-tag': true, 'git-push': false })).to.be.false;
+        });
+
+        it('should return true otherwise', function () {
+            expect(VersionUtils.hasUseGit({ 'nogit-commit': false, 'nogit-tag': true, 'git-push': false })).to.be.true;
+            expect(VersionUtils.hasUseGit({ 'nogit-commit': true, 'nogit-tag': false, 'git-push': false })).to.be.true;
+            expect(VersionUtils.hasUseGit({ 'nogit-commit': false, 'nogit-tag': false, 'git-push': false })).to.be.true;
+            expect(VersionUtils.hasUseGit({ 'nogit-commit': false, 'nogit-tag': true, 'git-push': true })).to.be.true;
+            expect(VersionUtils.hasUseGit({ 'nogit-commit': true, 'nogit-tag': false, 'git-push': true })).to.be.true;
+            expect(VersionUtils.hasUseGit({ 'nogit-commit': false, 'nogit-tag': false, 'git-push': true })).to.be.true;
         });
     });
 
