@@ -65,20 +65,46 @@ var NUMBER_REGEXP = /^\d+$/;
  */
 
 // Here the class
-// TODO use as much as possible unsync fs functions
 module.exports = function () {
     function VersionUtils() {
         _classCallCheck(this, VersionUtils);
     }
 
     _createClass(VersionUtils, null, [{
-        key: 'createCommitGitIfNeeded',
+        key: 'checkForGitIfNeeded',
+
+        /**
+         * @param {VersionOptions} options
+         * @returns {Promise}
+         */
+        value: function checkForGitIfNeeded(options) {
+            if (VersionUtils.hasUseGit(options)) {
+                return GitUtils.hasGitInstalled().then(function (state) {
+                    if (!state) {
+                        return Promise.reject(new Error('Git seems not be installed'));
+                    }
+
+                    return GitUtils.hasGitProject();
+                }).then(function (state) {
+                    if (!state) {
+                        return Promise.reject(new Error('We are not into a Git project'));
+                    }
+
+                    return Promise.resolve();
+                });
+            }
+
+            return Promise.resolve();
+        }
 
         /**
          * @param {string} packageJsonVersion
          * @param {VersionOptions} options
          * @returns {Promise}
          */
+
+    }, {
+        key: 'createCommitGitIfNeeded',
         value: function createCommitGitIfNeeded(packageJsonVersion, options) {
             if (VersionUtils.hashCreateCommitGit(options)) {
                 return GitUtils.createCommit(packageJsonVersion, options['git-commit-message'] ? options['git-commit-message'] : messages.GIT_COMMIT_MESSAGE);
@@ -148,6 +174,8 @@ module.exports = function () {
                             // Bumping !!
                             return {
                                 v: Promise.resolve().then(function () {
+                                    return VersionUtils.checkForGitIfNeeded(options);
+                                }).then(function () {
                                     return VersionUtils.doPrenpmVersionRunScriptIfNeeded(packageJson);
                                 }).then(function () {
                                     return VersionUtils.updatePackageVersion(packageJsonVersion);
@@ -297,6 +325,21 @@ module.exports = function () {
         key: 'hashPushCommitsGit',
         value: function hashPushCommitsGit(options) {
             return !!(options && options['git-push']);
+        }
+
+        /**
+         * @param {VersionOptions} [options]
+         * @returns {boolean}
+         */
+
+    }, {
+        key: 'hasUseGit',
+        value: function hasUseGit(options) {
+            if (!options) {
+                return false;
+            }
+
+            return VersionUtils.hashCreateCommitGit(options) || VersionUtils.hashCreateTagGit(options) || VersionUtils.hashPushCommitsGit(options);
         }
 
         /**

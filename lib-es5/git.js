@@ -92,6 +92,34 @@ module.exports = function () {
         }
 
         /**
+         * @returns {Promise.<boolean>}
+         */
+
+    }, {
+        key: 'hasGitInstalled',
+        value: function hasGitInstalled() {
+            return Utils.promisedExec('git --help', true).then(function () {
+                return true;
+            }).catch(function () {
+                return false;
+            });
+        }
+
+        /**
+         * @returns {Promise.<boolean>}
+         */
+
+    }, {
+        key: 'hasGitProject',
+        value: function hasGitProject() {
+            return Utils.promisedExec('git status --porcelain', true).then(function () {
+                return true;
+            }).catch(function () {
+                return false;
+            });
+        }
+
+        /**
          * Push the commits and the tags if needed
          * @param {boolean} [tags=false]
          * @returns {Promise}

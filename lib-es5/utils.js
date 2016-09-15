@@ -42,12 +42,13 @@ module.exports = function () {
 
         /**
          * @param {string} command
+         * @param {boolean} [silent=false]
          * @returns {Promise}
          */
 
     }, {
         key: 'promisedExec',
-        value: function promisedExec(command) {
+        value: function promisedExec(command, silent) {
             return new Promise(function (resolve, reject) {
                 var instance = exec(command, function (error) {
                     if (error) {
@@ -57,13 +58,15 @@ module.exports = function () {
                     }
                 });
 
-                instance.stdout.on('data', function (data) {
-                    console.log(data);
-                });
+                if (!silent) {
+                    instance.stdout.on('data', function (data) {
+                        console.log(data);
+                    });
 
-                instance.stderr.on('data', function (data) {
-                    console.error(data);
-                });
+                    instance.stderr.on('data', function (data) {
+                        console.error(data);
+                    });
+                }
             });
         }
     }]);
