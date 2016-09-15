@@ -92,6 +92,32 @@ describe('GitUtils - ', function () {
         });
     });
 
+    describe('and the method "hasGitProject" ', function () {
+        it('should exist', function () {
+            expect(GitUtils.hasGitProject).to.exist;
+        });
+
+        it('should return false if the cwd is not into a git project', function () {
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.reject('fatal: Not a git repository (or any of the parent directories): .git'));
+
+            return GitUtils
+                .hasGitProject()
+                .then(function (status) {
+                    expect(status).to.be.false;
+                });
+        });
+
+        it('should return true otherwise', function () {
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+
+            return GitUtils
+                .hasGitProject()
+                .then(function (status) {
+                    expect(status).to.be.true;
+                });
+        });
+    });
+
     describe('and the method "push" ', function () {
         it('should exist', function () {
             expect(GitUtils.push).to.exist;

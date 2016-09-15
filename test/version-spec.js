@@ -56,8 +56,25 @@ describe('VersionUtils - ', function () {
                 });
         });
 
+        it('should raise a specific error if we are not into a git project', function () {
+            sinonSandBox.stub(GitUtils, 'hasGitInstalled', () => Promise.resolve(true));
+            sinonSandBox.stub(GitUtils, 'hasGitProject', () => Promise.resolve(false));
+
+            return VersionUtils
+                .checkForGitIfNeeded({ 'git-push': true })
+                .then(function () {
+                    expect(true).to.be.false;
+                })
+                .catch(function (err) {
+                    expect(err).to.exist;
+                    expect(err instanceof Error).to.be.true;
+                    expect(err.message).equal('We are not into a Git project');
+                });
+        });
+
         it('should do nothing otherwise', function () {
             sinonSandBox.stub(GitUtils, 'hasGitInstalled', () => Promise.resolve(true));
+            sinonSandBox.stub(GitUtils, 'hasGitProject', () => Promise.resolve(true));
 
             return VersionUtils
                 .checkForGitIfNeeded({ 'git-push': true });
@@ -184,6 +201,7 @@ describe('VersionUtils - ', function () {
         describe('should use git, ', function () {
             it('and log an error if needed', function () {
                 sinonSandBox.stub(VersionUtils, 'updatePackageVersion', () => Promise.reject('an error'));
+                sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
                 let printErrorSpy = sinonSandBox.stub(VersionUtils, 'printError', noop);
 
                 return VersionUtils
@@ -232,6 +250,10 @@ describe('VersionUtils - ', function () {
                                     "git --help"
                                 ],
                                 [
+                                    "promisedExec",
+                                    "git status --porcelain"
+                                ],
+                                [
                                     "updatePackageVersion",
                                     "1.2.1"
                                 ],
@@ -259,6 +281,10 @@ describe('VersionUtils - ', function () {
                                 [
                                     "promisedExec",
                                     "git --help"
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git status --porcelain"
                                 ],
                                 [
                                     "updatePackageVersion",
@@ -292,6 +318,10 @@ describe('VersionUtils - ', function () {
                                 [
                                     "promisedExec",
                                     "git --help"
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git status --porcelain"
                                 ],
                                 [
                                     "updatePackageVersion",
@@ -344,6 +374,10 @@ describe('VersionUtils - ', function () {
                                 [
                                     "promisedExec",
                                     "git --help"
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git status --porcelain"
                                 ],
                                 [
                                     "promisedExec",
@@ -427,6 +461,10 @@ describe('VersionUtils - ', function () {
                         [
                             "promisedExec",
                             "git --help"
+                        ],
+                        [
+                            "promisedExec",
+                            "git status --porcelain"
                         ],
                         [
                             "updatePackageVersion",
