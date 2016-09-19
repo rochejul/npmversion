@@ -9,9 +9,11 @@
 
 'use strict';
 
-describe('Cli-Params analyzer - ', function () {
+const importLib = require('./importLib');
+
+describe(`Cli-Params analyzer${importLib.getContext()} - `, function () {
     const expect = require('chai').expect;
-    const versionOptionsAnalyzer = require('../lib/cli-params');
+    const versionOptionsAnalyzer = importLib('cli-params');
 
     it('should exports a function', function () {
         expect(typeof versionOptionsAnalyzer).equals('function');

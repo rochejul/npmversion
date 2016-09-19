@@ -9,11 +9,13 @@
 
 'use strict';
 
-describe('GitUtils - ', function () {
+const importLib = require('./importLib');
+
+describe(`GitUtils${importLib.getContext()} - `, function () {
     const expect = require('chai').expect;
     const sinon = require('sinon');
-    const GitUtils = require('../lib/git');
-    const Utils = require('../lib/utils');
+    const GitUtils = importLib('git');
+    const Utils = importLib('utils');
 
     let sinonSandBox = null;
 

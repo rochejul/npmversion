@@ -58,7 +58,10 @@ var ERRORS = Object.freeze({
         function GitNotInstalledError() {
             _classCallCheck(this, GitNotInstalledError);
 
-            return _possibleConstructorReturn(this, Object.getPrototypeOf(GitNotInstalledError).apply(this, arguments));
+            var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(GitNotInstalledError).call(this, 'Git seems not be to be installed'));
+
+            _this.name = 'GitNotInstalledError';
+            return _this;
         }
 
         return GitNotInstalledError;
@@ -69,7 +72,10 @@ var ERRORS = Object.freeze({
         function NotAGitProjectError() {
             _classCallCheck(this, NotAGitProjectError);
 
-            return _possibleConstructorReturn(this, Object.getPrototypeOf(NotAGitProjectError).apply(this, arguments));
+            var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(NotAGitProjectError).call(this, 'It seems there is not initialized git project'));
+
+            _this2.name = 'NotAGitProjectError';
+            return _this2;
         }
 
         return NotAGitProjectError;
@@ -221,9 +227,9 @@ var VersionUtils = function () {
                                     return packageJsonVersion;
                                 }) // Return the updated package version
                                 .catch(function (err) {
-                                    if (err instanceof ERRORS.GitNotInstalledError) {
+                                    if (err.name === 'GitNotInstalledError') {
                                         VersionUtils.printGitNotInstalledError();
-                                    } else if (err instanceof ERRORS.NotAGitProjectError) {
+                                    } else if (err.name === 'NotAGitProjectError') {
                                         VersionUtils.printNotAGitProjectError();
                                     } else {
                                         VersionUtils.printError(err);

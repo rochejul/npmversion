@@ -9,9 +9,11 @@
 
 'use strict';
 
-describe('Utils - ', function () {
+const importLib = require('./importLib');
+
+describe(`Utils${importLib.getContext()} - `, function () {
     const expect = require('chai').expect;
-    const Utils = require('../lib/utils');
+    const Utils = importLib('utils');
 
     it('should exports something', function () {
         expect(Utils).to.exist;

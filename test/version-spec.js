@@ -9,15 +9,17 @@
 
 'use strict';
 
-describe('VersionUtils - ', function () {
+const importLib = require('./importLib');
+
+describe(`VersionUtils${importLib.getContext()} - `, function () {
     const chai = require('chai');
     const expect = chai.expect;
     const sinon = require('sinon');
 
-    const VersionUtils = require('../lib/version');
-    const GitUtils = require('../lib/git');
-    const Utils = require('../lib/utils');
-    const Messages = require('../lib/messages');
+    const VersionUtils = importLib('version');
+    const GitUtils = importLib('git');
+    const Utils = importLib('utils');
+    const Messages = importLib('messages');
     const noop = function () { };
     let sinonSandBox = null;
 
@@ -52,7 +54,7 @@ describe('VersionUtils - ', function () {
                 .catch(function (err) {
                     expect(err).to.exist;
                     expect(err instanceof Error).to.be.true;
-                    expect(err instanceof VersionUtils.ERRORS.GitNotInstalledError).to.be.true;
+                    expect(err.name).to.equals('GitNotInstalledError');
                 });
         });
 
@@ -68,7 +70,7 @@ describe('VersionUtils - ', function () {
                 .catch(function (err) {
                     expect(err).to.exist;
                     expect(err instanceof Error).to.be.true;
-                    expect(err instanceof VersionUtils.ERRORS.NotAGitProjectError).to.be.true;
+                    expect(err.name).to.equals('NotAGitProjectError');
                 });
         });
 
@@ -202,6 +204,7 @@ describe('VersionUtils - ', function () {
             it('and log a message if Git is not installed', function () {
                 sinonSandBox.stub(VersionUtils, 'checkForGitIfNeeded', () => Promise.reject(new VersionUtils.ERRORS.GitNotInstalledError()));
                 sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+                sinonSandBox.stub(process, 'exit', () => {});
                 let printErrorSpy = sinonSandBox.stub(VersionUtils, 'printGitNotInstalledError', noop);
 
                 return VersionUtils
@@ -218,6 +221,7 @@ describe('VersionUtils - ', function () {
             it('and log a message if we are not into a Git project', function () {
                 sinonSandBox.stub(VersionUtils, 'checkForGitIfNeeded', () => Promise.reject(new VersionUtils.ERRORS.NotAGitProjectError()));
                 sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+                sinonSandBox.stub(process, 'exit', () => {});
                 let printErrorSpy = sinonSandBox.stub(VersionUtils, 'printNotAGitProjectError', noop);
 
                 return VersionUtils
@@ -234,6 +238,7 @@ describe('VersionUtils - ', function () {
             it('and log an error if needed', function () {
                 sinonSandBox.stub(VersionUtils, 'updatePackageVersion', () => Promise.reject('an error'));
                 sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+                sinonSandBox.stub(process, 'exit', () => {});
                 let printErrorSpy = sinonSandBox.stub(VersionUtils, 'printError', noop);
 
                 return VersionUtils

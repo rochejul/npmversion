@@ -9,9 +9,11 @@
 
 'use strict';
 
-describe('RC retriever - ', function () {
+const importLib = require('./importLib');
+
+describe(`RC retriever${importLib.getContext()} - `, function () {
     const expect = require('chai').expect;
-    const rcOptionsRetriever = require('../lib/rc');
+    const rcOptionsRetriever = importLib('rc');
 
     it('should exports a function', function () {
         expect(typeof rcOptionsRetriever).equals('function');
