@@ -52,7 +52,7 @@ describe('VersionUtils - ', function () {
                 .catch(function (err) {
                     expect(err).to.exist;
                     expect(err instanceof Error).to.be.true;
-                    expect(err.message).equal('Git seems not be installed');
+                    expect(err instanceof VersionUtils.ERRORS.GitNotInstalledError).to.be.true;
                 });
         });
 
@@ -68,7 +68,7 @@ describe('VersionUtils - ', function () {
                 .catch(function (err) {
                     expect(err).to.exist;
                     expect(err instanceof Error).to.be.true;
-                    expect(err.message).equal('We are not into a Git project');
+                    expect(err instanceof VersionUtils.ERRORS.NotAGitProjectError).to.be.true;
                 });
         });
 
@@ -199,6 +199,38 @@ describe('VersionUtils - ', function () {
         });
 
         describe('should use git, ', function () {
+            it('and log a message if Git is not installed', function () {
+                sinonSandBox.stub(VersionUtils, 'checkForGitIfNeeded', () => Promise.reject(new VersionUtils.ERRORS.GitNotInstalledError()));
+                sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+                let printErrorSpy = sinonSandBox.stub(VersionUtils, 'printGitNotInstalledError', noop);
+
+                return VersionUtils
+                    .doIt({ 'increment': 'fake' })
+                    .then(function () {
+                        chai.fail('The then method should not be called');
+                    })
+                    .catch(function(err) {
+                        expect(printErrorSpy.called).to.be.true;
+                        expect(printErrorSpy.calledOnce).to.be.true;
+                    });
+            });
+
+            it('and log a message if we are not into a Git project', function () {
+                sinonSandBox.stub(VersionUtils, 'checkForGitIfNeeded', () => Promise.reject(new VersionUtils.ERRORS.NotAGitProjectError()));
+                sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+                let printErrorSpy = sinonSandBox.stub(VersionUtils, 'printNotAGitProjectError', noop);
+
+                return VersionUtils
+                    .doIt({ 'increment': 'fake' })
+                    .then(function () {
+                        chai.fail('The then method should not be called');
+                    })
+                    .catch(function(err) {
+                        expect(printErrorSpy.called).to.be.true;
+                        expect(printErrorSpy.calledOnce).to.be.true;
+                    });
+            });
+
             it('and log an error if needed', function () {
                 sinonSandBox.stub(VersionUtils, 'updatePackageVersion', () => Promise.reject('an error'));
                 sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());

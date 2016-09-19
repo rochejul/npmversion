@@ -18,6 +18,10 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 var path = require('path');
 var fs = require('fs');
 
@@ -47,6 +51,31 @@ var LEVEL_ENUM = {
 
 var NUMBER_REGEXP = /^\d+$/;
 
+var ERRORS = Object.freeze({
+    'GitNotInstalledError': function (_Error) {
+        _inherits(GitNotInstalledError, _Error);
+
+        function GitNotInstalledError() {
+            _classCallCheck(this, GitNotInstalledError);
+
+            return _possibleConstructorReturn(this, Object.getPrototypeOf(GitNotInstalledError).apply(this, arguments));
+        }
+
+        return GitNotInstalledError;
+    }(Error),
+    'NotAGitProjectError': function (_Error2) {
+        _inherits(NotAGitProjectError, _Error2);
+
+        function NotAGitProjectError() {
+            _classCallCheck(this, NotAGitProjectError);
+
+            return _possibleConstructorReturn(this, Object.getPrototypeOf(NotAGitProjectError).apply(this, arguments));
+        }
+
+        return NotAGitProjectError;
+    }(Error)
+});
+
 // Class documentation
 
 /**
@@ -65,7 +94,8 @@ var NUMBER_REGEXP = /^\d+$/;
  */
 
 // Here the class
-module.exports = function () {
+
+var VersionUtils = function () {
     function VersionUtils() {
         _classCallCheck(this, VersionUtils);
     }
@@ -81,13 +111,13 @@ module.exports = function () {
             if (VersionUtils.hasUseGit(options)) {
                 return GitUtils.hasGitInstalled().then(function (state) {
                     if (!state) {
-                        return Promise.reject(new Error('Git seems not be installed'));
+                        return Promise.reject(new ERRORS.GitNotInstalledError());
                     }
 
                     return GitUtils.hasGitProject();
                 }).then(function (state) {
                     if (!state) {
-                        return Promise.reject(new Error('We are not into a Git project'));
+                        return Promise.reject(new ERRORS.NotAGitProjectError());
                     }
 
                     return Promise.resolve();
@@ -191,7 +221,14 @@ module.exports = function () {
                                     return packageJsonVersion;
                                 }) // Return the updated package version
                                 .catch(function (err) {
-                                    VersionUtils.printError(err);
+                                    if (err instanceof ERRORS.GitNotInstalledError) {
+                                        VersionUtils.printGitNotInstalledError();
+                                    } else if (err instanceof ERRORS.NotAGitProjectError) {
+                                        VersionUtils.printNotAGitProjectError();
+                                    } else {
+                                        VersionUtils.printError(err);
+                                    }
+
                                     return Promise.reject(err);
                                 })
                             };
@@ -545,6 +582,17 @@ module.exports = function () {
         }
 
         /**
+         * Print the error for the exception GitNotInstalledError
+         */
+
+    }, {
+        key: 'printGitNotInstalledError',
+        value: function printGitNotInstalledError() {
+            console.error(messages.GIT_NOT_INSTALLED);
+            process.exit(1);
+        }
+
+        /**
          * Print the help text
          */
 
@@ -552,6 +600,17 @@ module.exports = function () {
         key: 'printHelp',
         value: function printHelp() {
             console.log(messages.HELP_TEXT, PACKAGE_JSON.version, PACKAGE_JSON.description);
+        }
+
+        /**
+         * Print the error for the exception GitNotInstalledError
+         */
+
+    }, {
+        key: 'printNotAGitProjectError',
+        value: function printNotAGitProjectError() {
+            console.error(messages.NOT_INTO_GIT_PROJECT);
+            process.exit(1);
         }
 
         /**
@@ -635,3 +694,13 @@ module.exports = function () {
 
     return VersionUtils;
 }();
+
+/**
+ * @name ERRORS
+ * @memberof VersionUtils
+ */
+
+
+Object.defineProperty(VersionUtils, 'ERRORS', { 'writable': false, 'value': ERRORS });
+
+module.exports = VersionUtils;

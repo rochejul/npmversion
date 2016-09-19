@@ -20,5 +20,7 @@ module.exports = {
   'GIT_COMMIT_MESSAGE': 'Release version: %s',
   'GIT_TAG_MESSAGE': 'v%s',
   'HELP_TEXT': fs.readFileSync(path.resolve(path.join(__dirname, '../resources/help.txt'))).toString(),
-  'NOT_FOUND_PACKAGE_JSON_FILE': fs.readFileSync(path.resolve(path.join(__dirname, '../resources/not-found-package-json-file.txt'))).toString()
+  'NOT_FOUND_PACKAGE_JSON_FILE': fs.readFileSync(path.resolve(path.join(__dirname, '../resources/not-found-package-json-file.txt'))).toString(),
+  'GIT_NOT_INSTALLED': fs.readFileSync(path.resolve(path.join(__dirname, '../resources/git-not-installed.txt'))).toString(),
+  'NOT_INTO_GIT_PROJECT': fs.readFileSync(path.resolve(path.join(__dirname, '../resources/not-into-git-project.txt'))).toString()
 };
