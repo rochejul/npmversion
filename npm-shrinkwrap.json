@@ -1,6 +1,6 @@
 {
   "name": "npmversion",
-  "version": "1.2.1",
+  "version": "1.2.2-beta",
   "dependencies": {
     "json5": {
       "version": "0.5.0",
