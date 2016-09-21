@@ -97,6 +97,7 @@ var ERRORS = Object.freeze({
  * @property {string} [preid]
  * @property {string} [git-commit-message]
  * @property {string} [git-tag-message]
+ * @property {string[]} [jsonFiles] Relative paths from the package.json to update files with a "version" property
  */
 
 // Here the class
@@ -215,6 +216,8 @@ var VersionUtils = function () {
                                     return VersionUtils.doPrenpmVersionRunScriptIfNeeded(packageJson);
                                 }).then(function () {
                                     return VersionUtils.updatePackageVersion(packageJsonVersion);
+                                }).then(function () {
+                                    return VersionUtils.updateJsonFilesIfNeeded(options, packageJsonVersion);
                                 }).then(function () {
                                     return VersionUtils.doPostnpmVersionRunScriptIfNeeded(packageJson);
                                 }).then(function () {
@@ -695,6 +698,44 @@ var VersionUtils = function () {
             return Utils.promisedExec('npm --no-git-tag-version version ' + packageVersion).then(function () {
                 return packageVersion;
             });
+        }
+
+        /**
+         * @param {string} packageVersion
+         * @param {string} jsonFilePath
+         * @returns {Promise}
+         */
+
+    }, {
+        key: 'updateJsonFile',
+        value: function updateJsonFile(packageVersion, jsonFilePath) {
+            var filePath = path.resolve(path.join(process.cwd(), jsonFilePath));
+
+            return Utils.readFile(filePath).then(function (jsonContent) {
+                return Utils.replaceJsonVersionProperty(jsonContent, packageVersion);
+            }).then(function (newJsonContent) {
+                return Utils.writeFile(filePath, newJsonContent);
+            }).then(function () {
+                return GitUtils.addFile(jsonFilePath);
+            });
+        }
+
+        /**
+         * @param {VersionOptions} options
+         * @param {string} packageVersion
+         * @returns {Promise}
+         */
+
+    }, {
+        key: 'updateJsonFilesIfNeeded',
+        value: function updateJsonFilesIfNeeded(options, packageVersion) {
+            if (options && options.jsonFiles && options.jsonFiles.length > 0) {
+                return Promise.all(options.jsonFiles.map(function (jsonFilePath) {
+                    return VersionUtils.updateJsonFile(packageVersion, jsonFilePath);
+                }));
+            }
+
+            return Promise.resolve();
         }
     }]);
 

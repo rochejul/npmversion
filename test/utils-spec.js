@@ -3,7 +3,7 @@
  *
  * @module test/utils-spec
  * @author Julien Roche
- * @version 0.0.1
+ * @version 1.3.0
  * @since 0.0.1
  */
 
@@ -13,10 +13,61 @@ const importLib = require('./importLib');
 
 describe(`Utils${importLib.getContext()} - `, function () {
     const expect = require('chai').expect;
+    const sinon = require('sinon');
     const Utils = importLib('utils');
+
+    const fs = require('fs');
+    const path = require('path');
+
+    let sinonSandBox;
 
     it('should exports something', function () {
         expect(Utils).to.exist;
+    });
+
+    beforeEach(function () {
+        sinonSandBox = sinon.sandbox.create();
+    });
+
+    afterEach(function () {
+        sinonSandBox && sinonSandBox.restore();
+        sinonSandBox = null;
+    });
+
+    describe('and the method "replaceJsonProperty" ', function () {
+        it('should exist', function () {
+            expect(Utils.replaceJsonProperty).to.exist;
+        });
+
+        it('should return the property value', function () {
+            expect(Utils.replaceJsonProperty('{"version":"1.2.3"}', 'version', '3.2.1')).to.equals('{"version":"3.2.1"}');
+            expect(Utils.replaceJsonProperty('{"version": "1.2.3"}', 'version', '3.2.1')).to.equals('{"version": "3.2.1"}');
+            expect(Utils.replaceJsonProperty('{"version" :"1.2.3"}', 'version', '3.2.1')).to.equals('{"version" :"3.2.1"}');
+            expect(Utils.replaceJsonProperty('{"version" : "1.2.3"}', 'version', '3.2.1')).to.equals('{"version" : "3.2.1"}');
+            expect(Utils.replaceJsonProperty('{"version":"1.2.3","description": "aa"}', 'version', '3.2.1')).to.equals('{"version":"3.2.1","description": "aa"}');
+            expect(Utils.replaceJsonProperty('{"version": "1.2.3","description": "aa"}', 'version', '3.2.1')).to.equals('{"version": "3.2.1","description": "aa"}');
+            expect(Utils.replaceJsonProperty('{"version" :"1.2.3","description": "aa"}', 'version', '3.2.1')).to.equals('{"version" :"3.2.1","description": "aa"}');
+            expect(Utils.replaceJsonProperty('{"version" : "1.2.3","description": "aa"}', 'version', '3.2.1')).to.equals('{"version" : "3.2.1","description": "aa"}');
+        });
+
+        it('should do nothing', function () {
+            expect(Utils.replaceJsonProperty('{"version":"1.2.3"}', 'description', '3.2.1')).to.equals('{"version":"1.2.3"}');
+        });
+    });
+
+    describe('and the method "replaceJsonVersionProperty" ', function () {
+        it('should exist', function () {
+            expect(Utils.replaceJsonVersionProperty).to.exist;
+        });
+
+        it('should call the replaceJsonProperty function', function () {
+            let replaceJsonPropertySpy = sinonSandBox.spy(Utils, 'replaceJsonProperty');
+            expect(Utils.replaceJsonVersionProperty('{"version":"1.2.3"}', '3.2.1')).to.equals('{"version":"3.2.1"}');
+            expect(replaceJsonPropertySpy.called).to.be.true;
+            expect(replaceJsonPropertySpy.args).deep.equals([
+                ['{"version":"1.2.3"}', 'version', '3.2.1']
+            ]);
+        });
     });
 
     describe('and the method "paramsLoader" ', function () {
@@ -40,7 +91,8 @@ describe(`Utils${importLib.getContext()} - `, function () {
                 'preid': null,
                 'read-only': false,
                 'u': false,
-                'unpreid': false
+                'unpreid': false,
+                'jsonFiles': []
             });
         });
 
@@ -60,7 +112,8 @@ describe(`Utils${importLib.getContext()} - `, function () {
                 'preid': null,
                 'read-only': false,
                 'u': false,
-                'unpreid': false
+                'unpreid': false,
+                'jsonFiles': []
             });
         });
 
@@ -80,8 +133,38 @@ describe(`Utils${importLib.getContext()} - `, function () {
                 'preid': null,
                 'read-only': false,
                 'u': false,
-                'unpreid': false
+                'unpreid': false,
+                'jsonFiles': []
             });
+        });
+    });
+
+    describe('and the method "readFile" ', function () {
+        it('should exist', function () {
+            expect(Utils.readFile).to.exist;
+        });
+
+        it('should reject the promise if we cannot read the file', function () {
+            sinonSandBox.stub(fs, 'readFile', (path, callback) => callback(new Error('an error')));
+
+            return Utils
+                .readFile('./bower.json')
+                .then(function () {
+                    expect(true).to.be.false;
+                })
+                .catch(function (err) {
+                    expect(err).to.exist;
+                    expect(err instanceof Error);
+                    expect(err.message).to.equals('an error');
+                });
+        });
+
+        it('should return the content of the file', function () {
+            return Utils
+                .readFile(path.resolve(path.join(__dirname, './file.txt')))
+                .then(function (content) {
+                    expect(content).to.equals('Some content\n');
+                })
         });
     });
 });

@@ -146,6 +146,22 @@ describe(`GitUtils${importLib.getContext()} - `, function () {
         });
     });
 
+    describe('and the method "addFile" ', function () {
+        it('should exist', function () {
+            expect(GitUtils.addFile).to.exist;
+        });
+
+        it('should create add the file in git', function () {
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+
+            return GitUtils
+                .addFile('bower.json')
+                .then(function () {
+                    expect(promiseExecStub.calledWithExactly('git add bower.json')).to.be.true;
+                });
+        });
+    });
+
     describe('and the method "createCommit" ', function () {
         it('should exist', function () {
             expect(GitUtils.createCommit).to.exist;

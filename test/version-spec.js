@@ -1027,28 +1027,6 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
         });
     });
 
-    describe('and the method "hashCreateTagGit" ', function () {
-        it('should exist', function () {
-            expect(VersionUtils.hashCreateTagGit).to.exist;
-        });
-
-        it('should return true if no options are passed', function () {
-            expect(VersionUtils.hashCreateTagGit()).to.be.true;
-        });
-
-        it('should return true if the option "nogit-tag" is omitted', function () {
-            expect(VersionUtils.hashCreateTagGit({ })).to.be.true;
-        });
-
-        it('should return true if the option "nogit-tag" is set to false', function () {
-            expect(VersionUtils.hashCreateTagGit({ 'nogit-tag': false })).to.be.true;
-        });
-
-        it('should return false otherwise', function () {
-            expect(VersionUtils.hashCreateTagGit({ 'nogit-tag': true })).to.be.false;
-        });
-    });
-
     describe('and the method "hashPushCommitsGit" ', function () {
         it('should exist', function () {
             expect(VersionUtils.hashPushCommitsGit).to.exist;
@@ -1188,6 +1166,82 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
                         expect(createTagSpy.calledWithExactly('1.2.3', 'my custom message')).to.be.true;
                     });
             });
+        });
+    });
+
+    describe('and the method "updateJsonFilesIfNeeded" ', function () {
+        it('should exist', function () {
+            expect(VersionUtils.updateJsonFilesIfNeeded).to.exist;
+        });
+
+        it('should do nothing if no options are passed', function () {
+            let updateJsonFileStub = sinonSandBox.stub(VersionUtils, 'updateJsonFile', () => Promise.resolve());
+
+            return VersionUtils
+                .updateJsonFilesIfNeeded(null, '1.2.3')
+                .then(function () {
+                    expect(updateJsonFileStub.called).to.be.false;
+                });
+        });
+
+        it('should do nothing if the jsonFiles option is missing', function () {
+            let updateJsonFileStub = sinonSandBox.stub(VersionUtils, 'updateJsonFile', () => Promise.resolve());
+
+            return VersionUtils
+                .updateJsonFilesIfNeeded({ }, '1.2.3')
+                .then(function () {
+                    expect(updateJsonFileStub.called).to.be.false;
+                });
+        });
+
+        it('should do nothing if the jsonFiles option is empty', function () {
+            let updateJsonFileStub = sinonSandBox.stub(VersionUtils, 'updateJsonFile', () => Promise.resolve());
+
+            return VersionUtils
+                .updateJsonFilesIfNeeded({ 'jsonFiles': [] }, '1.2.3')
+                .then(function () {
+                    expect(updateJsonFileStub.called).to.be.false;
+                });
+        });
+
+        it('should update the specified json files otherwise', function () {
+            let updateJsonFileStub = sinonSandBox.stub(VersionUtils, 'updateJsonFile', () => Promise.resolve());
+
+            return VersionUtils
+                .updateJsonFilesIfNeeded({ 'jsonFiles': ['bower.json', 'component.json'] }, '1.2.3')
+                .then(function () {
+                    expect(updateJsonFileStub.called).to.be.true;
+                    expect(updateJsonFileStub.calledTwice).to.be.true;
+                    expect(updateJsonFileStub.args).deep.equals([
+                        ['1.2.3', 'bower.json'],
+                        ['1.2.3', 'component.json']
+                    ]);
+                });
+        });
+    });
+
+    describe('and the method "updateJsonFile" ', function () {
+        it('should exist', function () {
+            expect(VersionUtils.updateJsonFile).to.exist;
+        });
+
+        it('should update the version property, save the json file and add it into git', function () {
+            sinonSandBox.stub(process, 'cwd', () => '/path/temp');
+
+            let readFileStub = sinonSandBox.stub(Utils, 'readFile', function () { return Promise.resolve('{"version":"1.2.3"}') });
+            let writeFileStub = sinonSandBox.stub(Utils, 'writeFile', function () { return Promise.resolve() });
+            let addFileStub = sinonSandBox.stub(GitUtils, 'addFile', function () { return Promise.resolve() });
+            let replaceJsonVersionPropertySpy = sinonSandBox.spy(Utils, 'replaceJsonVersionProperty');
+
+            return VersionUtils
+                .updateJsonFile('3.2.1', 'bower.json')
+                .then(function () {
+                    expect(readFileStub.args).deep.equals([['\\path\\temp\\bower.json']]);
+                    expect(replaceJsonVersionPropertySpy.args).deep.equals([['{"version":"1.2.3"}', '3.2.1']]);
+                    expect(replaceJsonVersionPropertySpy.returnValues).deep.equals(['{"version":"3.2.1"}']);
+                    expect(writeFileStub.args).deep.equals([['\\path\\temp\\bower.json', '{"version":"3.2.1"}']]);
+                    expect(addFileStub.args).deep.equals([['bower.json']]);
+                });
         });
     });
 });

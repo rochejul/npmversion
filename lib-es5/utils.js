@@ -16,13 +16,16 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var fs = require('fs');
 var exec = require('child_process').exec;
 
 var versionOptionsAnalyzer = require('./cli-params');
 var rcOptionsRetriever = require('./rc');
 
+// Constants & variables
 // Here the class
-module.exports = function () {
+
+var Utils = function () {
     function Utils() {
         _classCallCheck(this, Utils);
     }
@@ -69,7 +72,84 @@ module.exports = function () {
                 }
             });
         }
+
+        /**
+         * @param {string} filePath
+         * @returns {Promise}
+         */
+
+    }, {
+        key: 'readFile',
+        value: function readFile(filePath) {
+            return new Promise(function (resolve, reject) {
+                fs.readFile(filePath, function (err, content) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(content.toString());
+                    }
+                });
+            });
+        }
+
+        /**
+         * @param {string} content
+         * @param {string} propertyName
+         * @param {string} value
+         * @returns {string}
+         */
+
+    }, {
+        key: 'replaceJsonProperty',
+        value: function replaceJsonProperty(content, propertyName, value) {
+            var propertyToFound = '"' + propertyName + '"';
+            var indexPropertyToFound = content.indexOf(propertyToFound);
+
+            if (indexPropertyToFound >= 0) {
+                var startIndex = content.indexOf('"', indexPropertyToFound + propertyToFound.length);
+                var startExtract = content.substr(0, startIndex + 1);
+                var endExtract = content.substr(startIndex + 1);
+                endExtract = endExtract.substr(endExtract.indexOf('"'));
+
+                return '' + startExtract + value + endExtract;
+            }
+
+            return content;
+        }
+
+        /**
+         * @param {string} content
+         * @param {string} value
+         * @returns {string}
+         */
+
+    }, {
+        key: 'replaceJsonVersionProperty',
+        value: function replaceJsonVersionProperty(content, value) {
+            return Utils.replaceJsonProperty(content, 'version', value);
+        }
+
+        /**
+         * @param {string} filePath
+         * @returns {Promise}
+         */
+
+    }, {
+        key: 'writeFile',
+        value: function writeFile(filePath, content) {
+            return new Promise(function (resolve, reject) {
+                fs.writeFile(filePath, content, function (err) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve();
+                    }
+                });
+            });
+        }
     }]);
 
     return Utils;
 }();
+
+module.exports = Utils;

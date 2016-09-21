@@ -146,7 +146,27 @@ is called before create a git commit / tag and pushing.
     "git-push": false,
     "git-commit-message": "Release version: %s",
     "git-tag-message": "v%s",
-    "increment": "minor"
+    "increment": "minor",
+    "jsonFiles": []
+}
+````
+
+jsonFiles is a list of JSON files with the "version" property to update. The file path is relative to the package.json file.
+
+An example which includes bower:
+
+````json
+{
+    "force-preid": true,
+    "nogit-commit": false,
+    "nogit-tag": true,
+    "git-push": false,
+    "git-commit-message": "Release version: %s",
+    "git-tag-message": "v%s",
+    "increment": "minor",
+    "jsonFiles": [
+        "bower.json"
+    ]
 }
 ````
 

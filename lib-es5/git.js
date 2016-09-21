@@ -32,7 +32,15 @@ module.exports = function () {
     }
 
     _createClass(GitUtils, null, [{
-        key: 'createCommit',
+        key: 'addFile',
+
+        /**
+         * @param {string} filePath
+         * @returns {Promise}
+         */
+        value: function addFile(filePath) {
+            return Utils.promisedExec('git add ' + filePath);
+        }
 
         /**
          * Create a commit git
@@ -40,6 +48,9 @@ module.exports = function () {
          * @param {string} [label]
          * @returns {Promise}
          */
+
+    }, {
+        key: 'createCommit',
         value: function createCommit(packageVersion, label) {
             return Utils.promisedExec('git commit --all --message "' + GitUtils.createCommitLabel(packageVersion, label) + '"');
         }
