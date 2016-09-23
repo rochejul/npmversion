@@ -163,7 +163,7 @@ describe(`Utils${importLib.getContext()} - `, function () {
             return Utils
                 .readFile(path.resolve(path.join(__dirname, './file.txt')))
                 .then(function (content) {
-                    expect(content).to.equals('Some content\n');
+                    expect(content.startsWith('Some content')).to.be.true;
                 })
         });
     });

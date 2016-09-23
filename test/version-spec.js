@@ -1236,10 +1236,17 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
             return VersionUtils
                 .updateJsonFile('3.2.1', 'bower.json')
                 .then(function () {
-                    expect(readFileStub.args).deep.equals([['\\path\\temp\\bower.json']]);
+                    expect(readFileStub.args.length).equals(1);
+                    expect(readFileStub.args[0].length).equals(1);
+                    expect(readFileStub.args[0][0].replace(/\\/g, '/')).deep.equals('/path/temp/bower.json');
+
                     expect(replaceJsonVersionPropertySpy.args).deep.equals([['{"version":"1.2.3"}', '3.2.1']]);
                     expect(replaceJsonVersionPropertySpy.returnValues).deep.equals(['{"version":"3.2.1"}']);
-                    expect(writeFileStub.args).deep.equals([['\\path\\temp\\bower.json', '{"version":"3.2.1"}']]);
+
+                    expect(writeFileStub.args.length).equals(1);
+                    expect(writeFileStub.args[0].length).equals(2);
+                    expect(writeFileStub.args[0][0].replace(/\\/g, '/')).deep.equals('/path/temp/bower.json');
+                    expect(writeFileStub.args[0][1]).deep.equals('{"version":"3.2.1"}');
                     expect(addFileStub.args).deep.equals([['bower.json']]);
                 });
         });
