@@ -34,6 +34,23 @@ describe(`Utils${importLib.getContext()} - `, function () {
         sinonSandBox = null;
     });
 
+    describe('and the method "isJsonFileEntry" ', function () {
+        it('should exist', function () {
+            expect(Utils.isJsonFileEntry).to.exist;
+        });
+
+        it('should return true if the object is a JsonFileEntry', function () {
+            expect(Utils.isJsonFileEntry({ 'file': 'bower.json', 'property': 'version' })).to.be.true;
+        });
+
+        it('should return false otherwise', function () {
+            expect(Utils.isJsonFileEntry({ 'file': 'bower.json' })).to.be.false;
+            expect(Utils.isJsonFileEntry({ 'property': 'version' })).to.be.false;
+            expect(Utils.isJsonFileEntry({ })).to.be.false;
+            expect(Utils.isJsonFileEntry()).to.be.false;
+        });
+    });
+
     describe('and the method "replaceJsonProperty" ', function () {
         it('should exist', function () {
             expect(Utils.replaceJsonProperty).to.exist;

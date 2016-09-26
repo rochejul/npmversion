@@ -1208,13 +1208,13 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
             let updateJsonFileStub = sinonSandBox.stub(VersionUtils, 'updateJsonFile', () => Promise.resolve());
 
             return VersionUtils
-                .updateJsonFilesIfNeeded({ 'jsonFiles': ['bower.json', 'component.json'] }, '1.2.3')
+                .updateJsonFilesIfNeeded({ 'jsonFiles': ['bower.json', { 'file': 'component.json', 'property': 'version' }] }, '1.2.3')
                 .then(function () {
                     expect(updateJsonFileStub.called).to.be.true;
                     expect(updateJsonFileStub.calledTwice).to.be.true;
                     expect(updateJsonFileStub.args).deep.equals([
-                        [{ 'jsonFiles': ['bower.json', 'component.json'] }, '1.2.3', 'bower.json'],
-                        [{ 'jsonFiles': ['bower.json', 'component.json'] }, '1.2.3', 'component.json']
+                        [{ 'jsonFiles': ['bower.json', { 'file': 'component.json', 'property': 'version' }] }, '1.2.3', 'bower.json'],
+                        [{ 'jsonFiles': ['bower.json', { 'file': 'component.json', 'property': 'version' }] }, '1.2.3', { 'file': 'component.json', 'property': 'version' }]
                     ]);
                 });
         });
@@ -1274,6 +1274,61 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
                         expect(writeFileStub.args[0].length).equals(2);
                         expect(writeFileStub.args[0][0].replace(/\\/g, '/')).deep.equals('/path/temp/bower.json');
                         expect(writeFileStub.args[0][1]).deep.equals('{"version":"3.2.1"}');
+
+                        expect(addFileStub.called).to.be.false;
+                    });
+            });
+        });
+
+        describe('should update the specified property, save the json file ', function () {
+            it('and add it into git if activated', function () {
+                sinonSandBox.stub(process, 'cwd', () => '/path/temp');
+
+                let readFileStub = sinonSandBox.stub(Utils, 'readFile', function () { return Promise.resolve('{"specified":"1.2.3"}') });
+                let writeFileStub = sinonSandBox.stub(Utils, 'writeFile', function () { return Promise.resolve() });
+                let addFileStub = sinonSandBox.stub(GitUtils, 'addFile', function () { return Promise.resolve() });
+                let replaceJsonPropertySpy = sinonSandBox.spy(Utils, 'replaceJsonProperty');
+
+                return VersionUtils
+                    .updateJsonFile({}, '3.2.1', { 'file': 'bower.json', 'property': 'specified' })
+                    .then(function () {
+                        expect(readFileStub.args.length).equals(1);
+                        expect(readFileStub.args[0].length).equals(1);
+                        expect(readFileStub.args[0][0].replace(/\\/g, '/')).deep.equals('/path/temp/bower.json');
+
+                        expect(replaceJsonPropertySpy.args).deep.equals([['{"specified":"1.2.3"}', 'specified', '3.2.1']]);
+                        expect(replaceJsonPropertySpy.returnValues).deep.equals(['{"specified":"3.2.1"}']);
+
+                        expect(writeFileStub.args.length).equals(1);
+                        expect(writeFileStub.args[0].length).equals(2);
+                        expect(writeFileStub.args[0][0].replace(/\\/g, '/')).deep.equals('/path/temp/bower.json');
+                        expect(writeFileStub.args[0][1]).deep.equals('{"specified":"3.2.1"}');
+                        expect(addFileStub.args).deep.equals([['bower.json']]);
+                    });
+            });
+
+            it('and not add it into git if not activated', function () {
+                sinonSandBox.stub(process, 'cwd', () => '/path/temp');
+
+                let readFileStub = sinonSandBox.stub(Utils, 'readFile', function () { return Promise.resolve('{"specified":"1.2.3"}') });
+                let writeFileStub = sinonSandBox.stub(Utils, 'writeFile', function () { return Promise.resolve() });
+                let addFileStub = sinonSandBox.stub(GitUtils, 'addFile', function () { return Promise.resolve() });
+                let replaceJsonPropertySpy = sinonSandBox.spy(Utils, 'replaceJsonProperty');
+
+                return VersionUtils
+                    .updateJsonFile({ 'nogit-commit': true, 'nogit-tag': true, 'git-push': false }, '3.2.1', { 'file': 'bower.json', 'property': 'specified' })
+                    .then(function () {
+                        expect(readFileStub.args.length).equals(1);
+                        expect(readFileStub.args[0].length).equals(1);
+                        expect(readFileStub.args[0][0].replace(/\\/g, '/')).deep.equals('/path/temp/bower.json');
+
+                        expect(replaceJsonPropertySpy.args).deep.equals([['{"specified":"1.2.3"}', 'specified', '3.2.1']]);
+                        expect(replaceJsonPropertySpy.returnValues).deep.equals(['{"specified":"3.2.1"}']);
+
+                        expect(writeFileStub.args.length).equals(1);
+                        expect(writeFileStub.args[0].length).equals(2);
+                        expect(writeFileStub.args[0][0].replace(/\\/g, '/')).deep.equals('/path/temp/bower.json');
+                        expect(writeFileStub.args[0][1]).deep.equals('{"specified":"3.2.1"}');
 
                         expect(addFileStub.called).to.be.false;
                     });

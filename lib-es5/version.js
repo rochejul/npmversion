@@ -703,16 +703,23 @@ var VersionUtils = function () {
         /**
          * @param {VersionOptions} options
          * @param {string} packageVersion
-         * @param {string} jsonFilePath
+         * @param {string | JsonFileEntry} jsonFilePathOrEntry
          * @returns {Promise}
          */
 
     }, {
         key: 'updateJsonFile',
-        value: function updateJsonFile(options, packageVersion, jsonFilePath) {
+        value: function updateJsonFile(options, packageVersion, jsonFilePathOrEntry) {
+            var isJsonFileEntry = Utils.isJsonFileEntry(jsonFilePathOrEntry);
+            var jsonFilePath = isJsonFileEntry ? jsonFilePathOrEntry.file : jsonFilePathOrEntry;
+            var property = isJsonFileEntry ? jsonFilePathOrEntry.property : null;
             var filePath = path.resolve(path.join(process.cwd(), jsonFilePath));
 
             return Utils.readFile(filePath).then(function (jsonContent) {
+                if (property) {
+                    return Utils.replaceJsonProperty(jsonContent, property, packageVersion);
+                }
+
                 return Utils.replaceJsonVersionProperty(jsonContent, packageVersion);
             }).then(function (newJsonContent) {
                 return Utils.writeFile(filePath, newJsonContent);

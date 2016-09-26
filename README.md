@@ -170,6 +170,42 @@ An example which includes bower:
 }
 ````
 
+Another way: declare a json object with the property to update:
+
+````json
+{
+    "force-preid": true,
+    "nogit-commit": false,
+    "nogit-tag": true,
+    "git-push": false,
+    "git-commit-message": "Release version: %s",
+    "git-tag-message": "v%s",
+    "increment": "minor",
+    "jsonFiles": [
+        { "file": "bower.json", "property": "version" }
+    ]
+}
+````
+
+And of course, both:
+
+````json
+{
+    "force-preid": true,
+    "nogit-commit": false,
+    "nogit-tag": true,
+    "git-push": false,
+    "git-commit-message": "Release version: %s",
+    "git-tag-message": "v%s",
+    "increment": "minor",
+    "jsonFiles": [
+        "component.json",
+        { "file": "bower.json", "property": "version" }
+    ]
+}
+````
+
+
 ## Possible outputs
 
 ### In a classical way

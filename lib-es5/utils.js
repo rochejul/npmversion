@@ -22,6 +22,12 @@ var exec = require('child_process').exec;
 var versionOptionsAnalyzer = require('./cli-params');
 var rcOptionsRetriever = require('./rc');
 
+/**
+ * @class JsonFileEntry
+ * @property {string} file
+ * @property {string} property
+ */
+
 // Constants & variables
 // Here the class
 
@@ -31,13 +37,24 @@ var Utils = function () {
     }
 
     _createClass(Utils, null, [{
-        key: 'paramsLoader',
+        key: 'isJsonFileEntry',
+
+        /**
+         * @param {Object | JsonFileEntry} object
+         * @returns {boolean}
+         */
+        value: function isJsonFileEntry(object) {
+            return !!(object && object.file && object.property);
+        }
 
         /**
          * Load the application parameters
          * @param {string[]} cliParams
          * @return {VersionOptions}
          */
+
+    }, {
+        key: 'paramsLoader',
         value: function paramsLoader(cliParams) {
             var baseOptions = rcOptionsRetriever();
             return versionOptionsAnalyzer(cliParams, baseOptions);
