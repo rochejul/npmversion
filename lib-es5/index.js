@@ -15,6 +15,7 @@
  */
 
 module.exports = Object.freeze({
+  'Utils': require('./utils'),
   'VersionUtils': require('./version'),
   'GitUtils': require('./git'),
   'versionOptionsAnalyzer': require('./cli-params')
