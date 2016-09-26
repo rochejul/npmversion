@@ -701,6 +701,7 @@ var VersionUtils = function () {
         }
 
         /**
+         * @param {VersionOptions} options
          * @param {string} packageVersion
          * @param {string} jsonFilePath
          * @returns {Promise}
@@ -708,7 +709,7 @@ var VersionUtils = function () {
 
     }, {
         key: 'updateJsonFile',
-        value: function updateJsonFile(packageVersion, jsonFilePath) {
+        value: function updateJsonFile(options, packageVersion, jsonFilePath) {
             var filePath = path.resolve(path.join(process.cwd(), jsonFilePath));
 
             return Utils.readFile(filePath).then(function (jsonContent) {
@@ -716,13 +717,18 @@ var VersionUtils = function () {
             }).then(function (newJsonContent) {
                 return Utils.writeFile(filePath, newJsonContent);
             }).then(function () {
-                return GitUtils.addFile(jsonFilePath);
+                if (VersionUtils.hasUseGit(options)) {
+                    return GitUtils.addFile(jsonFilePath);
+                }
+
+                return Promise.resolve();
             });
         }
 
         /**
          * @param {VersionOptions} options
          * @param {string} packageVersion
+         * @param {VersionOptions} options
          * @returns {Promise}
          */
 
@@ -731,7 +737,7 @@ var VersionUtils = function () {
         value: function updateJsonFilesIfNeeded(options, packageVersion) {
             if (options && options.jsonFiles && options.jsonFiles.length > 0) {
                 return Promise.all(options.jsonFiles.map(function (jsonFilePath) {
-                    return VersionUtils.updateJsonFile(packageVersion, jsonFilePath);
+                    return VersionUtils.updateJsonFile(options, packageVersion, jsonFilePath);
                 }));
             }
 
