@@ -1,19 +1,5 @@
 {
     "presets": [
-        "babel-preset-es2015",
-        [
-            "env",
-            {
-                "targets": {
-                    "node": "current"
-                },
-                "debug": true,
-                "loose": true,
-                "useBuiltIns": false,
-                "modules": "commonjs",
-                "include": [],
-                "exclude": []
-            }
-        ]
+        "babel-preset-es2015"
     ]
 }
