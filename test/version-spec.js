@@ -259,12 +259,12 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
                 beforeEach(function () {
                     calls = [];
                     sinonSandBox.stub(VersionUtils, 'updatePackageVersion', function () {
-                        calls.push(['updatePackageVersion'].concat([].splice.apply(arguments, arguments)));
+                        calls.push(['updatePackageVersion'].concat(Array.from(arguments)));
                         return Promise.resolve();
                     });
 
                     sinonSandBox.stub(Utils, 'promisedExec', function () {
-                        calls.push(['promisedExec'].concat([].splice.apply(arguments, arguments)));
+                        calls.push(['promisedExec'].concat(Array.from(arguments)));
                         return Promise.resolve();
                     });
                 });
@@ -284,23 +284,31 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
                             expect(calls).deep.equals([
                                 [
                                     "promisedExec",
-                                    "git --help"
+                                    "git --help",
+                                    true
                                 ],
                                 [
                                     "promisedExec",
-                                    "git status --porcelain"
+                                    "git status --porcelain",
+                                    true,
+                                    undefined
                                 ],
                                 [
                                     "updatePackageVersion",
-                                    "1.2.1"
+                                    "1.2.1",
+                                    undefined
                                 ],
                                 [
                                     "promisedExec",
-                                    "git commit --all --message \"Release version: 1.2.1\""
+                                    "git commit --all --message \"Release version: 1.2.1\"",
+                                    false,
+                                    undefined
                                 ],
                                 [
                                     "promisedExec",
-                                    "git tag \"v1.2.1\""
+                                    "git tag \"v1.2.1\"",
+                                    false,
+                                    undefined
                                 ]
                             ]);
                         });
@@ -317,27 +325,37 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
                             expect(calls).deep.equals([
                                 [
                                     "promisedExec",
-                                    "git --help"
+                                    "git --help",
+                                    true
                                 ],
                                 [
                                     "promisedExec",
-                                    "git status --porcelain"
+                                    "git status --porcelain",
+                                    true,
+                                    undefined
                                 ],
                                 [
                                     "updatePackageVersion",
-                                    "1.2.1"
+                                    "1.2.1",
+                                    undefined
                                 ],
                                 [
                                     "promisedExec",
-                                    "git commit --all --message \"Release version: 1.2.1\""
+                                    "git commit --all --message \"Release version: 1.2.1\"",
+                                    false,
+                                    undefined
                                 ],
                                 [
                                     "promisedExec",
-                                    "git tag \"v1.2.1\""
+                                    "git tag \"v1.2.1\"",
+                                    false,
+                                    undefined
                                 ],
                                 [
                                     "promisedExec",
-                                    "git push && git push --tags"
+                                    "git push && git push --tags",
+                                    false,
+                                    undefined
                                 ]
                             ]);
                         });
@@ -354,23 +372,31 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
                             expect(calls).deep.equals([
                                 [
                                     "promisedExec",
-                                    "git --help"
+                                    "git --help",
+                                    true
                                 ],
                                 [
                                     "promisedExec",
-                                    "git status --porcelain"
+                                    "git status --porcelain",
+                                    true,
+                                    undefined
                                 ],
                                 [
                                     "updatePackageVersion",
-                                    "1.2.1"
+                                    "1.2.1",
+                                    undefined
                                 ],
                                 [
                                     "promisedExec",
-                                    "git commit --all --message \"Release version: 1.2.1\""
+                                    "git commit --all --message \"Release version: 1.2.1\"",
+                                    false,
+                                    undefined
                                 ],
                                 [
                                     "promisedExec",
-                                    "git push"
+                                    "git push",
+                                    false,
+                                    undefined
                                 ]
                             ]);
                         });
@@ -387,7 +413,8 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
                             expect(calls).deep.equals([
                                 [
                                     "updatePackageVersion",
-                                    "1.2.1"
+                                    "1.2.1",
+                                    undefined
                                 ]
                             ]);
                         });
@@ -410,35 +437,49 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
                             expect(calls).deep.equals([
                                 [
                                     "promisedExec",
-                                    "git --help"
+                                    "git --help",
+                                    true
                                 ],
                                 [
                                     "promisedExec",
-                                    "git status --porcelain"
+                                    "git status --porcelain",
+                                    true,
+                                    undefined
                                 ],
                                 [
                                     "promisedExec",
-                                    "npm run prenpmversion"
+                                    "npm run prenpmversion",
+                                    false,
+                                    undefined
                                 ],
                                 [
                                     "updatePackageVersion",
-                                    "1.2.1"
+                                    "1.2.1",
+                                    undefined
                                 ],
                                 [
                                     "promisedExec",
-                                    "npm run postnpmversion"
+                                    "npm run postnpmversion",
+                                    false,
+                                    undefined
                                 ],
                                 [
                                     "promisedExec",
-                                    "git commit --all --message \"Release version: 1.2.1\""
+                                    "git commit --all --message \"Release version: 1.2.1\"",
+                                    false,
+                                    undefined
                                 ],
                                 [
                                     "promisedExec",
-                                    "git tag \"v1.2.1\""
+                                    "git tag \"v1.2.1\"",
+                                    false,
+                                    undefined
                                 ],
                                 [
                                     "promisedExec",
-                                    "git push && git push --tags"
+                                    "git push && git push --tags",
+                                    false,
+                                    undefined
                                 ]
                             ]);
                         });
@@ -449,12 +490,12 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
         it('shoud deal with an arbitrary options set', function () {
             let calls = [];
             sinonSandBox.stub(VersionUtils, 'updatePackageVersion', function () {
-                calls.push(['updatePackageVersion'].concat([].splice.apply(arguments, arguments)));
+                calls.push(['updatePackageVersion'].concat(Array.from(arguments)));
                 return Promise.resolve();
             });
 
             sinonSandBox.stub(Utils, 'promisedExec', function () {
-                calls.push(['promisedExec'].concat([].splice.apply(arguments, arguments)));
+                calls.push(['promisedExec'].concat(Array.from(arguments)));
                 return Promise.resolve();
             });
 
@@ -497,23 +538,31 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
                     expect(calls).to.deep.equals([
                         [
                             "promisedExec",
-                            "git --help"
+                            "git --help",
+                            true
                         ],
                         [
                             "promisedExec",
-                            "git status --porcelain"
+                            "git status --porcelain",
+                            true,
+                            undefined
                         ],
                         [
                             "updatePackageVersion",
-                            "1.2.1-beta"
+                            "1.2.1-beta",
+                            undefined
                         ],
                         [
                             "promisedExec",
-                            "git commit --all --message \"Release version: 1.2.1-beta\""
+                            "git commit --all --message \"Release version: 1.2.1-beta\"",
+                            false,
+                            undefined
                         ],
                         [
                             "promisedExec",
-                            "git push"
+                            "git push",
+                            false,
+                            undefined
                         ]
                     ]);
                 });
