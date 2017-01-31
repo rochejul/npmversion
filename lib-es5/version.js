@@ -58,7 +58,7 @@ var ERRORS = Object.freeze({
         function GitNotInstalledError() {
             _classCallCheck(this, GitNotInstalledError);
 
-            var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(GitNotInstalledError).call(this, 'Git seems not be to be installed'));
+            var _this = _possibleConstructorReturn(this, (GitNotInstalledError.__proto__ || Object.getPrototypeOf(GitNotInstalledError)).call(this, 'Git seems not be to be installed'));
 
             _this.name = 'GitNotInstalledError';
             return _this;
@@ -72,7 +72,7 @@ var ERRORS = Object.freeze({
         function NotAGitProjectError() {
             _classCallCheck(this, NotAGitProjectError);
 
-            var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(NotAGitProjectError).call(this, 'It seems there is not initialized git project'));
+            var _this2 = _possibleConstructorReturn(this, (NotAGitProjectError.__proto__ || Object.getPrototypeOf(NotAGitProjectError)).call(this, 'It seems there is not initialized git project'));
 
             _this2.name = 'NotAGitProjectError';
             return _this2;
