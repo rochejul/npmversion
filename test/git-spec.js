@@ -131,7 +131,7 @@ describe(`GitUtils${importLib.getContext()} - `, function () {
             return GitUtils
                 .push(false)
                 .then(function () {
-                    expect(promiseExecStub.calledWithExactly('git push')).to.be.true;
+                    expect(promiseExecStub.calledWithExactly('git push', false, undefined)).to.be.true;
                 });
         });
 
@@ -141,7 +141,7 @@ describe(`GitUtils${importLib.getContext()} - `, function () {
             return GitUtils
                 .push(true)
                 .then(function () {
-                    expect(promiseExecStub.calledWithExactly('git push && git push --tags')).to.be.true;
+                    expect(promiseExecStub.calledWithExactly('git push && git push --tags', false, undefined)).to.be.true;
                 });
         });
     });
@@ -157,7 +157,7 @@ describe(`GitUtils${importLib.getContext()} - `, function () {
             return GitUtils
                 .addFile('bower.json')
                 .then(function () {
-                    expect(promiseExecStub.calledWithExactly('git add bower.json')).to.be.true;
+                    expect(promiseExecStub.calledWithExactly('git add bower.json', false, undefined)).to.be.true;
                 });
         });
     });
@@ -173,7 +173,7 @@ describe(`GitUtils${importLib.getContext()} - `, function () {
             return GitUtils
                 .createCommit('1.2.3', 'Change version to %s')
                 .then(function () {
-                    expect(promiseExecStub.calledWithExactly('git commit --all --message "Change version to 1.2.3"')).to.be.true;
+                    expect(promiseExecStub.calledWithExactly('git commit --all --message "Change version to 1.2.3"', false, undefined)).to.be.true;
                 });
         });
     });
@@ -189,7 +189,7 @@ describe(`GitUtils${importLib.getContext()} - `, function () {
             return GitUtils
                 .createTag('1.2.3', 'v%s')
                 .then(function () {
-                    expect(promiseExecStub.calledWithExactly('git tag "v1.2.3"')).to.be.true;
+                    expect(promiseExecStub.calledWithExactly('git tag "v1.2.3"', false, undefined)).to.be.true;
                 });
         });
     });

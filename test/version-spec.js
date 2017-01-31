@@ -1085,7 +1085,7 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
 
                         expect(createCommitSpy.called).to.be.true;
                         expect(createCommitSpy.calledOnce).to.be.true;
-                        expect(createCommitSpy.calledWithExactly('1.2.3', Messages.GIT_COMMIT_MESSAGE)).to.be.true;
+                        expect(createCommitSpy.calledWithExactly('1.2.3', Messages.GIT_COMMIT_MESSAGE, undefined)).to.be.true;
                     });
             });
 
@@ -1103,7 +1103,7 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
 
                         expect(createCommitSpy.called).to.be.true;
                         expect(createCommitSpy.calledOnce).to.be.true;
-                        expect(createCommitSpy.calledWithExactly('1.2.3', 'my custom message')).to.be.true;
+                        expect(createCommitSpy.calledWithExactly('1.2.3', 'my custom message', undefined)).to.be.true;
                     });
             });
         });
@@ -1145,7 +1145,7 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
 
                         expect(createTagSpy.called).to.be.true;
                         expect(createTagSpy.calledOnce).to.be.true;
-                        expect(createTagSpy.calledWithExactly('1.2.3', Messages.GIT_TAG_MESSAGE)).to.be.true;
+                        expect(createTagSpy.calledWithExactly('1.2.3', Messages.GIT_TAG_MESSAGE, undefined)).to.be.true;
                     });
             });
 
@@ -1163,7 +1163,7 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
 
                         expect(createTagSpy.called).to.be.true;
                         expect(createTagSpy.calledOnce).to.be.true;
-                        expect(createTagSpy.calledWithExactly('1.2.3', 'my custom message')).to.be.true;
+                        expect(createTagSpy.calledWithExactly('1.2.3', 'my custom message', undefined)).to.be.true;
                     });
             });
         });
@@ -1213,8 +1213,8 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
                     expect(updateJsonFileStub.called).to.be.true;
                     expect(updateJsonFileStub.calledTwice).to.be.true;
                     expect(updateJsonFileStub.args).deep.equals([
-                        [{ 'jsonFiles': ['bower.json', { 'file': 'component.json', 'property': 'version' }] }, '1.2.3', 'bower.json'],
-                        [{ 'jsonFiles': ['bower.json', { 'file': 'component.json', 'property': 'version' }] }, '1.2.3', { 'file': 'component.json', 'property': 'version' }]
+                        [{ 'jsonFiles': ['bower.json', { 'file': 'component.json', 'property': 'version' }] }, '1.2.3', 'bower.json', undefined],
+                        [{ 'jsonFiles': ['bower.json', { 'file': 'component.json', 'property': 'version' }] }, '1.2.3', { 'file': 'component.json', 'property': 'version' }, undefined]
                     ]);
                 });
         });
@@ -1248,7 +1248,7 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
                         expect(writeFileStub.args[0].length).equals(2);
                         expect(writeFileStub.args[0][0].replace(/\\/g, '/')).deep.equals('/path/temp/bower.json');
                         expect(writeFileStub.args[0][1]).deep.equals('{"version":"3.2.1"}');
-                        expect(addFileStub.args).deep.equals([['bower.json']]);
+                        expect(addFileStub.args).deep.equals([['bower.json', undefined]]);
                     });
             });
 
@@ -1303,7 +1303,7 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
                         expect(writeFileStub.args[0].length).equals(2);
                         expect(writeFileStub.args[0][0].replace(/\\/g, '/')).deep.equals('/path/temp/bower.json');
                         expect(writeFileStub.args[0][1]).deep.equals('{"specified":"3.2.1"}');
-                        expect(addFileStub.args).deep.equals([['bower.json']]);
+                        expect(addFileStub.args).deep.equals([['bower.json', undefined]]);
                     });
             });
 
