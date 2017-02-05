@@ -1,5 +1,12 @@
 {
     "presets": [
-        "babel-preset-es2015"
+        [
+            "env",
+            {
+                "targets": {
+                    "node": 0.12
+                }
+            }
+        ]
     ]
 }
