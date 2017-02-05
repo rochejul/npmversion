@@ -118,6 +118,24 @@ describe(`GitUtils${importLib.getContext()} - `, function () {
                     expect(status).to.be.true;
                 });
         });
+
+        it('should use per default the process.cwd', function () {
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+            return GitUtils
+                .hasGitProject()
+                .then(() => {
+                    expect(promiseExecStub.calledWithExactly('git status --porcelain', true, undefined)).to.be.true;
+                });
+        });
+
+        it('should use  the specified cwd', function () {
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+            return GitUtils
+                .hasGitProject('/etc')
+                .then(() => {
+                    expect(promiseExecStub.calledWithExactly('git status --porcelain', true, '/etc')).to.be.true;
+                });
+        });
     });
 
     describe('and the method "push" ', function () {
@@ -144,6 +162,24 @@ describe(`GitUtils${importLib.getContext()} - `, function () {
                     expect(promiseExecStub.calledWithExactly('git push && git push --tags', false, undefined)).to.be.true;
                 });
         });
+
+        it('should use per default the process.cwd', function () {
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+            return GitUtils
+                .push(false)
+                .then(() => {
+                    expect(promiseExecStub.calledWithExactly('git push', false, undefined)).to.be.true;
+                });
+        });
+
+        it('should use  the specified cwd', function () {
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+            return GitUtils
+                .push(false, '/etc')
+                .then(() => {
+                    expect(promiseExecStub.calledWithExactly('git push', false, '/etc')).to.be.true;
+                });
+        });
     });
 
     describe('and the method "addFile" ', function () {
@@ -158,6 +194,24 @@ describe(`GitUtils${importLib.getContext()} - `, function () {
                 .addFile('bower.json')
                 .then(function () {
                     expect(promiseExecStub.calledWithExactly('git add bower.json', false, undefined)).to.be.true;
+                });
+        });
+
+        it('should use per default the process.cwd', function () {
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+            return GitUtils
+                .addFile('bower.json')
+                .then(() => {
+                    expect(promiseExecStub.calledWithExactly('git add bower.json', false, undefined)).to.be.true;
+                });
+        });
+
+        it('should use  the specified cwd', function () {
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+            return GitUtils
+                .addFile('bower.json', '/etc')
+                .then(() => {
+                    expect(promiseExecStub.calledWithExactly('git add bower.json', false, '/etc')).to.be.true;
                 });
         });
     });
@@ -176,6 +230,24 @@ describe(`GitUtils${importLib.getContext()} - `, function () {
                     expect(promiseExecStub.calledWithExactly('git commit --all --message "Change version to 1.2.3"', false, undefined)).to.be.true;
                 });
         });
+
+        it('should use per default the process.cwd', function () {
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+            return GitUtils
+                .createCommit('1.2.3', 'Change version to %s')
+                .then(() => {
+                    expect(promiseExecStub.calledWithExactly('git commit --all --message "Change version to 1.2.3"', false, undefined)).to.be.true;
+                });
+        });
+
+        it('should use  the specified cwd', function () {
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+            return GitUtils
+                .createCommit('1.2.3', 'Change version to %s', '/etc')
+                .then(() => {
+                    expect(promiseExecStub.calledWithExactly('git commit --all --message "Change version to 1.2.3"', false, '/etc')).to.be.true;
+                });
+        });
     });
 
     describe('and the method "createTag" ', function () {
@@ -190,6 +262,24 @@ describe(`GitUtils${importLib.getContext()} - `, function () {
                 .createTag('1.2.3', 'v%s')
                 .then(function () {
                     expect(promiseExecStub.calledWithExactly('git tag "v1.2.3"', false, undefined)).to.be.true;
+                });
+        });
+
+        it('should use per default the process.cwd', function () {
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+            return GitUtils
+                .createTag('1.2.3', 'v%s')
+                .then(() => {
+                    expect(promiseExecStub.calledWithExactly('git tag "v1.2.3"', false, undefined)).to.be.true;
+                });
+        });
+
+        it('should use  the specified cwd', function () {
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+            return GitUtils
+                .createTag('1.2.3', 'v%s', '/etc')
+                .then(() => {
+                    expect(promiseExecStub.calledWithExactly('git tag "v1.2.3"', false, '/etc')).to.be.true;
                 });
         });
     });
