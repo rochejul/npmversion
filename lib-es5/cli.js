@@ -17,4 +17,4 @@ var VersionUtils = require('./version');
 // Do it !
 var argv = process.argv.slice(2);
 
-VersionUtils.doIt(argv && argv.length > 0 ? Utils.paramsLoader(argv) : null);
+VersionUtils.doIt(argv && argv.length > 0 ? Utils.paramsLoader(argv) : null, process.cwd());

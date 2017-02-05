@@ -17,7 +17,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var fs = require('fs');
-var exec = require('child_process').exec;
+var childProcess = require('child_process');
 
 var versionOptionsAnalyzer = require('./cli-params');
 var rcOptionsRetriever = require('./rc');
@@ -63,14 +63,15 @@ var Utils = function () {
         /**
          * @param {string} command
          * @param {boolean} [silent=false]
+         * @param {string} [cwd]
          * @returns {Promise}
          */
 
     }, {
         key: 'promisedExec',
-        value: function promisedExec(command, silent) {
+        value: function promisedExec(command, silent, cwd) {
             return new Promise(function (resolve, reject) {
-                var instance = exec(command, function (error) {
+                var instance = childProcess.exec(command, { 'cwd': cwd ? cwd : process.cwd() }, function (error) {
                     if (error) {
                         reject(error);
                     } else {

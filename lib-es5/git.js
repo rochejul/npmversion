@@ -36,23 +36,25 @@ module.exports = function () {
 
         /**
          * @param {string} filePath
+         * @param {string} [cwd]
          * @returns {Promise}
          */
-        value: function addFile(filePath) {
-            return Utils.promisedExec('git add ' + filePath);
+        value: function addFile(filePath, cwd) {
+            return Utils.promisedExec('git add ' + filePath, false, cwd);
         }
 
         /**
          * Create a commit git
          * @param {string} packageVersion
          * @param {string} [label]
+         * @param {string} [cwd]
          * @returns {Promise}
          */
 
     }, {
         key: 'createCommit',
-        value: function createCommit(packageVersion, label) {
-            return Utils.promisedExec('git commit --all --message "' + GitUtils.createCommitLabel(packageVersion, label) + '"');
+        value: function createCommit(packageVersion, label, cwd) {
+            return Utils.promisedExec('git commit --all --message "' + GitUtils.createCommitLabel(packageVersion, label) + '"', false, cwd);
         }
 
         /**
@@ -76,13 +78,14 @@ module.exports = function () {
          * Create a tag git
          * @param {string} packageVersion
          * @param {string} [label]
+         * @param {string} [cwd]
          * @returns {Promise}
          */
 
     }, {
         key: 'createTag',
-        value: function createTag(packageVersion, label) {
-            return Utils.promisedExec('git tag "' + GitUtils.createTagLabel(packageVersion, label) + '"');
+        value: function createTag(packageVersion, label, cwd) {
+            return Utils.promisedExec('git tag "' + GitUtils.createTagLabel(packageVersion, label) + '"', false, cwd);
         }
 
         /**
@@ -117,13 +120,14 @@ module.exports = function () {
         }
 
         /**
+         * @param {string} [cwd]
          * @returns {Promise.<boolean>}
          */
 
     }, {
         key: 'hasGitProject',
-        value: function hasGitProject() {
-            return Utils.promisedExec('git status --porcelain', true).then(function () {
+        value: function hasGitProject(cwd) {
+            return Utils.promisedExec('git status --porcelain', true, cwd).then(function () {
                 return true;
             }).catch(function () {
                 return false;
@@ -133,13 +137,14 @@ module.exports = function () {
         /**
          * Push the commits and the tags if needed
          * @param {boolean} [tags=false]
+         * @param {string} [cwd]
          * @returns {Promise}
          */
 
     }, {
         key: 'push',
-        value: function push(tags) {
-            return Utils.promisedExec('git push' + (tags ? ' && git push --tags' : ''));
+        value: function push(tags, cwd) {
+            return Utils.promisedExec('git push' + (tags ? ' && git push --tags' : ''), false, cwd);
         }
     }]);
 

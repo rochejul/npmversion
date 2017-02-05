@@ -112,16 +112,17 @@ var VersionUtils = function () {
 
         /**
          * @param {VersionOptions} options
+         * @param {string} [cwd]
          * @returns {Promise}
          */
-        value: function checkForGitIfNeeded(options) {
+        value: function checkForGitIfNeeded(options, cwd) {
             if (VersionUtils.hasUseGit(options)) {
                 return GitUtils.hasGitInstalled().then(function (state) {
                     if (!state) {
                         return Promise.reject(new ERRORS.GitNotInstalledError());
                     }
 
-                    return GitUtils.hasGitProject();
+                    return GitUtils.hasGitProject(cwd);
                 }).then(function (state) {
                     if (!state) {
                         return Promise.reject(new ERRORS.NotAGitProjectError());
@@ -137,14 +138,15 @@ var VersionUtils = function () {
         /**
          * @param {string} packageJsonVersion
          * @param {VersionOptions} options
+         * @param {string} [cwd]
          * @returns {Promise}
          */
 
     }, {
         key: 'createCommitGitIfNeeded',
-        value: function createCommitGitIfNeeded(packageJsonVersion, options) {
+        value: function createCommitGitIfNeeded(packageJsonVersion, options, cwd) {
             if (VersionUtils.hashCreateCommitGit(options)) {
-                return GitUtils.createCommit(packageJsonVersion, options['git-commit-message'] ? options['git-commit-message'] : messages.GIT_COMMIT_MESSAGE);
+                return GitUtils.createCommit(packageJsonVersion, options['git-commit-message'] ? options['git-commit-message'] : messages.GIT_COMMIT_MESSAGE, cwd);
             }
 
             return Promise.resolve();
@@ -153,14 +155,15 @@ var VersionUtils = function () {
         /**
          * @param {string} packageJsonVersion
          * @param {VersionOptions} options
+         * @param {string} [cwd]
          * @returns {Promise}
          */
 
     }, {
         key: 'createTagGitIfNeeded',
-        value: function createTagGitIfNeeded(packageJsonVersion, options) {
+        value: function createTagGitIfNeeded(packageJsonVersion, options, cwd) {
             if (VersionUtils.hashCreateTagGit(options)) {
-                return GitUtils.createTag(packageJsonVersion, options['git-tag-message'] ? options['git-tag-message'] : messages.GIT_TAG_MESSAGE);
+                return GitUtils.createTag(packageJsonVersion, options['git-tag-message'] ? options['git-tag-message'] : messages.GIT_TAG_MESSAGE, cwd);
             }
 
             return Promise.resolve();
@@ -169,21 +172,22 @@ var VersionUtils = function () {
         /**
          * Analyze the options do the bumping / versionning
          * @param {VersionOptions} [options]
+         * @param {string} [cwd]
          * @returns {Promise.<string>} Will contain the updated package version
          */
 
     }, {
         key: 'doIt',
-        value: function doIt(options) {
+        value: function doIt(options, cwd) {
             if (!options || options.help) {
                 // Basic: display the help message
                 VersionUtils.printHelp();
             } else {
-                if (VersionUtils.hasFoundPackageJsonFile()) {
+                if (VersionUtils.hasFoundPackageJsonFile(cwd)) {
                     var _ret = function () {
                         // Version manipulation !
-                        var packageJson = VersionUtils.getCurrentPackageJson();
-                        var packageJsonVersion = VersionUtils.getCurrentPackageJsonVersion(packageJson);
+                        var packageJson = VersionUtils.getCurrentPackageJson(cwd);
+                        var packageJsonVersion = VersionUtils.getCurrentPackageJsonVersion(packageJson, cwd);
 
                         if (options.unpreid) {
                             // We want to only remove the prefix
@@ -211,21 +215,21 @@ var VersionUtils = function () {
                             // Bumping !!
                             return {
                                 v: Promise.resolve().then(function () {
-                                    return VersionUtils.checkForGitIfNeeded(options);
+                                    return VersionUtils.checkForGitIfNeeded(options, cwd);
                                 }).then(function () {
-                                    return VersionUtils.doPrenpmVersionRunScriptIfNeeded(packageJson);
+                                    return VersionUtils.doPrenpmVersionRunScriptIfNeeded(packageJson, cwd);
                                 }).then(function () {
-                                    return VersionUtils.updatePackageVersion(packageJsonVersion);
+                                    return VersionUtils.updatePackageVersion(packageJsonVersion, cwd);
                                 }).then(function () {
-                                    return VersionUtils.updateJsonFilesIfNeeded(options, packageJsonVersion);
+                                    return VersionUtils.updateJsonFilesIfNeeded(options, packageJsonVersion, cwd);
                                 }).then(function () {
-                                    return VersionUtils.doPostnpmVersionRunScriptIfNeeded(packageJson);
+                                    return VersionUtils.doPostnpmVersionRunScriptIfNeeded(packageJson, cwd);
                                 }).then(function () {
-                                    return VersionUtils.createCommitGitIfNeeded(packageJsonVersion, options);
+                                    return VersionUtils.createCommitGitIfNeeded(packageJsonVersion, options, cwd);
                                 }).then(function () {
-                                    return VersionUtils.createTagGitIfNeeded(packageJsonVersion, options);
+                                    return VersionUtils.createTagGitIfNeeded(packageJsonVersion, options, cwd);
                                 }).then(function () {
-                                    return VersionUtils.doPushGitIfNeeded(options);
+                                    return VersionUtils.doPushGitIfNeeded(options, cwd);
                                 }).then(function () {
                                     return packageJsonVersion;
                                 }) // Return the updated package version
@@ -256,14 +260,15 @@ var VersionUtils = function () {
 
         /**
          * @param {Object} packageJson
+         * @param {string} [cwd]
          * @returns {Promise}
          */
 
     }, {
         key: 'doPostnpmVersionRunScriptIfNeeded',
-        value: function doPostnpmVersionRunScriptIfNeeded(packageJson) {
+        value: function doPostnpmVersionRunScriptIfNeeded(packageJson, cwd) {
             if (VersionUtils.isPostnpmversionRunScriptDetectedInPackageJson(packageJson)) {
-                return VersionUtils.runScriptPostnpmversion();
+                return VersionUtils.runScriptPostnpmversion(cwd);
             }
 
             return Promise.resolve();
@@ -271,14 +276,15 @@ var VersionUtils = function () {
 
         /**
          * @param {Object} packageJson
+         * @param {string} [cwd]
          * @returns {Promise}
          */
 
     }, {
         key: 'doPrenpmVersionRunScriptIfNeeded',
-        value: function doPrenpmVersionRunScriptIfNeeded(packageJson) {
+        value: function doPrenpmVersionRunScriptIfNeeded(packageJson, cwd) {
             if (VersionUtils.isPrenpmversionRunScriptDetectedInPackageJson(packageJson)) {
-                return VersionUtils.runScriptPrenpmversion();
+                return VersionUtils.runScriptPrenpmversion(cwd);
             }
 
             return Promise.resolve();
@@ -286,14 +292,15 @@ var VersionUtils = function () {
 
         /**
          * @param {VersionOptions} options
+         * @param {string} [cwd]
          * @returns {Promise}
          */
 
     }, {
         key: 'doPushGitIfNeeded',
-        value: function doPushGitIfNeeded(options) {
+        value: function doPushGitIfNeeded(options, cwd) {
             if (VersionUtils.hashPushCommitsGit(options)) {
-                return GitUtils.push(VersionUtils.hashCreateTagGit(options));
+                return GitUtils.push(VersionUtils.hashCreateTagGit(options), cwd);
             }
 
             return Promise.resolve();
@@ -301,13 +308,14 @@ var VersionUtils = function () {
 
         /**
          * Get the content of the package.json file from the CWD path
+         * @param {string} [cwd]
          * @returns {Object}
          */
 
     }, {
         key: 'getCurrentPackageJson',
-        value: function getCurrentPackageJson() {
-            var packageJsonContent = fs.readFileSync(path.join(process.cwd(), PACKAGE_JSON_FILENAME));
+        value: function getCurrentPackageJson(cwd) {
+            var packageJsonContent = fs.readFileSync(cwd ? cwd : path.join(process.cwd(), PACKAGE_JSON_FILENAME));
             return json5.parse(packageJsonContent);
         }
 
@@ -319,25 +327,24 @@ var VersionUtils = function () {
 
     }, {
         key: 'getCurrentPackageJsonVersion',
-        value: function getCurrentPackageJsonVersion(packageJson) {
+        value: function getCurrentPackageJsonVersion(packageJson, cwd) {
             if (packageJson) {
                 return packageJson.version;
             }
 
-            var packageJsonContent = fs.readFileSync(path.join(process.cwd(), PACKAGE_JSON_FILENAME));
-            var packageJsonParsed = json5.parse(packageJsonContent);
-            return packageJsonParsed.version;
+            return VersionUtils.getCurrentPackageJson(cwd).version;
         }
 
         /**
          * Checks if we found a package.json file onto the CWD path
+         * @param {string} [cwd]
          * @returns {boolean}
          */
 
     }, {
         key: 'hasFoundPackageJsonFile',
-        value: function hasFoundPackageJsonFile() {
-            return fs.existsSync(path.join(process.cwd(), PACKAGE_JSON_FILENAME));
+        value: function hasFoundPackageJsonFile(cwd) {
+            return fs.existsSync(cwd ? cwd : path.join(process.cwd(), PACKAGE_JSON_FILENAME));
         }
 
         /**
@@ -648,26 +655,28 @@ var VersionUtils = function () {
          * Run the "prenpmversion" npm scripts
          *
          * @method
+         * @param {string} [cwd]
          * @returns {Promise}
          */
 
     }, {
         key: 'runScriptPrenpmversion',
-        value: function runScriptPrenpmversion() {
-            return Utils.promisedExec('npm run prenpmversion');
+        value: function runScriptPrenpmversion(cwd) {
+            return Utils.promisedExec('npm run prenpmversion', false, cwd);
         }
 
         /**
          * Run the "postnpmversion" npm scripts
          *
          * @method
+         * @param {string} [cwd]
          * @returns {Promise}
          */
 
     }, {
         key: 'runScriptPostnpmversion',
-        value: function runScriptPostnpmversion() {
-            return Utils.promisedExec('npm run postnpmversion');
+        value: function runScriptPostnpmversion(cwd) {
+            return Utils.promisedExec('npm run postnpmversion', false, cwd);
         }
 
         /**
@@ -689,13 +698,14 @@ var VersionUtils = function () {
         /**
          * Update the package.json file and if needed the npm-shrinkwrap.json file
          * @param {string} packageVersion
+         * @param {string} [cwd]
          * @returns {Promise}
          */
 
     }, {
         key: 'updatePackageVersion',
-        value: function updatePackageVersion(packageVersion) {
-            return Utils.promisedExec('npm --no-git-tag-version version ' + packageVersion).then(function () {
+        value: function updatePackageVersion(packageVersion, cwd) {
+            return Utils.promisedExec('npm --no-git-tag-version version ' + packageVersion, false, cwd).then(function () {
                 return packageVersion;
             });
         }
@@ -704,16 +714,17 @@ var VersionUtils = function () {
          * @param {VersionOptions} options
          * @param {string} packageVersion
          * @param {string | JsonFileEntry} jsonFilePathOrEntry
+         * @param {string} [cwd]
          * @returns {Promise}
          */
 
     }, {
         key: 'updateJsonFile',
-        value: function updateJsonFile(options, packageVersion, jsonFilePathOrEntry) {
+        value: function updateJsonFile(options, packageVersion, jsonFilePathOrEntry, cwd) {
             var isJsonFileEntry = Utils.isJsonFileEntry(jsonFilePathOrEntry);
             var jsonFilePath = isJsonFileEntry ? jsonFilePathOrEntry.file : jsonFilePathOrEntry;
             var property = isJsonFileEntry ? jsonFilePathOrEntry.property : null;
-            var filePath = path.resolve(path.join(process.cwd(), jsonFilePath));
+            var filePath = path.resolve(path.join(cwd ? cwd : process.cwd(), jsonFilePath));
 
             return Utils.readFile(filePath).then(function (jsonContent) {
                 if (property) {
@@ -725,7 +736,7 @@ var VersionUtils = function () {
                 return Utils.writeFile(filePath, newJsonContent);
             }).then(function () {
                 if (VersionUtils.hasUseGit(options)) {
-                    return GitUtils.addFile(jsonFilePath);
+                    return GitUtils.addFile(jsonFilePath, cwd);
                 }
 
                 return Promise.resolve();
@@ -736,15 +747,16 @@ var VersionUtils = function () {
          * @param {VersionOptions} options
          * @param {string} packageVersion
          * @param {VersionOptions} options
+         * @param {string} [cwd]
          * @returns {Promise}
          */
 
     }, {
         key: 'updateJsonFilesIfNeeded',
-        value: function updateJsonFilesIfNeeded(options, packageVersion) {
+        value: function updateJsonFilesIfNeeded(options, packageVersion, cwd) {
             if (options && options.jsonFiles && options.jsonFiles.length > 0) {
                 return Promise.all(options.jsonFiles.map(function (jsonFilePath) {
-                    return VersionUtils.updateJsonFile(options, packageVersion, jsonFilePath);
+                    return VersionUtils.updateJsonFile(options, packageVersion, jsonFilePath, cwd);
                 }));
             }
 
