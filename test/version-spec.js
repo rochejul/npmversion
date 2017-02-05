@@ -484,6 +484,73 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
                             ]);
                         });
                 });
+
+                it('use the specified cwd', function () {
+                    sinonSandBox.stub(VersionUtils, 'getCurrentPackageJson', () => {
+                        return {
+                            'version': '1.2.0',
+                            'scripts': {
+                                'prenpmversion': 'echo "Hello"',
+                                'postnpmversion': 'echo "Wordl"'
+                            }
+                        };
+                    });
+
+                    sinonSandBox.stub(VersionUtils, 'hasFoundPackageJsonFile', () => true);
+
+                    return VersionUtils
+                        .doIt({ 'increment': 'fake', 'git-push': true }, '/etc')
+                        .then(function () {
+                            expect(calls).deep.equals([
+                                [
+                                    "promisedExec",
+                                    "git --help",
+                                    true
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git status --porcelain",
+                                    true,
+                                    '/etc'
+                                ],
+                                [
+                                    "promisedExec",
+                                    "npm run prenpmversion",
+                                    false,
+                                    '/etc'
+                                ],
+                                [
+                                    "updatePackageVersion",
+                                    "1.2.1",
+                                    '/etc'
+                                ],
+                                [
+                                    "promisedExec",
+                                    "npm run postnpmversion",
+                                    false,
+                                    '/etc'
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git commit --all --message \"Release version: 1.2.1\"",
+                                    false,
+                                    '/etc'
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git tag \"v1.2.1\"",
+                                    false,
+                                    '/etc'
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git push && git push --tags",
+                                    false,
+                                    '/etc'
+                                ]
+                            ]);
+                        });
+                });
             });
         });
 
