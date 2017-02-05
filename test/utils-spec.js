@@ -18,6 +18,7 @@ describe(`Utils${importLib.getContext()} - `, function () {
 
     const fs = require('fs');
     const path = require('path');
+    const childProcess = require('child_process');
 
     let sinonSandBox;
 
@@ -48,6 +49,65 @@ describe(`Utils${importLib.getContext()} - `, function () {
             expect(Utils.isJsonFileEntry({ 'property': 'version' })).to.be.false;
             expect(Utils.isJsonFileEntry({ })).to.be.false;
             expect(Utils.isJsonFileEntry()).to.be.false;
+        });
+    });
+
+    describe('and the method "promisedExec" ', function () {
+        it('should exist', function () {
+            expect(Utils.promisedExec).to.exist;
+        });
+
+        it('should resolve the promise when the execution is done', function () {
+            sinonSandBox.stub(childProcess, 'exec', (command, options, callback) => callback(null));
+            return Utils.promisedExec('ls -la', true);
+        });
+
+        it('should reject the promise when the execution is rejected', function () {
+            sinonSandBox.stub(childProcess, 'exec', (command, options, callback) => callback(500));
+            return Utils
+                .promisedExec('ls -la', true)
+                .then(() => Promise.reject('Should not be called'))
+                .catch(() => Promise.resolve());
+        });
+
+        it('should use per default the process.cwd', function () {
+            let execStub = sinonSandBox.stub(childProcess, 'exec', (command, options, callback) => callback(null));
+            return Utils
+                .promisedExec('ls -la', true)
+                .then(() => {
+                    expect(execStub.calledWithExactly('ls -la', { 'cwd': process.cwd() }, sinon.match.func)).to.be.true;
+                });
+        });
+
+        it('should use  the specified cwd', function () {
+            let execStub = sinonSandBox.stub(childProcess, 'exec', (command, options, callback) => callback(null));
+            return Utils
+                .promisedExec('ls -la', true, '/etc')
+                .then(() => {
+                    expect(execStub.calledWithExactly('ls -la', { 'cwd': '/etc' }, sinon.match.func)).to.be.true;
+                });
+        });
+
+        it('should log the ouput', function () {
+            let instance = {
+                'stderr': { 'on': function () { } },
+                'stdout': { 'on': function () { } }
+            };
+
+            let stderrOnStub = sinonSandBox.spy(instance.stderr, 'on');
+            sinonSandBox.spy(instance.stdout, 'on');
+            sinonSandBox.stub(childProcess, 'exec', (command, options, callback) => {
+                callback(null);
+                return instance;
+            });
+            Utils
+                .promisedExec('ls -la', false)
+                .then(() => {
+                    expect(instance.stderr.on.called);
+                    expect(stderrOnStub.withArgs('data', sinon.match.func)).to.be.true;
+                    expect(instance.stdout.on.called);
+                    expect(instance.stdout.on.withArgs('data', sinon.match.func)).to.be.true;
+                });
         });
     });
 
