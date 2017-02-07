@@ -16,6 +16,9 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
     const expect = chai.expect;
     const sinon = require('sinon');
 
+    const fs = require('fs');
+    const path = require('path');
+
     const VersionUtils = importLib('version');
     const GitUtils = importLib('git');
     const Utils = importLib('utils');
@@ -36,6 +39,102 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
             sinonSandBox.restore();
             sinonSandBox = null;
         }
+    });
+
+    describe('and the method "hasFoundPackageJsonFile" ', function () {
+        it('should exist', function () {
+            expect(VersionUtils.hasFoundPackageJsonFile).to.exist;
+        });
+
+        it('should return true if we can found the package.json file', function () {
+            sinonSandBox.stub(fs, 'existsSync', () => true);
+            expect(VersionUtils.hasFoundPackageJsonFile()).to.be.true;
+        });
+
+        it('should return false if we cannot found the package.json file', function () {
+            sinonSandBox.stub(fs, 'existsSync', () => false);
+            expect(VersionUtils.hasFoundPackageJsonFile()).to.be.false;
+        });
+
+        describe('should find the package.json based ', function () {
+            it('on the current CWD', function () {
+                sinonSandBox.stub(fs, 'existsSync', () => '{ "version": "1.2.3" }');
+                VersionUtils.hasFoundPackageJsonFile();
+
+                expect(fs.existsSync.calledWithExactly(path.resolve(process.cwd() + '/package.json'))).to.be.true;
+            });
+
+            it('on the specified CWD', function () {
+                sinonSandBox.stub(fs, 'existsSync', () => '{ "version": "1.2.3" }');
+                VersionUtils.hasFoundPackageJsonFile('/etc');
+
+                expect(fs.existsSync.calledWithExactly(path.resolve(path.join('/etc', 'package.json')))).to.be.true;
+            });
+        });
+    });
+
+    describe('and the method "getCurrentPackageJson" ', function () {
+        it('should exist', function () {
+            expect(VersionUtils.getCurrentPackageJson).to.exist;
+        });
+
+        it('should return the content of the JSON file', function () {
+            sinonSandBox.stub(fs, 'readFileSync', () => '{ "version": "1.2.3" }');
+            let json = VersionUtils.getCurrentPackageJson();
+
+            expect(json).deep.equals({ 'version': '1.2.3' });
+        });
+
+        describe('should load the package.json content based ', function () {
+            it('on the current CWD', function () {
+                sinonSandBox.stub(fs, 'readFileSync', () => '{ "version": "1.2.3" }');
+                VersionUtils.getCurrentPackageJson();
+
+                expect(fs.readFileSync.calledWithExactly(path.resolve(process.cwd() + '/package.json'))).to.be.true;
+            });
+
+            it('on the specified CWD', function () {
+                sinonSandBox.stub(fs, 'readFileSync', () => '{ "version": "1.2.3" }');
+                VersionUtils.getCurrentPackageJson('/etc');
+
+                expect(fs.readFileSync.calledWithExactly(path.resolve(path.join('/etc', 'package.json')))).to.be.true;
+            });
+        });
+    });
+
+    describe('and the method "getCurrentPackageJsonVersion" ', function () {
+        it('should exist', function () {
+            expect(VersionUtils.getCurrentPackageJsonVersion).to.exist;
+        });
+
+        it('should return the version of the JSON object', function () {
+            let version = VersionUtils.getCurrentPackageJsonVersion({ 'version': '1.2.3' });
+
+            expect(version).equals('1.2.3');
+        });
+
+        it('should return the version of the JSON file', function () {
+            sinonSandBox.stub(fs, 'readFileSync', () => '{ "version": "1.2.3" }');
+            let version = VersionUtils.getCurrentPackageJsonVersion();
+
+            expect(version).equals('1.2.3');
+        });
+
+        describe('should load the package.json content based ', function () {
+            it('on the current CWD', function () {
+                sinonSandBox.stub(fs, 'readFileSync', () => '{ "version": "1.2.3" }');
+                VersionUtils.getCurrentPackageJsonVersion();
+
+                expect(fs.readFileSync.calledWithExactly(path.resolve(process.cwd() + '/package.json'))).to.be.true;
+            });
+
+            it('on the specified CWD', function () {
+                sinonSandBox.stub(fs, 'readFileSync', () => '{ "version": "1.2.3" }');
+                VersionUtils.getCurrentPackageJsonVersion(null, '/etc');
+
+                expect(fs.readFileSync.calledWithExactly(path.resolve(path.join('/etc', 'package.json')))).to.be.true;
+            });
+        });
     });
 
     describe('and the method "checkForGitIfNeeded" ', function () {
@@ -1339,6 +1438,22 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
     describe('and the method "updateJsonFile" ', function () {
         it('should exist', function () {
             expect(VersionUtils.updateJsonFile).to.exist;
+        });
+
+        describe('should find the bower.json based ', function () {
+            it('on the current CWD', function () {
+                sinonSandBox.stub(Utils, 'readFile', () => Promise.reject());
+                VersionUtils.updateJsonFile(null, null, { 'file': 'bower.json', 'property': 'version' });
+
+                expect(Utils.readFile.calledWithExactly(path.resolve(process.cwd() + '/bower.json'))).to.be.true;
+            });
+
+            it('on the specified CWD', function () {
+                sinonSandBox.stub(Utils, 'readFile', () => Promise.reject());
+                VersionUtils.updateJsonFile(null, null, { 'file': 'bower.json', 'property': 'version' }, '/etc');
+
+                expect(Utils.readFile.calledWithExactly(path.resolve(path.join('/etc', 'bower.json')))).to.be.true;
+            });
         });
 
         describe('should update the version property, save the json file ', function () {

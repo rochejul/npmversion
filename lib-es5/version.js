@@ -313,13 +313,14 @@ var VersionUtils = function () {
     }, {
         key: 'getCurrentPackageJson',
         value: function getCurrentPackageJson(cwd) {
-            var packageJsonContent = fs.readFileSync(cwd ? cwd : path.join(process.cwd(), PACKAGE_JSON_FILENAME));
+            var packageJsonContent = fs.readFileSync(path.resolve(path.join(cwd ? cwd : process.cwd(), PACKAGE_JSON_FILENAME)));
             return json5.parse(packageJsonContent);
         }
 
         /**
          * Get the version of the package.json file from the CWD path
          * @param {Object} [packageJson]
+         * @param {string} [cwd]
          * @returns {string}
          */
 
@@ -342,7 +343,7 @@ var VersionUtils = function () {
     }, {
         key: 'hasFoundPackageJsonFile',
         value: function hasFoundPackageJsonFile(cwd) {
-            return fs.existsSync(cwd ? cwd : path.join(process.cwd(), PACKAGE_JSON_FILENAME));
+            return fs.existsSync(path.resolve(path.join(cwd ? cwd : process.cwd(), PACKAGE_JSON_FILENAME)));
         }
 
         /**
