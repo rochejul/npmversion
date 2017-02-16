@@ -1,7 +1,10 @@
 {
     "parser": "espree",
     "extends": "eslint:recommended",
-    "plugins": ["node"],
+    "plugins": [
+        "node",
+        "promise"
+    ],
     "env": {
         "node": true,
         "es6": true
@@ -197,6 +200,16 @@
         "node/no-unpublished-require": 2,
         "node/no-unsupported-features": [2, { "version": 4 }],
         "node/process-exit-as-throw": 2,
-        "node/shebang": 2
+        "node/shebang": 2,
+
+        "promise/always-return": "error",
+        "promise/no-return-wrap": "error",
+        "promise/param-names": "error",
+        "promise/catch-or-return": "error",
+        "promise/no-native": "off",
+        "promise/no-nesting": "warn",
+        "promise/no-promise-in-callback": "warn",
+        "promise/no-callback-in-promise": "warn",
+        "promise/avoid-new": "off"
     }
 }

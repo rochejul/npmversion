@@ -50,6 +50,7 @@
     "chai": "3.5.0",
     "eslint": "2.4.0",
     "eslint-plugin-node": "2.0.0",
+    "eslint-plugin-promise": "3.4.1",
     "jsdoc": "3.4.0",
     "mocha": "2.4.5",
     "rimraf": "2.5.2",
