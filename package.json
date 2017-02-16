@@ -15,7 +15,7 @@
     "checkstyle": "npm run delete target/eslint-reporter-checkstyle.xml && (node node_modules/eslint/bin/eslint.js --config=.eslintrc --output-file ./target/eslint-reporter-checkstyle.xml --format checkstyle ./lib || exit 0)",
     "delete": "node node_modules/rimraf/bin.js",
     "documentation": "npm run delete target/doc && node ./node_modules/jsdoc/jsdoc.js --recurse --destination ./target/doc --verbose ./lib",
-    "shrinkwrap": "npm shrinkwrap --only=prod",
+    "freeze-dependencies": "npm shrinkwrap --only=prod",
     "start": "node ./lib/index.js",
     "test": "npm run test-beyond && npm run test-es5",
     "test-beyond": "node ./node_modules/mocha/bin/mocha --recursive --ui bdd --colors ./test",
