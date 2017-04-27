@@ -190,6 +190,85 @@ describe(`GitUtils${importLib.getContext()} - `, function () {
         });
     });
 
+    describe('and the method "isBranchUpstream" ', function () {
+        it('should exist', function () {
+            expect(GitUtils.isBranchUpstream).to.exist;
+        });
+
+        it('should return false if an error occured (1)', function () {
+            sinonSandBox.stub(Utils, 'promisedExec', () => Promise.reject());
+            sinonSandBox.stub(GitUtils, 'getRemoteName', () => Promise.resolve('origin'));
+
+            return GitUtils
+                .isBranchUpstream('releases/1.0.0')
+                .then(function (isBranchUpstream) {
+                    expect(isBranchUpstream).to.be.false;
+                });
+        });
+
+        it('should return false if an error occured (2)', function () {
+            sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve(''));
+            sinonSandBox.stub(GitUtils, 'getRemoteName', () => Promise.reject());
+
+            return GitUtils
+                .isBranchUpstream('releases/1.0.0')
+                .then(function (isBranchUpstream) {
+                    expect(isBranchUpstream).to.be.false;
+                });
+        });
+
+        it('should return false if no remote branches', function () {
+            sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve(''));
+            sinonSandBox.stub(GitUtils, 'getRemoteName', () => Promise.resolve('origin'));
+
+            return GitUtils
+                .isBranchUpstream('releases/1.0.0')
+                .then(function (isBranchUpstream) {
+                    expect(isBranchUpstream).to.be.false;
+                });
+        });
+
+        it('should return false if the local branch has no associated remote branch', function () {
+            sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve(''));
+            sinonSandBox.stub(GitUtils, 'getRemoteName', () => Promise.resolve(`origin/HEAD          -> origin/master
+  origin/master        ec904e9 Last commiy
+  origin/release/0.9.0 f35d72b use of babel-preset-env instead
+`));
+
+            return GitUtils
+                .isBranchUpstream('releases/1.0.0')
+                .then(function (isBranchUpstream) {
+                    expect(isBranchUpstream).to.be.false;
+                });
+        });
+
+        it('should return true otherwise', function () {
+            sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve(''));
+            sinonSandBox.stub(GitUtils, 'getRemoteName', () => Promise.resolve(`origin/HEAD          -> origin/master
+  origin/master        ec904e9 Last commiy
+  origin/release/1.0.0 f35d72b use of babel-preset-env instead
+`));
+
+            return GitUtils
+                .isBranchUpstream('releases/1.0.0')
+                .then(function (isBranchUpstream) {
+                    expect(isBranchUpstream).to.be.false;
+                });
+        });
+
+        it('should use the specified cwd', function () {
+            let getRemoteName = sinonSandBox.stub(GitUtils, 'getRemoteName', () => Promise.resolve('origin'));
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+
+            return GitUtils
+                .isBranchUpstream('releases/1.0.0', '/etc')
+                .then(function () {
+                    expect(promiseExecStub.calledWithExactly('git branch -rvv', true, '/etc')).to.be.true;
+                    expect(getRemoteName.calledWithExactly('/etc')).to.be.true;
+                });
+        });
+    });
+
     describe('and the method "push" ', function () {
         it('should exist', function () {
             expect(GitUtils.push).to.exist;

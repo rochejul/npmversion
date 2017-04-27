@@ -16,6 +16,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var os = require('os');
 var Utils = require('./utils');
 
 // Constants
@@ -154,6 +155,30 @@ module.exports = function () {
         key: 'getRemoteName',
         value: function getRemoteName(cwd) {
             return Utils.promisedExec('git origin', true, cwd);
+        }
+
+        /**
+         * @param {string} branchName
+         * @param {string} [cwd]
+         * @returns {Promise.<boolean>}
+         */
+
+    }, {
+        key: 'isBranchUpstream',
+        value: function isBranchUpstream(branchName, cwd) {
+            return Promise.all([Utils.promisedExec('git branch -rvv', true, cwd), GitUtils.getRemoteName(cwd)]).then(function (results) {
+                var remoteBrancheLines = results[0].split(os.EOL);
+                var remoteName = results[1];
+                var remoteBranch = remoteName + '/' + branchName;
+
+                return remoteBrancheLines.find(function (remoteBranchLine) {
+                    return remoteBranchLine.contains(remoteBranch);
+                });
+            }).then(function (remoteBranchLine) {
+                return !!remoteBranchLine;
+            }).catch(function () {
+                return false;
+            });
         }
 
         /**
