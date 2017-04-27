@@ -135,6 +135,17 @@ module.exports = function () {
         }
 
         /**
+         * @param {string} [cwd]
+         * @returns {Promise.<boolean>}
+         */
+
+    }, {
+        key: 'getRemoteName',
+        value: function getRemoteName(cwd) {
+            return Utils.promisedExec('git origin', true, cwd);
+        }
+
+        /**
          * Push the commits and the tags if needed
          * @param {boolean} [tags=false]
          * @param {string} [cwd]

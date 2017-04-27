@@ -138,6 +138,22 @@ describe(`GitUtils${importLib.getContext()} - `, function () {
         });
     });
 
+    describe('and the method "getRemoteName" ', function () {
+        it('should exist', function () {
+            expect(GitUtils.getRemoteName).to.exist;
+        });
+
+        it('should return the origin name', function () {
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve('origin'));
+
+            return GitUtils
+                .getRemoteName()
+                .then(function (remoteName) {
+                    expect(remoteName).equals('origin');
+                });
+        });
+    });
+
     describe('and the method "push" ', function () {
         it('should exist', function () {
             expect(GitUtils.push).to.exist;
