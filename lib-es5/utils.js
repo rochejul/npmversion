@@ -64,18 +64,18 @@ var Utils = function () {
          * @param {string} command
          * @param {boolean} [silent=false]
          * @param {string} [cwd]
-         * @returns {Promise}
+         * @returns {Promise.<string>}
          */
 
     }, {
         key: 'promisedExec',
         value: function promisedExec(command, silent, cwd) {
             return new Promise(function (resolve, reject) {
-                var instance = childProcess.exec(command, { 'cwd': cwd ? cwd : process.cwd() }, function (error) {
+                var instance = childProcess.exec(command, { 'cwd': cwd ? cwd : process.cwd() }, function (error, stdout) {
                     if (error) {
                         reject(error);
                     } else {
-                        resolve();
+                        resolve(stdout);
                     }
                 });
 

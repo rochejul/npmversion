@@ -62,6 +62,14 @@ describe(`Utils${importLib.getContext()} - `, function () {
             return Utils.promisedExec('ls -la', true);
         });
 
+        it('should return the command output', function () {
+            sinonSandBox.stub(childProcess, 'exec', (command, options, callback) => callback(null, 'return of the command'));
+            return Utils.promisedExec('ls -la', true)
+                .then(commandOutput => {
+                    expect(commandOutput).equals('return of the command');
+                });
+        });
+
         it('should reject the promise when the execution is rejected', function () {
             sinonSandBox.stub(childProcess, 'exec', (command, options, callback) => callback(500));
             return Utils
