@@ -152,6 +152,16 @@ describe(`GitUtils${importLib.getContext()} - `, function () {
                     expect(remoteName).equals('releases/1.0.0');
                 });
         });
+
+        it('should use the specified cwd', function () {
+            let getBranchNameStub = sinonSandBox.stub(GitUtils, 'getBranchName', () => Promise.resolve('releases/1.0.0'));
+
+            return GitUtils
+                .getBranchName('/etc')
+                .then(function () {
+                    expect(getBranchNameStub.calledWithExactly('/etc')).to.be.true;
+                });
+        });
     });
 
     describe('and the method "getRemoteName" ', function () {
@@ -166,6 +176,16 @@ describe(`GitUtils${importLib.getContext()} - `, function () {
                 .getRemoteName()
                 .then(function (remoteName) {
                     expect(remoteName).equals('origin');
+                });
+        });
+
+        it('should use the specified cwd', function () {
+            let getRemoteNameStub = sinonSandBox.stub(GitUtils, 'getRemoteName', () => Promise.resolve('origin'));
+
+            return GitUtils
+                .getRemoteName('/etc')
+                .then(function () {
+                    expect(getRemoteNameStub.calledWithExactly('/etc')).to.be.true;
                 });
         });
     });
@@ -312,6 +332,39 @@ describe(`GitUtils${importLib.getContext()} - `, function () {
                 .createTag('1.2.3', 'v%s', '/etc')
                 .then(() => {
                     expect(promiseExecStub.calledWithExactly('git tag "v1.2.3"', false, '/etc')).to.be.true;
+                });
+        });
+    });
+
+
+    describe('and the method "upstreamCurrentBranch" ', function () {
+        it('should exist', function () {
+            expect(GitUtils.upstreamCurrentBranch).to.exist;
+        });
+
+        it('should push the branch to remote', function () {
+            sinonSandBox.stub(GitUtils, 'getRemoteName', () => Promise.resolve('origin'));
+            sinonSandBox.stub(GitUtils, 'getBranchName', () => Promise.resolve('releases/1.0.0'));
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+
+            return GitUtils
+                .upstreamCurrentBranch()
+                .then(function () {
+                    expect(promiseExecStub.calledWithExactly('git push --set-upstream origin releases/1.0.0', false, undefined)).to.be.true;
+                });
+        });
+
+        it('should use the specified cwd', function () {
+            let getRemoteNameStub = sinonSandBox.stub(GitUtils, 'getRemoteName', () => Promise.resolve('origin'));
+            let getBranchNameStub = sinonSandBox.stub(GitUtils, 'getBranchName', () => Promise.resolve('releases/1.0.0'));
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+
+            return GitUtils
+                .upstreamCurrentBranch('/etc')
+                .then(function () {
+                    expect(getRemoteNameStub.calledWithExactly('/etc')).to.be.true;
+                    expect(getBranchNameStub.calledWithExactly('/etc')).to.be.true;
+                    expect(promiseExecStub.calledWithExactly('git push --set-upstream origin releases/1.0.0', false, '/etc')).to.be.true;
                 });
         });
     });

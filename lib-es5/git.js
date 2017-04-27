@@ -168,6 +168,23 @@ module.exports = function () {
         value: function push(tags, cwd) {
             return Utils.promisedExec('git push' + (tags ? ' && git push --tags' : ''), false, cwd);
         }
+
+        /**
+         * Push the current branch if needed
+         * @param {string} [cwd]
+         * @returns {Promise}
+         */
+
+    }, {
+        key: 'upstreamCurrentBranch',
+        value: function upstreamCurrentBranch(cwd) {
+            return Promise.all([GitUtils.getRemoteName(cwd), GitUtils.getBranchName(cwd)]).then(function (infos) {
+                var remoteName = infos[0];
+                var branchName = infos[1];
+
+                return Utils.promisedExec('git push --set-upstream ' + remoteName + ' ' + branchName, false, cwd);
+            });
+        }
     }]);
 
     return GitUtils;
