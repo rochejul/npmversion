@@ -136,7 +136,18 @@ module.exports = function () {
 
         /**
          * @param {string} [cwd]
-         * @returns {Promise.<boolean>}
+         * @returns {Promise.<string>}
+         */
+
+    }, {
+        key: 'getBranchName',
+        value: function getBranchName(cwd) {
+            return Utils.promisedExec('git rev-parse --abbrev-ref HEAD', true, cwd);
+        }
+
+        /**
+         * @param {string} [cwd]
+         * @returns {Promise.<string>}
          */
 
     }, {

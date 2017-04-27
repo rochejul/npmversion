@@ -138,6 +138,22 @@ describe(`GitUtils${importLib.getContext()} - `, function () {
         });
     });
 
+    describe('and the method "getBranchName" ', function () {
+        it('should exist', function () {
+            expect(GitUtils.getBranchName).to.exist;
+        });
+
+        it('should return the branch name', function () {
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve('releases/1.0.0'));
+
+            return GitUtils
+                .getBranchName()
+                .then(function (remoteName) {
+                    expect(remoteName).equals('releases/1.0.0');
+                });
+        });
+    });
+
     describe('and the method "getRemoteName" ', function () {
         it('should exist', function () {
             expect(GitUtils.getRemoteName).to.exist;
