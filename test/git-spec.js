@@ -416,33 +416,27 @@ describe(`GitUtils${importLib.getContext()} - `, function () {
     });
 
 
-    describe('and the method "upstreamCurrentBranch" ', function () {
+    describe('and the method "upstreamBranch" ', function () {
         it('should exist', function () {
-            expect(GitUtils.upstreamCurrentBranch).to.exist;
+            expect(GitUtils.upstreamBranch).to.exist;
         });
 
         it('should push the branch to remote', function () {
-            sinonSandBox.stub(GitUtils, 'getRemoteName', () => Promise.resolve('origin'));
-            sinonSandBox.stub(GitUtils, 'getBranchName', () => Promise.resolve('releases/1.0.0'));
             let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
 
             return GitUtils
-                .upstreamCurrentBranch()
+                .upstreamBranch('origin', 'releases/1.0.0')
                 .then(function () {
                     expect(promiseExecStub.calledWithExactly('git push --set-upstream origin releases/1.0.0', false, undefined)).to.be.true;
                 });
         });
 
         it('should use the specified cwd', function () {
-            let getRemoteNameStub = sinonSandBox.stub(GitUtils, 'getRemoteName', () => Promise.resolve('origin'));
-            let getBranchNameStub = sinonSandBox.stub(GitUtils, 'getBranchName', () => Promise.resolve('releases/1.0.0'));
             let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
 
             return GitUtils
-                .upstreamCurrentBranch('/etc')
+                .upstreamBranch('origin', 'releases/1.0.0', '/etc')
                 .then(function () {
-                    expect(getRemoteNameStub.calledWithExactly('/etc')).to.be.true;
-                    expect(getBranchNameStub.calledWithExactly('/etc')).to.be.true;
                     expect(promiseExecStub.calledWithExactly('git push --set-upstream origin releases/1.0.0', false, '/etc')).to.be.true;
                 });
         });
