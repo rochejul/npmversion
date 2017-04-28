@@ -170,7 +170,7 @@ describe(`GitUtils${importLib.getContext()} - `, function () {
         });
 
         it('should return the origin name', function () {
-            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve('origin'));
+            sinonSandBox.stub(GitUtils, 'getRemoteNameList', () => Promise.resolve(['origin']));
 
             return GitUtils
                 .getRemoteName()
@@ -179,13 +179,86 @@ describe(`GitUtils${importLib.getContext()} - `, function () {
                 });
         });
 
+        it('should raise the exception NoRemoteGitError if no remotes were detected', function () {
+            sinonSandBox.stub(GitUtils, 'getRemoteNameList', () => Promise.resolve([]));
+
+            return GitUtils
+                .getRemoteName()
+                .then(() => Promise.reject('Should not be resolved'))
+                .catch(function (err) {
+                    expect(err).to.exist;
+                    expect(err instanceof Error).to.be.true;
+                    expect(err.name).to.equals('NoRemoteGitError');
+                });
+        });
+
+        it('should raise the exception MultipeRemoteGitError if no remotes were detected', function () {
+            sinonSandBox.stub(GitUtils, 'getRemoteNameList', () => Promise.resolve(['origin', 'anotherRemote']));
+
+            return GitUtils
+                .getRemoteName()
+                .then(() => Promise.reject('Should not be resolved'))
+                .catch(function (err) {
+                    expect(err).to.exist;
+                    expect(err instanceof Error).to.be.true;
+                    expect(err.name).to.equals('MultipeRemoteGitError');
+                });
+        });
+
         it('should use the specified cwd', function () {
-            let getRemoteNameStub = sinonSandBox.stub(GitUtils, 'getRemoteName', () => Promise.resolve('origin'));
+            let getRemoteNameListStub = sinonSandBox.stub(GitUtils, 'getRemoteNameList', () => Promise.resolve(['origin']));
 
             return GitUtils
                 .getRemoteName('/etc')
                 .then(function () {
-                    expect(getRemoteNameStub.calledWithExactly('/etc')).to.be.true;
+                    expect(getRemoteNameListStub.calledWithExactly('/etc')).to.be.true;
+                });
+        });
+    });
+
+    describe('and the method "getRemoteNameList" ', function () {
+        it('should exist', function () {
+            expect(GitUtils.getRemoteNameList).to.exist;
+        });
+
+        it('should return the remote names (1)', function () {
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve(''));
+
+            return GitUtils
+                .getRemoteNameList()
+                .then(function (remoteNames) {
+                    expect(remoteNames).deep.equals([]);
+                });
+        });
+
+        it('should return the remote names (2)', function () {
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve('origin'));
+
+            return GitUtils
+                .getRemoteNameList()
+                .then(function (remoteNames) {
+                    expect(remoteNames).deep.equals(['origin']);
+                });
+        });
+
+        it('should return the remote names (3)', function () {
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve(`origin
+anotherRemote`));
+
+            return GitUtils
+                .getRemoteNameList()
+                .then(function (remoteNames) {
+                    expect(remoteNames).deep.equals(['origin', 'anotherRemote']);
+                });
+        });
+
+        it('should use the specified cwd', function () {
+            let getRemoteNameListStub = sinonSandBox.stub(GitUtils, 'getRemoteNameList', () => Promise.resolve('origin'));
+
+            return GitUtils
+                .getRemoteNameList('/etc')
+                .then(function () {
+                    expect(getRemoteNameListStub.calledWithExactly('/etc')).to.be.true;
                 });
         });
     });

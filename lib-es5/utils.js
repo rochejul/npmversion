@@ -148,6 +148,17 @@ var Utils = function () {
         }
 
         /**
+         * @param {string} str
+         * @returns {string[]}
+         */
+
+    }, {
+        key: 'splitByEndOfLine',
+        value: function splitByEndOfLine(str) {
+            return str ? str.replace('\r', '').split('\n') : [];
+        }
+
+        /**
          * @param {string} filePath
          * @returns {Promise}
          */

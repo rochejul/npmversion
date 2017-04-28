@@ -111,7 +111,7 @@ var VersionUtils = function () {
         /**
          * @param {VersionOptions} options
          * @param {string} [cwd]
-         * @returns {Promise}
+         * @returns {Promise.<void | GitNotInstalledError | NotAGitProjectError>}
          */
         value: function checkForGitIfNeeded(options, cwd) {
             if (VersionUtils.hasUseGit(options)) {

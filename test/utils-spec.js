@@ -252,4 +252,31 @@ describe(`Utils${importLib.getContext()} - `, function () {
                 })
         });
     });
+
+    describe('and the method "splitByEndOfLine" ', function () {
+        it('should exist', function () {
+            expect(Utils.splitByEndOfLine).to.exist;
+        });
+
+        it('should return an empty array if no string is specified', function () {
+            expect(Utils.splitByEndOfLine()).deep.equals([]);
+            expect(Utils.splitByEndOfLine(null)).deep.equals([]);
+        });
+
+        it('should return an empty array if string is empty', function () {
+            expect(Utils.splitByEndOfLine('')).deep.equals([]);
+        });
+
+        it('should return an array with only one item if end of line was detected', function () {
+            expect(Utils.splitByEndOfLine('one')).deep.equals(['one']);
+        });
+
+        it('should return an array based on \\n', function () {
+            expect(Utils.splitByEndOfLine('one\ntwo')).deep.equals(['one', 'two']);
+        });
+
+        it('should return an array based on \\r\\n', function () {
+            expect(Utils.splitByEndOfLine('one\r\ntwo')).deep.equals(['one', 'two']);
+        });
+    });
 });

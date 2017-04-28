@@ -16,7 +16,10 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var os = require('os');
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 var Utils = require('./utils');
 
 // Constants
@@ -26,8 +29,40 @@ var REGEX = {
     'DOUBLE_QUOTE': /"/g
 };
 
+var ERRORS = Object.freeze({
+    'NoRemoteGitError': function (_Error) {
+        _inherits(NoRemoteGitError, _Error);
+
+        function NoRemoteGitError() {
+            _classCallCheck(this, NoRemoteGitError);
+
+            var _this = _possibleConstructorReturn(this, (NoRemoteGitError.__proto__ || Object.getPrototypeOf(NoRemoteGitError)).call(this, 'No remote Git seems to be declared'));
+
+            _this.name = 'NoRemoteGitError';
+            return _this;
+        }
+
+        return NoRemoteGitError;
+    }(Error),
+    'MultipeRemoteGitError': function (_Error2) {
+        _inherits(MultipeRemoteGitError, _Error2);
+
+        function MultipeRemoteGitError() {
+            _classCallCheck(this, MultipeRemoteGitError);
+
+            var _this2 = _possibleConstructorReturn(this, (MultipeRemoteGitError.__proto__ || Object.getPrototypeOf(MultipeRemoteGitError)).call(this, 'Multiple remote Git have been detected'));
+
+            _this2.name = 'MultipeRemoteGitError';
+            return _this2;
+        }
+
+        return MultipeRemoteGitError;
+    }(Error)
+});
+
 // Here the class
-module.exports = function () {
+
+var GitUtils = function () {
     function GitUtils() {
         _classCallCheck(this, GitUtils);
     }
@@ -148,13 +183,34 @@ module.exports = function () {
 
         /**
          * @param {string} [cwd]
-         * @returns {Promise.<string>}
+         * @returns {Promise.<string | NoRemoteGitError | MultipeRemoteGitError>}
          */
 
     }, {
         key: 'getRemoteName',
         value: function getRemoteName(cwd) {
-            return Utils.promisedExec('git origin', true, cwd);
+            return GitUtils.getRemoteNameList(cwd).then(function (remotes) {
+                if (remotes.length === 1) {
+                    return remotes[0];
+                } else if (remotes.length > 1) {
+                    return Promise.reject(new ERRORS.MultipeRemoteGitError());
+                }
+
+                return Promise.reject(new ERRORS.NoRemoteGitError());
+            });
+        }
+
+        /**
+         * @param {string} [cwd]
+         * @returns {Promise.<string[]>}
+         */
+
+    }, {
+        key: 'getRemoteNameList',
+        value: function getRemoteNameList(cwd) {
+            return Utils.promisedExec('git origin', true, cwd).then(function (ouputData) {
+                return Utils.splitByEndOfLine(ouputData);
+            });
         }
 
         /**
@@ -167,7 +223,7 @@ module.exports = function () {
         key: 'isBranchUpstream',
         value: function isBranchUpstream(branchName, cwd) {
             return Promise.all([Utils.promisedExec('git branch -rvv', true, cwd), GitUtils.getRemoteName(cwd)]).then(function (results) {
-                var remoteBrancheLines = results[0].split(os.EOL);
+                var remoteBrancheLines = Utils.splitByEndOfLine(results[0]);
                 var remoteName = results[1];
                 var remoteBranch = remoteName + '/' + branchName;
 
@@ -211,3 +267,13 @@ module.exports = function () {
 
     return GitUtils;
 }();
+
+;
+
+/**
+ * @name ERRORS
+ * @memberof GitUtils
+ */
+Object.defineProperty(GitUtils, 'ERRORS', { 'writable': false, 'value': ERRORS });
+
+module.exports = GitUtils;
