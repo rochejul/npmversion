@@ -278,5 +278,9 @@ describe(`Utils${importLib.getContext()} - `, function () {
         it('should return an array based on \\r\\n', function () {
             expect(Utils.splitByEndOfLine('one\r\ntwo')).deep.equals(['one', 'two']);
         });
+
+        it('should not return empty lines', function () {
+            expect(Utils.splitByEndOfLine('one\n\ntwo\n')).deep.equals(['one', 'two']);
+        });
     });
 });

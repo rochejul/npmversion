@@ -30,30 +30,44 @@ var REGEX = {
 };
 
 var ERRORS = Object.freeze({
-    'NoRemoteGitError': function (_Error) {
-        _inherits(NoRemoteGitError, _Error);
+    'NoBranchGitError': function (_Error) {
+        _inherits(NoBranchGitError, _Error);
+
+        function NoBranchGitError() {
+            _classCallCheck(this, NoBranchGitError);
+
+            var _this = _possibleConstructorReturn(this, (NoBranchGitError.__proto__ || Object.getPrototypeOf(NoBranchGitError)).call(this, 'No branch Git seems to be declared'));
+
+            _this.name = 'NoBranchGitError';
+            return _this;
+        }
+
+        return NoBranchGitError;
+    }(Error),
+    'NoRemoteGitError': function (_Error2) {
+        _inherits(NoRemoteGitError, _Error2);
 
         function NoRemoteGitError() {
             _classCallCheck(this, NoRemoteGitError);
 
-            var _this = _possibleConstructorReturn(this, (NoRemoteGitError.__proto__ || Object.getPrototypeOf(NoRemoteGitError)).call(this, 'No remote Git seems to be declared'));
+            var _this2 = _possibleConstructorReturn(this, (NoRemoteGitError.__proto__ || Object.getPrototypeOf(NoRemoteGitError)).call(this, 'No remote Git seems to be declared'));
 
-            _this.name = 'NoRemoteGitError';
-            return _this;
+            _this2.name = 'NoRemoteGitError';
+            return _this2;
         }
 
         return NoRemoteGitError;
     }(Error),
-    'MultipeRemoteGitError': function (_Error2) {
-        _inherits(MultipeRemoteGitError, _Error2);
+    'MultipeRemoteGitError': function (_Error3) {
+        _inherits(MultipeRemoteGitError, _Error3);
 
         function MultipeRemoteGitError() {
             _classCallCheck(this, MultipeRemoteGitError);
 
-            var _this2 = _possibleConstructorReturn(this, (MultipeRemoteGitError.__proto__ || Object.getPrototypeOf(MultipeRemoteGitError)).call(this, 'Multiple remote Git have been detected'));
+            var _this3 = _possibleConstructorReturn(this, (MultipeRemoteGitError.__proto__ || Object.getPrototypeOf(MultipeRemoteGitError)).call(this, 'Multiple remote Git have been detected'));
 
-            _this2.name = 'MultipeRemoteGitError';
-            return _this2;
+            _this3.name = 'MultipeRemoteGitError';
+            return _this3;
         }
 
         return MultipeRemoteGitError;
@@ -172,13 +186,15 @@ var GitUtils = function () {
 
         /**
          * @param {string} [cwd]
-         * @returns {Promise.<string>}
+         * @returns {Promise.<string | NoBranchGitError>}
          */
 
     }, {
         key: 'getBranchName',
         value: function getBranchName(cwd) {
-            return Utils.promisedExec('git rev-parse --abbrev-ref HEAD', true, cwd);
+            return Utils.promisedExec('git rev-parse --abbrev-ref HEAD', true, cwd).then(function (outputData) {
+                return outputData ? outputData : Promise.reject(new ERRORS.NoBranchGitError());
+            });
         }
 
         /**
@@ -214,6 +230,19 @@ var GitUtils = function () {
         }
 
         /**
+         * @param {string} [cwd]
+         * @returns {Promise.<boolean>}
+         */
+
+    }, {
+        key: 'isCurrentBranchUpstream',
+        value: function isCurrentBranchUpstream(cwd) {
+            return GitUtils.getBranchName(cwd).then(function (branchName) {
+                return GitUtils.isBranchUpstream(branchName, cwd);
+            });
+        }
+
+        /**
          * @param {string} branchName
          * @param {string} [cwd]
          * @returns {Promise.<boolean>}
@@ -228,7 +257,7 @@ var GitUtils = function () {
                 var remoteBranch = remoteName + '/' + branchName;
 
                 return remoteBrancheLines.find(function (remoteBranchLine) {
-                    return remoteBranchLine.contains(remoteBranch);
+                    return remoteBranchLine.indexOf(remoteBranch) >= 0;
                 });
             }).then(function (remoteBranchLine) {
                 return !!remoteBranchLine;

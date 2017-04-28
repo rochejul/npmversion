@@ -18,6 +18,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var fs = require('fs');
 var childProcess = require('child_process');
+var _ = require('lodash');
 
 var versionOptionsAnalyzer = require('./cli-params');
 var rcOptionsRetriever = require('./rc');
@@ -155,7 +156,7 @@ var Utils = function () {
     }, {
         key: 'splitByEndOfLine',
         value: function splitByEndOfLine(str) {
-            return str ? str.replace('\r', '').split('\n') : [];
+            return str ? _.compact(str.replace('\r', '').split('\n')) : [];
         }
 
         /**
