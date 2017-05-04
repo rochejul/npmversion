@@ -58,19 +58,19 @@ var ERRORS = Object.freeze({
 
         return NoRemoteGitError;
     }(Error),
-    'MultipeRemoteGitError': function (_Error3) {
-        _inherits(MultipeRemoteGitError, _Error3);
+    'MultipleRemoteError': function (_Error3) {
+        _inherits(MultipleRemoteError, _Error3);
 
-        function MultipeRemoteGitError() {
-            _classCallCheck(this, MultipeRemoteGitError);
+        function MultipleRemoteError() {
+            _classCallCheck(this, MultipleRemoteError);
 
-            var _this3 = _possibleConstructorReturn(this, (MultipeRemoteGitError.__proto__ || Object.getPrototypeOf(MultipeRemoteGitError)).call(this, 'Multiple remote Git have been detected'));
+            var _this3 = _possibleConstructorReturn(this, (MultipleRemoteError.__proto__ || Object.getPrototypeOf(MultipleRemoteError)).call(this, 'Multiple remote Git have been detected'));
 
-            _this3.name = 'MultipeRemoteGitError';
+            _this3.name = 'MultipleRemoteError';
             return _this3;
         }
 
-        return MultipeRemoteGitError;
+        return MultipleRemoteError;
     }(Error)
 });
 
@@ -199,7 +199,7 @@ var GitUtils = function () {
 
         /**
          * @param {string} [cwd]
-         * @returns {Promise.<string | NoRemoteGitError | MultipeRemoteGitError>}
+         * @returns {Promise.<string | NoRemoteGitError | MultipleRemoteError>}
          */
 
     }, {
@@ -209,7 +209,7 @@ var GitUtils = function () {
                 if (remotes.length === 1) {
                     return remotes[0];
                 } else if (remotes.length > 1) {
-                    return Promise.reject(new ERRORS.MultipeRemoteGitError());
+                    return Promise.reject(new ERRORS.MultipleRemoteError());
                 }
 
                 return Promise.reject(new ERRORS.NoRemoteGitError());
@@ -297,12 +297,12 @@ var GitUtils = function () {
     return GitUtils;
 }();
 
-;
-
 /**
  * @name ERRORS
  * @memberof GitUtils
  */
+
+
 Object.defineProperty(GitUtils, 'ERRORS', { 'writable': false, 'value': ERRORS });
 
 module.exports = GitUtils;

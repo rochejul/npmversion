@@ -164,6 +164,7 @@ describe(`Utils${importLib.getContext()} - `, function () {
             expect(Utils.paramsLoader([])).deep.equals({
                 '_': [],
                 'force-preid': false,
+                'git-remote-name': null,
                 'git-commit-message': 'Release version: %s',
                 'git-push': false,
                 'git-tag-message': 'v%s',
@@ -185,6 +186,7 @@ describe(`Utils${importLib.getContext()} - `, function () {
             expect(Utils.paramsLoader(['--force-preid'])).deep.equals({
                 '_': [],
                 'force-preid': true,
+                'git-remote-name': null,
                 'git-commit-message': 'Release version: %s',
                 'git-push': false,
                 'git-tag-message': 'v%s',
@@ -203,9 +205,10 @@ describe(`Utils${importLib.getContext()} - `, function () {
         });
 
         it('should load the rc file and override some options if some parameters are set with the cli parameters', function () {
-            expect(Utils.paramsLoader(['--force-preid', '--increment', 'minor', '--nogit-commit'])).deep.equals({
+            expect(Utils.paramsLoader(['--force-preid', '--increment', 'minor', '--nogit-commit', '--git-remote-name', 'origin'])).deep.equals({
                 '_': [],
                 'force-preid': true,
+                'git-remote-name': 'origin',
                 'git-commit-message': 'Release version: %s',
                 'git-push': false,
                 'git-tag-message': 'v%s',

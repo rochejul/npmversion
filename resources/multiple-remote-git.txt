@@ -1,0 +1,3 @@
+Multiple Git remote were found. Please specify one with the parameter "git-remote-name"
+
+You can specify it into the configuration file through "git-remote-name"

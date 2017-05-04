@@ -147,6 +147,7 @@ is called before create a git commit / tag and pushing.
     "git-commit-message": "Release version: %s",
     "git-tag-message": "v%s",
     "increment": "minor",
+    "defaultRemoteName": null,
     "jsonFiles": []
 }
 ````

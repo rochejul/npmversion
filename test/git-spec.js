@@ -205,7 +205,7 @@ describe(`GitUtils${importLib.getContext()} - `, function () {
                 });
         });
 
-        it('should raise the exception MultipeRemoteGitError if no remotes were detected', function () {
+        it('should raise the exception MultipleRemoteError if no remotes were detected', function () {
             sinonSandBox.stub(GitUtils, 'getRemoteNameList', () => Promise.resolve(['origin', 'anotherRemote']));
 
             return GitUtils
@@ -214,7 +214,7 @@ describe(`GitUtils${importLib.getContext()} - `, function () {
                 .catch(function (err) {
                     expect(err).to.exist;
                     expect(err instanceof Error).to.be.true;
-                    expect(err.name).to.equals('MultipeRemoteGitError');
+                    expect(err.name).to.equals('MultipleRemoteError');
                 });
         });
 
