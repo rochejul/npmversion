@@ -584,6 +584,60 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
                         });
                 });
 
+                it('wrap with a pre and post npm-scripts command but no execute it, because npmversion is on run scripts too', function () {
+                    sinonSandBox.stub(VersionUtils, 'getCurrentPackageJson', () => {
+                        return {
+                            'version': '1.2.0',
+                            'scripts': {
+                                'prenpmversion': 'echo "Hello"',
+                                'npmversion': 'node ./node_modules/npmversion/bin/npmversion',
+                                'postnpmversion': 'echo "Wordl"'
+                            }
+                        };
+                    });
+
+                    return VersionUtils
+                        .doIt({ 'increment': 'fake', 'git-push': true })
+                        .then(function () {
+                            expect(calls).deep.equals([
+                                [
+                                    "promisedExec",
+                                    "git --help",
+                                    true
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git status --porcelain",
+                                    true,
+                                    undefined
+                                ],
+                                [
+                                    "updatePackageVersion",
+                                    "1.2.1",
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git commit --all --message \"Release version: 1.2.1\"",
+                                    false,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git tag \"v1.2.1\"",
+                                    false,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git push && git push --tags",
+                                    false,
+                                    undefined
+                                ]
+                            ]);
+                        });
+                });
+
                 it('use the specified cwd', function () {
                     sinonSandBox.stub(VersionUtils, 'getCurrentPackageJson', () => {
                         return {
@@ -1140,6 +1194,33 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
                     expect(VersionUtils.incrementPackageVersion('1.2.3-beta.0', 'premajor', 'beta', true)).equals('2.0.0-beta.0');
                 });
             });
+        });
+    });
+
+    describe('and the method "isNpmversionRunScriptDetectedInPackageJson" ', function () {
+        it('should exist', function () {
+            expect(VersionUtils.isNpmversionRunScriptDetectedInPackageJson).to.exist;
+        });
+
+        it('should return false if no content into the package.json', function () {
+            expect(VersionUtils.isNpmversionRunScriptDetectedInPackageJson()).to.be.false;
+            expect(VersionUtils.isNpmversionRunScriptDetectedInPackageJson(null)).to.be.false;
+        });
+
+        it('should return false there is no "scripts" property', function () {
+            expect(VersionUtils.isNpmversionRunScriptDetectedInPackageJson({ })).to.be.false;
+        });
+
+        it('should return false there is no "npmversion" property into the scripts part', function () {
+            expect(VersionUtils.isNpmversionRunScriptDetectedInPackageJson({ 'scripts': { } })).to.be.false;
+        });
+
+        it('should return false if "npmversion" is empty', function () {
+            expect(VersionUtils.isNpmversionRunScriptDetectedInPackageJson({ 'scripts': { 'npmversion': '' } })).to.be.false;
+        });
+
+        it('should return true otherwise', function () {
+            expect(VersionUtils.isNpmversionRunScriptDetectedInPackageJson({ 'scripts': { 'npmversion': 'echo "test"' } })).to.be.true;
         });
     });
 
