@@ -265,7 +265,8 @@ var VersionUtils = function () {
     }, {
         key: 'doPostnpmVersionRunScriptIfNeeded',
         value: function doPostnpmVersionRunScriptIfNeeded(packageJson, cwd) {
-            if (VersionUtils.isPostnpmversionRunScriptDetectedInPackageJson(packageJson)) {
+            if (VersionUtils.isPostnpmversionRunScriptDetectedInPackageJson(packageJson) && VersionUtils.isNpmversionRunScriptDetectedInPackageJson(packageJson)) {
+                // if "npmversion" is into the run scripts, npm will automatically dears with the pre / post (if the command is run with "nom run npmversion")
                 return VersionUtils.runScriptPostnpmversion(cwd);
             }
 
@@ -281,7 +282,8 @@ var VersionUtils = function () {
     }, {
         key: 'doPrenpmVersionRunScriptIfNeeded',
         value: function doPrenpmVersionRunScriptIfNeeded(packageJson, cwd) {
-            if (VersionUtils.isPrenpmversionRunScriptDetectedInPackageJson(packageJson)) {
+            if (VersionUtils.isPrenpmversionRunScriptDetectedInPackageJson(packageJson) && VersionUtils.isNpmversionRunScriptDetectedInPackageJson(packageJson)) {
+                // if "npmversion" is into the run scripts, npm will automatically dears with the pre / post (if the command is run with "nom run npmversion")
                 return VersionUtils.runScriptPrenpmversion(cwd);
             }
 
@@ -559,6 +561,18 @@ var VersionUtils = function () {
             }
 
             return semver.inc(packageVersion, level, preid);
+        }
+
+        /**
+         * Check if we have a "npmversion" as run-script into the package.json file
+         * @param {Object} packageJson
+         * @returns {Boolean}
+         */
+
+    }, {
+        key: 'isNpmversionRunScriptDetectedInPackageJson',
+        value: function isNpmversionRunScriptDetectedInPackageJson(packageJson) {
+            return !!(packageJson && packageJson.scripts && packageJson.scripts.npmversion);
         }
 
         /**
