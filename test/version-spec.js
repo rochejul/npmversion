@@ -32,6 +32,9 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
 
     beforeEach(function () {
         sinonSandBox = sinon.sandbox.create();
+
+        sinonSandBox.stub(GitUtils, 'getBranchName', () => Promise.resolve('release/fakeBranch'));
+        sinonSandBox.stub(GitUtils, 'getRemoteName', () => Promise.resolve('origin'));
     });
 
     afterEach(function () {
@@ -334,6 +337,40 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
                     });
             });
 
+            it('and log a message if we have no remote', function () {
+                sinonSandBox.stub(VersionUtils, 'doPushGitIfNeeded', () => Promise.reject(new GitUtils.ERRORS.NoRemoteGitError()));
+                sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+                sinonSandBox.stub(process, 'exit', () => {});
+                let printErrorSpy = sinonSandBox.stub(VersionUtils, 'printNoRemoteGitError', noop);
+
+                return VersionUtils
+                    .doIt({ 'increment': 'fake' })
+                    .then(function () {
+                        chai.fail('The then method should not be called');
+                    })
+                    .catch(function(err) {
+                        expect(printErrorSpy.called).to.be.true;
+                        expect(printErrorSpy.calledOnce).to.be.true;
+                    });
+            });
+
+            it('and log a message if we have multiple remotes', function () {
+                sinonSandBox.stub(VersionUtils, 'doPushGitIfNeeded', () => Promise.reject(new GitUtils.ERRORS.MultipleRemoteError()));
+                sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+                sinonSandBox.stub(process, 'exit', () => {});
+                let printErrorSpy = sinonSandBox.stub(VersionUtils, 'printMultipleRemoteError', noop);
+
+                return VersionUtils
+                    .doIt({ 'increment': 'fake' })
+                    .then(function () {
+                        chai.fail('The then method should not be called');
+                    })
+                    .catch(function(err) {
+                        expect(printErrorSpy.called).to.be.true;
+                        expect(printErrorSpy.calledOnce).to.be.true;
+                    });
+            });
+
             it('and log an error if needed', function () {
                 sinonSandBox.stub(VersionUtils, 'updatePackageVersion', () => Promise.reject('an error'));
                 sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
@@ -413,7 +450,126 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
                         });
                 });
 
-                it('push the commit and the tag', function () {
+                it('push the local branch, commit and the tag', function () {
+                    sinonSandBox.stub(VersionUtils, 'getCurrentPackageJson', () => {
+                        return { 'version': '1.2.0' };
+                    });
+
+                    return VersionUtils
+                        .doIt({ 'increment': 'fake', 'git-push': true })
+                        .then(function () {
+                            expect(calls).deep.equals([
+                                [
+                                    "promisedExec",
+                                    "git --help",
+                                    true
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git status --porcelain",
+                                    true,
+                                    undefined
+                                ],
+                                [
+                                    "updatePackageVersion",
+                                    "1.2.1",
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git commit --all --message \"Release version: 1.2.1\"",
+                                    false,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git tag \"v1.2.1\"",
+                                    false,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git branch -rvv",
+                                    true,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git push --set-upstream origin release/fakeBranch",
+                                    false,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git push && git push --tags",
+                                    false,
+                                    undefined
+                                ]
+                            ]);
+                        });
+                });
+
+                it('push the local branch on the specified origin, commit and the tag', function () {
+                    sinonSandBox.stub(VersionUtils, 'getCurrentPackageJson', () => {
+                        return { 'version': '1.2.0' };
+                    });
+
+                    return VersionUtils
+                        .doIt({ 'increment': 'fake', 'git-push': true, 'git-remote-name': 'anotherOrigin' })
+                        .then(function () {
+                            expect(calls).deep.equals([
+                                [
+                                    "promisedExec",
+                                    "git --help",
+                                    true
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git status --porcelain",
+                                    true,
+                                    undefined
+                                ],
+                                [
+                                    "updatePackageVersion",
+                                    "1.2.1",
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git commit --all --message \"Release version: 1.2.1\"",
+                                    false,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git tag \"v1.2.1\"",
+                                    false,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git branch -rvv",
+                                    true,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git push --set-upstream anotherOrigin release/fakeBranch",
+                                    false,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git push && git push --tags",
+                                    false,
+                                    undefined
+                                ]
+                            ]);
+                        });
+                });
+
+                it('push commit and the tag (because the local branch is associated to a remote branch', function () {
+                    sinonSandBox.stub(GitUtils, 'isBranchUpstream', () => Promise.resolve(true));
                     sinonSandBox.stub(VersionUtils, 'getCurrentPackageJson', () => {
                         return { 'version': '1.2.0' };
                     });
@@ -488,6 +644,18 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
                                 [
                                     "promisedExec",
                                     "git commit --all --message \"Release version: 1.2.1\"",
+                                    false,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git branch -rvv",
+                                    true,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git push --set-upstream origin release/fakeBranch",
                                     false,
                                     undefined
                                 ],
@@ -571,6 +739,18 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
                                 [
                                     "promisedExec",
                                     "git tag \"v1.2.1\"",
+                                    false,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git branch -rvv",
+                                    true,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git push --set-upstream origin release/fakeBranch",
                                     false,
                                     undefined
                                 ],
@@ -697,6 +877,18 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
                                 ],
                                 [
                                     "promisedExec",
+                                    "git branch -rvv",
+                                    true,
+                                    '/etc'
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git push --set-upstream origin release/fakeBranch",
+                                    false,
+                                    '/etc'
+                                ],
+                                [
+                                    "promisedExec",
                                     "git push && git push --tags",
                                     false,
                                     '/etc'
@@ -775,6 +967,18 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
                         [
                             "promisedExec",
                             "git commit --all --message \"Release version: 1.2.1-beta\"",
+                            false,
+                            undefined
+                        ],
+                        [
+                            "promisedExec",
+                            "git branch -rvv",
+                            true,
+                            undefined
+                        ],
+                        [
+                            "promisedExec",
+                            "git push --set-upstream origin release/fakeBranch",
                             false,
                             undefined
                         ],

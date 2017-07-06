@@ -18,6 +18,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var fs = require('fs');
 var childProcess = require('child_process');
+var _ = require('lodash');
 
 var versionOptionsAnalyzer = require('./cli-params');
 var rcOptionsRetriever = require('./rc');
@@ -64,18 +65,18 @@ var Utils = function () {
          * @param {string} command
          * @param {boolean} [silent=false]
          * @param {string} [cwd]
-         * @returns {Promise}
+         * @returns {Promise.<string>}
          */
 
     }, {
         key: 'promisedExec',
         value: function promisedExec(command, silent, cwd) {
             return new Promise(function (resolve, reject) {
-                var instance = childProcess.exec(command, { 'cwd': cwd ? cwd : process.cwd() }, function (error) {
+                var instance = childProcess.exec(command, { 'cwd': cwd ? cwd : process.cwd() }, function (error, stdout) {
                     if (error) {
                         reject(error);
                     } else {
-                        resolve();
+                        resolve(stdout);
                     }
                 });
 
@@ -145,6 +146,17 @@ var Utils = function () {
         key: 'replaceJsonVersionProperty',
         value: function replaceJsonVersionProperty(content, value) {
             return Utils.replaceJsonProperty(content, 'version', value);
+        }
+
+        /**
+         * @param {string} str
+         * @returns {string[]}
+         */
+
+    }, {
+        key: 'splitByEndOfLine',
+        value: function splitByEndOfLine(str) {
+            return str ? _.compact(str.replace('\r', '').split('\n')) : [];
         }
 
         /**

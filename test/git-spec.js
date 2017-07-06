@@ -138,6 +138,286 @@ describe(`GitUtils${importLib.getContext()} - `, function () {
         });
     });
 
+    describe('and the method "getBranchName" ', function () {
+        it('should exist', function () {
+            expect(GitUtils.getBranchName).to.exist;
+        });
+
+        it('should return the branch name', function () {
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve('releases/1.0.0'));
+
+            return GitUtils
+                .getBranchName()
+                .then(function (remoteName) {
+                    expect(remoteName).equals('releases/1.0.0');
+                });
+        });
+
+        it('should raise the exception NoBranchGitError if no branch was detected', function () {
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve(''));
+
+            return GitUtils
+                .getBranchName()
+                .then(() => Promise.reject('Should not be resolved'))
+                .catch(function (err) {
+                    expect(err).to.exist;
+                    expect(err instanceof Error).to.be.true;
+                    expect(err.name).to.equals('NoBranchGitError');
+                });
+        });
+
+        it('should use the specified cwd', function () {
+            let getBranchNameStub = sinonSandBox.stub(GitUtils, 'getBranchName', () => Promise.resolve('releases/1.0.0'));
+
+            return GitUtils
+                .getBranchName('/etc')
+                .then(function () {
+                    expect(getBranchNameStub.calledWithExactly('/etc')).to.be.true;
+                });
+        });
+    });
+
+    describe('and the method "getRemoteName" ', function () {
+        it('should exist', function () {
+            expect(GitUtils.getRemoteName).to.exist;
+        });
+
+        it('should return the origin name', function () {
+            sinonSandBox.stub(GitUtils, 'getRemoteNameList', () => Promise.resolve(['origin']));
+
+            return GitUtils
+                .getRemoteName()
+                .then(function (remoteName) {
+                    expect(remoteName).equals('origin');
+                });
+        });
+
+        it('should raise the exception NoRemoteGitError if no remotes were detected', function () {
+            sinonSandBox.stub(GitUtils, 'getRemoteNameList', () => Promise.resolve([]));
+
+            return GitUtils
+                .getRemoteName()
+                .then(() => Promise.reject('Should not be resolved'))
+                .catch(function (err) {
+                    expect(err).to.exist;
+                    expect(err instanceof Error).to.be.true;
+                    expect(err.name).to.equals('NoRemoteGitError');
+                });
+        });
+
+        it('should raise the exception MultipleRemoteError if no remotes were detected', function () {
+            sinonSandBox.stub(GitUtils, 'getRemoteNameList', () => Promise.resolve(['origin', 'anotherRemote']));
+
+            return GitUtils
+                .getRemoteName()
+                .then(() => Promise.reject('Should not be resolved'))
+                .catch(function (err) {
+                    expect(err).to.exist;
+                    expect(err instanceof Error).to.be.true;
+                    expect(err.name).to.equals('MultipleRemoteError');
+                });
+        });
+
+        it('should use the specified cwd', function () {
+            let getRemoteNameListStub = sinonSandBox.stub(GitUtils, 'getRemoteNameList', () => Promise.resolve(['origin']));
+
+            return GitUtils
+                .getRemoteName('/etc')
+                .then(function () {
+                    expect(getRemoteNameListStub.calledWithExactly('/etc')).to.be.true;
+                });
+        });
+    });
+
+    describe('and the method "getRemoteNameList" ', function () {
+        it('should exist', function () {
+            expect(GitUtils.getRemoteNameList).to.exist;
+        });
+
+        it('should return the remote names (1)', function () {
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve(''));
+
+            return GitUtils
+                .getRemoteNameList()
+                .then(function (remoteNames) {
+                    expect(remoteNames).deep.equals([]);
+                });
+        });
+
+        it('should return the remote names (2)', function () {
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve('origin'));
+
+            return GitUtils
+                .getRemoteNameList()
+                .then(function (remoteNames) {
+                    expect(remoteNames).deep.equals(['origin']);
+                });
+        });
+
+        it('should return the remote names (3)', function () {
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve(`origin
+anotherRemote`));
+
+            return GitUtils
+                .getRemoteNameList()
+                .then(function (remoteNames) {
+                    expect(remoteNames).deep.equals(['origin', 'anotherRemote']);
+                });
+        });
+
+        it('should use the specified cwd', function () {
+            let getRemoteNameListStub = sinonSandBox.stub(GitUtils, 'getRemoteNameList', () => Promise.resolve('origin'));
+
+            return GitUtils
+                .getRemoteNameList('/etc')
+                .then(function () {
+                    expect(getRemoteNameListStub.calledWithExactly('/etc')).to.be.true;
+                });
+        });
+    });
+
+    describe('and the method "isCurrentBranchUpstream" ', function () {
+        it('should exist', function () {
+            expect(GitUtils.isCurrentBranchUpstream).to.exist;
+        });
+
+        it('should raise the exception NoBranchGitError if no branch was detected', function () {
+            sinonSandBox.stub(GitUtils, 'getBranchName', () => Promise.reject(new GitUtils.ERRORS.NoBranchGitError()));
+
+            return GitUtils
+                .isCurrentBranchUpstream()
+                .then(() => Promise.reject('Should not be resolved'))
+                .catch(function (err) {
+                    expect(err).to.exist;
+                    expect(err instanceof Error).to.be.true;
+                    expect(err.name).to.equals('NoBranchGitError');
+                });
+        });
+
+        it('should return false if the current branch is not linked to a remote branch', function () {
+            sinonSandBox.stub(GitUtils, 'getBranchName', () => Promise.resolve('releases/1.0.0'));
+            sinonSandBox.stub(GitUtils, 'getRemoteName', () => Promise.resolve('origin'));
+            sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve(`origin/HEAD          -> origin/master
+  origin/master        ec904e9 Last commiy
+  origin/releases/0.9.0 f35d72b use of babel-preset-env instead
+`));
+
+            return GitUtils
+                .isCurrentBranchUpstream()
+                .then(isUpstream => {
+                    expect(isUpstream).to.be.false;
+                });
+        });
+
+        it('should return true if the current branch is linked to a remote branch', function () {
+            sinonSandBox.stub(GitUtils, 'getBranchName', () => Promise.resolve('releases/1.0.0'));
+            sinonSandBox.stub(GitUtils, 'getRemoteName', () => Promise.resolve('origin'));
+            sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve(`origin/HEAD          -> origin/master
+  origin/master        ec904e9 Last commiy
+  origin/releases/1.0.0 f35d72b use of babel-preset-env instead
+`));
+
+            return GitUtils
+                .isCurrentBranchUpstream()
+                .then(isUpstream => {
+                    expect(isUpstream).to.be.true;
+                });
+        });
+
+        it('should use the specified cwd', function () {
+            let getBranchName =  sinonSandBox.stub(GitUtils, 'getBranchName', () => Promise.resolve('releases/1.0.0'));
+            let getRemoteName = sinonSandBox.stub(GitUtils, 'getRemoteName', () => Promise.resolve('origin'));
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+
+            return GitUtils
+                .isCurrentBranchUpstream('/etc')
+                .then(function () {
+                    expect(promiseExecStub.calledWithExactly('git branch -rvv', true, '/etc')).to.be.true;
+                    expect(getBranchName.calledWithExactly('/etc')).to.be.true;
+                    expect(getRemoteName.calledWithExactly('/etc')).to.be.true;
+                });
+        });
+    });
+
+    describe('and the method "isBranchUpstream" ', function () {
+        it('should exist', function () {
+            expect(GitUtils.isBranchUpstream).to.exist;
+        });
+
+        it('should return false if an error occured (1)', function () {
+            sinonSandBox.stub(Utils, 'promisedExec', () => Promise.reject());
+            sinonSandBox.stub(GitUtils, 'getRemoteName', () => Promise.resolve('origin'));
+
+            return GitUtils
+                .isBranchUpstream('releases/1.0.0')
+                .then(function (isBranchUpstream) {
+                    expect(isBranchUpstream).to.be.false;
+                });
+        });
+
+        it('should return false if an error occured (2)', function () {
+            sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve(''));
+            sinonSandBox.stub(GitUtils, 'getRemoteName', () => Promise.reject());
+
+            return GitUtils
+                .isBranchUpstream('releases/1.0.0')
+                .then(function (isBranchUpstream) {
+                    expect(isBranchUpstream).to.be.false;
+                });
+        });
+
+        it('should return false if no remote branches', function () {
+            sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve(''));
+            sinonSandBox.stub(GitUtils, 'getRemoteName', () => Promise.resolve('origin'));
+
+            return GitUtils
+                .isBranchUpstream('releases/1.0.0')
+                .then(function (isBranchUpstream) {
+                    expect(isBranchUpstream).to.be.false;
+                });
+        });
+
+        it('should return false if the local branch has no associated remote branch', function () {
+            sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve(`origin/HEAD          -> origin/master
+  origin/master        ec904e9 Last commiy
+  origin/releases/0.9.0 f35d72b use of babel-preset-env instead
+`));
+            sinonSandBox.stub(GitUtils, 'getRemoteName', () => Promise.resolve('origin'));
+
+            return GitUtils
+                .isBranchUpstream('releases/1.0.0')
+                .then(function (isBranchUpstream) {
+                    expect(isBranchUpstream).to.be.false;
+                });
+        });
+
+        it('should return true otherwise', function () {
+            sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve(`origin/HEAD          -> origin/master
+  origin/master        ec904e9 Last commiy
+  origin/releases/1.0.0 f35d72b use of babel-preset-env instead
+`));
+            sinonSandBox.stub(GitUtils, 'getRemoteName', () => Promise.resolve('origin'));
+
+            return GitUtils
+                .isBranchUpstream('releases/1.0.0')
+                .then(function (isBranchUpstream) {
+                    expect(isBranchUpstream).to.be.true;
+                });
+        });
+
+        it('should use the specified cwd', function () {
+            let getRemoteName = sinonSandBox.stub(GitUtils, 'getRemoteName', () => Promise.resolve('origin'));
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+
+            return GitUtils
+                .isBranchUpstream('releases/1.0.0', '/etc')
+                .then(function () {
+                    expect(promiseExecStub.calledWithExactly('git branch -rvv', true, '/etc')).to.be.true;
+                    expect(getRemoteName.calledWithExactly('/etc')).to.be.true;
+                });
+        });
+    });
+
     describe('and the method "push" ', function () {
         it('should exist', function () {
             expect(GitUtils.push).to.exist;
@@ -280,6 +560,33 @@ describe(`GitUtils${importLib.getContext()} - `, function () {
                 .createTag('1.2.3', 'v%s', '/etc')
                 .then(() => {
                     expect(promiseExecStub.calledWithExactly('git tag "v1.2.3"', false, '/etc')).to.be.true;
+                });
+        });
+    });
+
+
+    describe('and the method "upstreamBranch" ', function () {
+        it('should exist', function () {
+            expect(GitUtils.upstreamBranch).to.exist;
+        });
+
+        it('should push the branch to remote', function () {
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+
+            return GitUtils
+                .upstreamBranch('origin', 'releases/1.0.0')
+                .then(function () {
+                    expect(promiseExecStub.calledWithExactly('git push --set-upstream origin releases/1.0.0', false, undefined)).to.be.true;
+                });
+        });
+
+        it('should use the specified cwd', function () {
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+
+            return GitUtils
+                .upstreamBranch('origin', 'releases/1.0.0', '/etc')
+                .then(function () {
+                    expect(promiseExecStub.calledWithExactly('git push --set-upstream origin releases/1.0.0', false, '/etc')).to.be.true;
                 });
         });
     });

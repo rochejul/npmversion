@@ -25,6 +25,7 @@ var RC_OPTIONS = {
     'git-push': false,
     'git-commit-message': messages.GIT_COMMIT_MESSAGE,
     'git-tag-message': messages.GIT_TAG_MESSAGE,
+    'git-remote-name': null,
     'increment': 'patch',
     'jsonFiles': []
 };

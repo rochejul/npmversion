@@ -93,6 +93,7 @@ var ERRORS = Object.freeze({
  * @property {boolean} [git-push=false]
  * @property {string} [increment=LEVEL_ENUM.patch]
  * @property {string} [preid]
+ * @property {string} [git-remote-name]
  * @property {string} [git-commit-message]
  * @property {string} [git-tag-message]
  * @property {string[]} [jsonFiles] Relative paths from the package.json to update files with a "version" property
@@ -111,7 +112,7 @@ var VersionUtils = function () {
         /**
          * @param {VersionOptions} options
          * @param {string} [cwd]
-         * @returns {Promise}
+         * @returns {Promise.<void | GitNotInstalledError | NotAGitProjectError>}
          */
         value: function checkForGitIfNeeded(options, cwd) {
             if (VersionUtils.hasUseGit(options)) {
@@ -236,6 +237,10 @@ var VersionUtils = function () {
                                         VersionUtils.printGitNotInstalledError();
                                     } else if (err.name === 'NotAGitProjectError') {
                                         VersionUtils.printNotAGitProjectError();
+                                    } else if (err.name === 'NoRemoteGitError') {
+                                        VersionUtils.printNoRemoteGitError();
+                                    } else if (err.name === 'MultipleRemoteError') {
+                                        VersionUtils.printMultipleRemoteError();
                                     } else {
                                         VersionUtils.printError(err);
                                     }
@@ -300,7 +305,35 @@ var VersionUtils = function () {
         key: 'doPushGitIfNeeded',
         value: function doPushGitIfNeeded(options, cwd) {
             if (VersionUtils.hashPushCommitsGit(options)) {
-                return GitUtils.push(VersionUtils.hashCreateTagGit(options), cwd);
+                var _ret2 = function () {
+                    var hasRemoteNameGit = VersionUtils.hasRemoteNameGit(options);
+                    var isUpstramPromise = void 0;
+
+                    if (hasRemoteNameGit) {
+                        isUpstramPromise = GitUtils.isBranchUpstream(options['git-remote-name'], cwd);
+                    } else {
+                        isUpstramPromise = GitUtils.isCurrentBranchUpstream(cwd);
+                    }
+
+                    return {
+                        v: isUpstramPromise.then(function (isUpstream) {
+                            if (!isUpstream) {
+                                return Promise.all([hasRemoteNameGit ? options['git-remote-name'] : GitUtils.getRemoteName(cwd), GitUtils.getBranchName(cwd)]).then(function (results) {
+                                    var remoteName = results[0];
+                                    var branchName = results[1];
+
+                                    return GitUtils.upstreamBranch(remoteName, branchName, cwd);
+                                });
+                            }
+
+                            return Promise.resolve();
+                        }).then(function () {
+                            return GitUtils.push(VersionUtils.hashCreateTagGit(options), cwd);
+                        })
+                    };
+                }();
+
+                if (typeof _ret2 === "object") return _ret2.v;
             }
 
             return Promise.resolve();
@@ -379,6 +412,17 @@ var VersionUtils = function () {
         key: 'hashPushCommitsGit',
         value: function hashPushCommitsGit(options) {
             return !!(options && options['git-push']);
+        }
+
+        /**
+         * @param {VersionOptions} [options]
+         * @returns {boolean}
+         */
+
+    }, {
+        key: 'hasRemoteNameGit',
+        value: function hasRemoteNameGit(options) {
+            return !!(options && options['git-remote-name']);
         }
 
         /**
@@ -650,6 +694,18 @@ var VersionUtils = function () {
         key: 'printNotFoundPackageJsonFile',
         value: function printNotFoundPackageJsonFile() {
             console.error(messages.NOT_FOUND_PACKAGE_JSON_FILE);
+            process.exit(1);
+        }
+    }, {
+        key: 'printNoRemoteGitError',
+        value: function printNoRemoteGitError() {
+            console.error(messages.NO_REMOTE_GIT);
+            process.exit(1);
+        }
+    }, {
+        key: 'printMultipleRemoteError',
+        value: function printMultipleRemoteError() {
+            console.error(messages.MULTIPLE_REMOTE_GIT);
             process.exit(1);
         }
 

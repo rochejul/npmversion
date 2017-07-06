@@ -24,6 +24,7 @@ describe(`RC retriever${importLib.getContext()} - `, function () {
             'force-preid': false,
             'nogit-commit': false,
             'nogit-tag': true,
+            'git-remote-name': null,
             'git-commit-message': 'Release version: %s',
             'git-push': false,
             'git-tag-message': 'v%s',

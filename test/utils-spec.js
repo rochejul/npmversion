@@ -62,6 +62,14 @@ describe(`Utils${importLib.getContext()} - `, function () {
             return Utils.promisedExec('ls -la', true);
         });
 
+        it('should return the command output', function () {
+            sinonSandBox.stub(childProcess, 'exec', (command, options, callback) => callback(null, 'return of the command'));
+            return Utils.promisedExec('ls -la', true)
+                .then(commandOutput => {
+                    expect(commandOutput).equals('return of the command');
+                });
+        });
+
         it('should reject the promise when the execution is rejected', function () {
             sinonSandBox.stub(childProcess, 'exec', (command, options, callback) => callback(500));
             return Utils
@@ -156,6 +164,7 @@ describe(`Utils${importLib.getContext()} - `, function () {
             expect(Utils.paramsLoader([])).deep.equals({
                 '_': [],
                 'force-preid': false,
+                'git-remote-name': null,
                 'git-commit-message': 'Release version: %s',
                 'git-push': false,
                 'git-tag-message': 'v%s',
@@ -177,6 +186,7 @@ describe(`Utils${importLib.getContext()} - `, function () {
             expect(Utils.paramsLoader(['--force-preid'])).deep.equals({
                 '_': [],
                 'force-preid': true,
+                'git-remote-name': null,
                 'git-commit-message': 'Release version: %s',
                 'git-push': false,
                 'git-tag-message': 'v%s',
@@ -195,9 +205,10 @@ describe(`Utils${importLib.getContext()} - `, function () {
         });
 
         it('should load the rc file and override some options if some parameters are set with the cli parameters', function () {
-            expect(Utils.paramsLoader(['--force-preid', '--increment', 'minor', '--nogit-commit'])).deep.equals({
+            expect(Utils.paramsLoader(['--force-preid', '--increment', 'minor', '--nogit-commit', '--git-remote-name', 'origin'])).deep.equals({
                 '_': [],
                 'force-preid': true,
+                'git-remote-name': 'origin',
                 'git-commit-message': 'Release version: %s',
                 'git-push': false,
                 'git-tag-message': 'v%s',
@@ -242,6 +253,37 @@ describe(`Utils${importLib.getContext()} - `, function () {
                 .then(function (content) {
                     expect(content.startsWith('Some content')).to.be.true;
                 })
+        });
+    });
+
+    describe('and the method "splitByEndOfLine" ', function () {
+        it('should exist', function () {
+            expect(Utils.splitByEndOfLine).to.exist;
+        });
+
+        it('should return an empty array if no string is specified', function () {
+            expect(Utils.splitByEndOfLine()).deep.equals([]);
+            expect(Utils.splitByEndOfLine(null)).deep.equals([]);
+        });
+
+        it('should return an empty array if string is empty', function () {
+            expect(Utils.splitByEndOfLine('')).deep.equals([]);
+        });
+
+        it('should return an array with only one item if end of line was detected', function () {
+            expect(Utils.splitByEndOfLine('one')).deep.equals(['one']);
+        });
+
+        it('should return an array based on \\n', function () {
+            expect(Utils.splitByEndOfLine('one\ntwo')).deep.equals(['one', 'two']);
+        });
+
+        it('should return an array based on \\r\\n', function () {
+            expect(Utils.splitByEndOfLine('one\r\ntwo')).deep.equals(['one', 'two']);
+        });
+
+        it('should not return empty lines', function () {
+            expect(Utils.splitByEndOfLine('one\n\ntwo\n')).deep.equals(['one', 'two']);
         });
     });
 });

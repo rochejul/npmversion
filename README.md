@@ -136,6 +136,49 @@ is called before create a git commit / tag and pushing.
 }
 ````
 
+Be aware that this pre / post are executed before and after the version bumping, and in all cases before pushing the git commit and tag.
+Internally, the workflow would be:
+
+````bash
+> git --help
+> git status --porcelain
+> npm run prenpmversion
+> updatePackageVersion
+> npm run postnpmversion
+> git commit --all --message \"Release version: 1.2.1\"
+> git tag \"v1.2.1\"
+> ...
+````
+
+So if you run npmversion not with CLI tool, but as run-script, you must be carefull.
+If you name it "npmversion", you commands will be executed twice: one before / after the version bumping and one before / after the whole process. I suggest to call with anoter name like "bumping" or "versioning"
+
+````json
+{
+  "name": "my-app",
+  "version": "0.0.1",
+  "scripts": {
+      "test": "node ./node_modules/mocha/bin/mocha --recursive --ui bdd --colors ./test",
+      
+      "bump-release": "test && bumping --unpreid --git-push",
+  
+      "bump-major": "test && bumping --increment major --git-push",
+      "bump-minor": "test && bumping --increment minor --git-push",
+      "bump-patch": "test && bumping --increment major --git-push",
+      
+      "bump-major-beta": "bumping --increment major --preid beta --nogit-tag --git-push",
+      "bump-minor-beta": "bumping --increment minor --preid beta --nogit-tag --git-push",
+      "bump-patch-beta": "bumping --increment major --preid beta --nogit-tag --git-push",
+      
+      "prenpmversion": "echo \"Pre npmversion\"",
+      "postnpmversion": "echo \"Post npmversion\"",
+      
+      "bumping": "node ./node_modules/npmversion/bin/npmversion"
+  }
+}
+````
+
+
 ## Possible .npmversionrc configuration
 
 ````json
@@ -147,6 +190,7 @@ is called before create a git commit / tag and pushing.
     "git-commit-message": "Release version: %s",
     "git-tag-message": "v%s",
     "increment": "minor",
+    "defaultRemoteName": null,
     "jsonFiles": []
 }
 ````
