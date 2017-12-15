@@ -94,11 +94,11 @@ Type the command "npm install --save-dev --save-exact npmversion
   "scripts": {
       "test": "node ./node_modules/mocha/bin/mocha --recursive --ui bdd --colors ./test",
       
-      "bump-release": "test && npmversion --unpreid --git-push",
+      "bump-release": "npm run test && npmversion --unpreid --git-push",
   
-      "bump-major": "test && npmversion --increment major --git-push",
-      "bump-minor": "test && npmversion --increment minor --git-push",
-      "bump-patch": "test && npmversion --increment patch --git-push",
+      "bump-major": "npm run test && npmversion --increment major --git-push",
+      "bump-minor": "npm run test && npmversion --increment minor --git-push",
+      "bump-patch": "npm run test && npmversion --increment patch --git-push",
       
       "bump-major-beta": "npmversion --increment major --preid beta --nogit-tag --git-push",
       "bump-minor-beta": "npmversion --increment minor --preid beta --nogit-tag --git-push",
@@ -120,11 +120,11 @@ is called before create a git commit / tag and pushing.
   "scripts": {
       "test": "node ./node_modules/mocha/bin/mocha --recursive --ui bdd --colors ./test",
       
-      "bump-release": "test && npmversion --unpreid --git-push",
+      "bump-release": "npm run test && npmversion --unpreid --git-push",
   
-      "bump-major": "test && npmversion --increment major --git-push",
-      "bump-minor": "test && npmversion --increment minor --git-push",
-      "bump-patch": "test && npmversion --increment major --git-push",
+      "bump-major": "npm run test && npmversion --increment major --git-push",
+      "bump-minor": "npm run test && npmversion --increment minor --git-push",
+      "bump-patch": "npm run test && npmversion --increment major --git-push",
       
       "bump-major-beta": "npmversion --increment major --preid beta --nogit-tag --git-push",
       "bump-minor-beta": "npmversion --increment minor --preid beta --nogit-tag --git-push",
@@ -160,11 +160,11 @@ If you name it "npmversion", you commands will be executed twice: one before / a
   "scripts": {
       "test": "node ./node_modules/mocha/bin/mocha --recursive --ui bdd --colors ./test",
       
-      "bump-release": "test && bumping --unpreid --git-push",
+      "bump-release": "npm run test && bumping --unpreid --git-push",
   
-      "bump-major": "test && bumping --increment major --git-push",
-      "bump-minor": "test && bumping --increment minor --git-push",
-      "bump-patch": "test && bumping --increment major --git-push",
+      "bump-major": "npm run test && bumping --increment major --git-push",
+      "bump-minor": "npm run test && bumping --increment minor --git-push",
+      "bump-patch": "npm run test && bumping --increment major --git-push",
       
       "bump-major-beta": "bumping --increment major --preid beta --nogit-tag --git-push",
       "bump-minor-beta": "bumping --increment minor --preid beta --nogit-tag --git-push",
