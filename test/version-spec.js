@@ -808,6 +808,18 @@ describe(`VersionUtils  - `, function () {
                                 ],
                                 [
                                     "promisedExec",
+                                    "git branch -rvv",
+                                    true,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git push --set-upstream origin release/fakeBranch",
+                                    false,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
                                     "git push && git push --tags",
                                     false,
                                     undefined
