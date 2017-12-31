@@ -9,12 +9,10 @@
 
 'use strict';
 
-const importLib = require('./importLib');
-
-describe(`Utils${importLib.getContext()} - `, function () {
+describe(`Utils  - `, function () {
     const expect = require('chai').expect;
     const sinon = require('sinon');
-    const Utils = importLib('utils');
+    const Utils =  require('../lib/utils');
 
     const fs = require('fs');
     const path = require('path');

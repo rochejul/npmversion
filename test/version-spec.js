@@ -9,9 +9,7 @@
 
 'use strict';
 
-const importLib = require('./importLib');
-
-describe(`VersionUtils${importLib.getContext()} - `, function () {
+describe(`VersionUtils  - `, function () {
     const chai = require('chai');
     const expect = chai.expect;
     const sinon = require('sinon');
@@ -19,10 +17,10 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
     const fs = require('fs');
     const path = require('path');
 
-    const VersionUtils = importLib('version');
-    const GitUtils = importLib('git');
-    const Utils = importLib('utils');
-    const Messages = importLib('messages');
+    const VersionUtils =  require('../lib/version');
+    const GitUtils =  require('../lib/git');
+    const Utils =  require('../lib/utils');
+    const Messages =  require('../lib/messages');
     const noop = function () { };
     let sinonSandBox = null;
 
