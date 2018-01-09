@@ -192,7 +192,9 @@ describe(`VersionUtils  - `, function () {
             it('no options are passed ', function () {
                 let printHelpStub = sinonSandBox.stub(VersionUtils, 'printHelp', noop);
 
-                VersionUtils.doIt();
+                VersionUtils
+                    .doIt()
+                    .catch(() => { });
 
                 expect(printHelpStub.called).to.be.true;
                 expect(printHelpStub.calledOnce).to.be.true;
@@ -201,7 +203,9 @@ describe(`VersionUtils  - `, function () {
             it('if the help option is passed ', function () {
                 let printHelpStub = sinonSandBox.stub(VersionUtils, 'printHelp', noop);
 
-                VersionUtils.doIt({ 'help': true });
+                VersionUtils
+                    .doIt({ 'help': true })
+                    .catch(() => { });
 
                 expect(printHelpStub.called).to.be.true;
                 expect(printHelpStub.calledOnce).to.be.true;
@@ -212,7 +216,9 @@ describe(`VersionUtils  - `, function () {
             sinonSandBox.stub(VersionUtils, 'hasFoundPackageJsonFile', () => false);
             let printNotFoundStub = sinonSandBox.stub(VersionUtils, 'printNotFoundPackageJsonFile', noop);
 
-            VersionUtils.doIt({ 'increment': 'patch' });
+            VersionUtils
+                .doIt({ 'increment': 'patch' })
+                .catch(() => { });
 
             expect(printNotFoundStub.called).to.be.true;
             expect(printNotFoundStub.calledOnce).to.be.true;
@@ -226,7 +232,9 @@ describe(`VersionUtils  - `, function () {
 
             let printVersionStub = sinonSandBox.stub(VersionUtils, 'printVersion', noop);
 
-            VersionUtils.doIt({ 'increment': 'patch', 'read-only': true });
+            VersionUtils
+                .doIt({ 'increment': 'patch', 'read-only': true })
+                .catch(() => { });
 
             expect(printVersionStub.called).to.be.true;
             expect(printVersionStub.calledOnce).to.be.true;
@@ -242,7 +250,9 @@ describe(`VersionUtils  - `, function () {
 
                 let printVersionStub = sinonSandBox.stub(VersionUtils, 'printVersion', noop);
 
-                VersionUtils.doIt({ 'increment': 'patch', 'read-only': true });
+                VersionUtils
+                    .doIt({ 'increment': 'patch', 'read-only': true })
+                    .catch(() => { });
 
                 expect(printVersionStub.called).to.be.true;
                 expect(printVersionStub.calledOnce).to.be.true;
@@ -257,7 +267,9 @@ describe(`VersionUtils  - `, function () {
 
                 let printVersionStub = sinonSandBox.stub(VersionUtils, 'printVersion', noop);
 
-                VersionUtils.doIt({ 'increment': 'fake', 'read-only': true });
+                VersionUtils
+                    .doIt({ 'increment': 'fake', 'read-only': true })
+                    .catch(() => { });
 
                 expect(printVersionStub.called).to.be.true;
                 expect(printVersionStub.calledOnce).to.be.true;
@@ -273,7 +285,9 @@ describe(`VersionUtils  - `, function () {
                 let incrementPackageVersionSpy = sinonSandBox.spy(VersionUtils, 'incrementPackageVersion');
                 let printVersionStub = sinonSandBox.stub(VersionUtils, 'printVersion', noop);
 
-                VersionUtils.doIt({ 'increment': 'PATCH', 'read-only': true, 'preid': 'beta', 'force-preid': true });
+                VersionUtils
+                    .doIt({ 'increment': 'PATCH', 'read-only': true, 'preid': 'beta', 'force-preid': true })
+                    .catch(() => { });
 
                 expect(incrementPackageVersionSpy.called).to.be.true;
                 expect(incrementPackageVersionSpy.calledOnce).to.be.true;
@@ -293,7 +307,9 @@ describe(`VersionUtils  - `, function () {
 
             let printVersionStub = sinonSandBox.stub(VersionUtils, 'printVersion', noop);
 
-            VersionUtils.doIt({ 'unpreid': true, 'read-only': true });
+            VersionUtils
+                .doIt({ 'unpreid': true, 'read-only': true })
+                .catch(() => { });
 
             expect(printVersionStub.called).to.be.true;
             expect(printVersionStub.calledOnce).to.be.true;

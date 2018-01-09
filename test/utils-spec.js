@@ -106,13 +106,13 @@ describe(`Utils  - `, function () {
                 callback(null);
                 return instance;
             });
-            Utils
+            return Utils
                 .promisedExec('ls -la', false)
                 .then(() => {
                     expect(instance.stderr.on.called);
-                    expect(stderrOnStub.withArgs('data', sinon.match.func)).to.be.true;
+                    expect(stderrOnStub.withArgs('data', sinon.match.func).calledOnce).to.be.true;
                     expect(instance.stdout.on.called);
-                    expect(instance.stdout.on.withArgs('data', sinon.match.func)).to.be.true;
+                    expect(instance.stdout.on.withArgs('data', sinon.match.func).calledOnce).to.be.true;
                 });
         });
     });
