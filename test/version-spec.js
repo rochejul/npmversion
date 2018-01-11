@@ -9,9 +9,7 @@
 
 'use strict';
 
-const importLib = require('./importLib');
-
-describe(`VersionUtils${importLib.getContext()} - `, function () {
+describe(`VersionUtils  - `, function () {
     const chai = require('chai');
     const expect = chai.expect;
     const sinon = require('sinon');
@@ -19,10 +17,10 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
     const fs = require('fs');
     const path = require('path');
 
-    const VersionUtils = importLib('version');
-    const GitUtils = importLib('git');
-    const Utils = importLib('utils');
-    const Messages = importLib('messages');
+    const VersionUtils =  require('../lib/version');
+    const GitUtils =  require('../lib/git');
+    const Utils =  require('../lib/utils');
+    const Messages =  require('../lib/messages');
     const noop = function () { };
     let sinonSandBox = null;
 
@@ -194,7 +192,9 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
             it('no options are passed ', function () {
                 let printHelpStub = sinonSandBox.stub(VersionUtils, 'printHelp', noop);
 
-                VersionUtils.doIt();
+                VersionUtils
+                    .doIt()
+                    .catch(() => { });
 
                 expect(printHelpStub.called).to.be.true;
                 expect(printHelpStub.calledOnce).to.be.true;
@@ -203,7 +203,9 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
             it('if the help option is passed ', function () {
                 let printHelpStub = sinonSandBox.stub(VersionUtils, 'printHelp', noop);
 
-                VersionUtils.doIt({ 'help': true });
+                VersionUtils
+                    .doIt({ 'help': true })
+                    .catch(() => { });
 
                 expect(printHelpStub.called).to.be.true;
                 expect(printHelpStub.calledOnce).to.be.true;
@@ -214,7 +216,9 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
             sinonSandBox.stub(VersionUtils, 'hasFoundPackageJsonFile', () => false);
             let printNotFoundStub = sinonSandBox.stub(VersionUtils, 'printNotFoundPackageJsonFile', noop);
 
-            VersionUtils.doIt({ 'increment': 'patch' });
+            VersionUtils
+                .doIt({ 'increment': 'patch' })
+                .catch(() => { });
 
             expect(printNotFoundStub.called).to.be.true;
             expect(printNotFoundStub.calledOnce).to.be.true;
@@ -228,7 +232,9 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
 
             let printVersionStub = sinonSandBox.stub(VersionUtils, 'printVersion', noop);
 
-            VersionUtils.doIt({ 'increment': 'patch', 'read-only': true });
+            VersionUtils
+                .doIt({ 'increment': 'patch', 'read-only': true })
+                .catch(() => { });
 
             expect(printVersionStub.called).to.be.true;
             expect(printVersionStub.calledOnce).to.be.true;
@@ -244,7 +250,9 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
 
                 let printVersionStub = sinonSandBox.stub(VersionUtils, 'printVersion', noop);
 
-                VersionUtils.doIt({ 'increment': 'patch', 'read-only': true });
+                VersionUtils
+                    .doIt({ 'increment': 'patch', 'read-only': true })
+                    .catch(() => { });
 
                 expect(printVersionStub.called).to.be.true;
                 expect(printVersionStub.calledOnce).to.be.true;
@@ -259,7 +267,9 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
 
                 let printVersionStub = sinonSandBox.stub(VersionUtils, 'printVersion', noop);
 
-                VersionUtils.doIt({ 'increment': 'fake', 'read-only': true });
+                VersionUtils
+                    .doIt({ 'increment': 'fake', 'read-only': true })
+                    .catch(() => { });
 
                 expect(printVersionStub.called).to.be.true;
                 expect(printVersionStub.calledOnce).to.be.true;
@@ -275,7 +285,9 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
                 let incrementPackageVersionSpy = sinonSandBox.spy(VersionUtils, 'incrementPackageVersion');
                 let printVersionStub = sinonSandBox.stub(VersionUtils, 'printVersion', noop);
 
-                VersionUtils.doIt({ 'increment': 'PATCH', 'read-only': true, 'preid': 'beta', 'force-preid': true });
+                VersionUtils
+                    .doIt({ 'increment': 'PATCH', 'read-only': true, 'preid': 'beta', 'force-preid': true })
+                    .catch(() => { });
 
                 expect(incrementPackageVersionSpy.called).to.be.true;
                 expect(incrementPackageVersionSpy.calledOnce).to.be.true;
@@ -295,7 +307,9 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
 
             let printVersionStub = sinonSandBox.stub(VersionUtils, 'printVersion', noop);
 
-            VersionUtils.doIt({ 'unpreid': true, 'read-only': true });
+            VersionUtils
+                .doIt({ 'unpreid': true, 'read-only': true })
+                .catch(() => { });
 
             expect(printVersionStub.called).to.be.true;
             expect(printVersionStub.calledOnce).to.be.true;
@@ -306,6 +320,7 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
             it('and log a message if Git is not installed', function () {
                 sinonSandBox.stub(VersionUtils, 'checkForGitIfNeeded', () => Promise.reject(new VersionUtils.ERRORS.GitNotInstalledError()));
                 sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+                sinonSandBox.stub(Utils, 'promisedSpawn', () => Promise.resolve());
                 sinonSandBox.stub(process, 'exit', () => {});
                 let printErrorSpy = sinonSandBox.stub(VersionUtils, 'printGitNotInstalledError', noop);
 
@@ -323,6 +338,7 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
             it('and log a message if we are not into a Git project', function () {
                 sinonSandBox.stub(VersionUtils, 'checkForGitIfNeeded', () => Promise.reject(new VersionUtils.ERRORS.NotAGitProjectError()));
                 sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+                sinonSandBox.stub(Utils, 'promisedSpawn', () => Promise.resolve());
                 sinonSandBox.stub(process, 'exit', () => {});
                 let printErrorSpy = sinonSandBox.stub(VersionUtils, 'printNotAGitProjectError', noop);
 
@@ -340,6 +356,7 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
             it('and log a message if we have no remote', function () {
                 sinonSandBox.stub(VersionUtils, 'doPushGitIfNeeded', () => Promise.reject(new GitUtils.ERRORS.NoRemoteGitError()));
                 sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+                sinonSandBox.stub(Utils, 'promisedSpawn', () => Promise.resolve());
                 sinonSandBox.stub(process, 'exit', () => {});
                 let printErrorSpy = sinonSandBox.stub(VersionUtils, 'printNoRemoteGitError', noop);
 
@@ -357,6 +374,7 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
             it('and log a message if we have multiple remotes', function () {
                 sinonSandBox.stub(VersionUtils, 'doPushGitIfNeeded', () => Promise.reject(new GitUtils.ERRORS.MultipleRemoteError()));
                 sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+                sinonSandBox.stub(Utils, 'promisedSpawn', () => Promise.resolve());
                 sinonSandBox.stub(process, 'exit', () => {});
                 let printErrorSpy = sinonSandBox.stub(VersionUtils, 'printMultipleRemoteError', noop);
 
@@ -374,6 +392,7 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
             it('and log an error if needed', function () {
                 sinonSandBox.stub(VersionUtils, 'updatePackageVersion', () => Promise.reject('an error'));
                 sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+                sinonSandBox.stub(Utils, 'promisedSpawn', () => Promise.resolve());
                 sinonSandBox.stub(process, 'exit', () => {});
                 let printErrorSpy = sinonSandBox.stub(VersionUtils, 'printError', noop);
 
@@ -805,6 +824,18 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
                                 [
                                     "promisedExec",
                                     "git tag \"v1.2.1\"",
+                                    false,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git branch -rvv",
+                                    true,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git push --set-upstream origin release/fakeBranch",
                                     false,
                                     undefined
                                 ],
@@ -1527,6 +1558,28 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
         });
     });
 
+    describe('and the method "hasIgnoreErrorJsonFile" ', function () {
+        it('should exist', function () {
+            expect(VersionUtils.hasIgnoreErrorJsonFile).to.exist;
+        });
+
+        it('should return false if no options are passed', function () {
+            expect(VersionUtils.hasIgnoreErrorJsonFile()).to.be.false;
+        });
+
+        it('should return false if the option "ignoreErrorJsonFile" is omitted', function () {
+            expect(VersionUtils.hasIgnoreErrorJsonFile({ })).to.be.false;
+        });
+
+        it('should return false if the option "ignoreErrorJsonFile" is set to false', function () {
+            expect(VersionUtils.hasIgnoreErrorJsonFile({ 'ignoreErrorJsonFile': false })).to.be.false;
+        });
+
+        it('should return true otherwise', function () {
+            expect(VersionUtils.hasIgnoreErrorJsonFile({ 'ignoreErrorJsonFile': true })).to.be.true;
+        });
+    });
+
     describe('and the method "hashPushCommitsGit" ', function () {
         it('should exist', function () {
             expect(VersionUtils.hashPushCommitsGit).to.exist;
@@ -1725,17 +1778,44 @@ describe(`VersionUtils${importLib.getContext()} - `, function () {
             expect(VersionUtils.updateJsonFile).to.exist;
         });
 
+        describe('should around error management, ', function () {
+           it('return the error if the option ignoreErrorJsonFile is not set to true', function () {
+               sinonSandBox.stub(Utils, 'readFile', () => Promise.reject());
+
+               return VersionUtils
+                    .updateJsonFile({ }, '1.0.0-beta.55', { 'file': 'bower.json', 'property': 'version' })
+                   .then(() => Promise.reject('The test should fail'))
+                   .catch(err => Promise.resolve('The test is a success'));
+           });
+
+            it('print a warn message if the option ignoreErrorJsonFile is set to true', function () {
+                let printIgnoredJsonFile = sinonSandBox.stub(VersionUtils, 'printIgnoredJsonFile', noop);
+                sinonSandBox.stub(Utils, 'readFile', () => Promise.reject());
+
+                return VersionUtils
+                    .updateJsonFile({ 'ignoreErrorJsonFile': true }, '1.0.0-beta.55', { 'file': 'bower.json', 'property': 'version' })
+                    .then(() => {
+                        expect(printIgnoredJsonFile.called).to.be.true;
+                        expect(printIgnoredJsonFile.calledOnce).to.be.true;
+                    })
+            });
+        });
+
         describe('should find the bower.json based ', function () {
             it('on the current CWD', function () {
                 sinonSandBox.stub(Utils, 'readFile', () => Promise.reject());
-                VersionUtils.updateJsonFile(null, null, { 'file': 'bower.json', 'property': 'version' });
+                VersionUtils
+                    .updateJsonFile(null, null, { 'file': 'bower.json', 'property': 'version' })
+                    .catch(() => { });
 
                 expect(Utils.readFile.calledWithExactly(path.resolve(process.cwd() + '/bower.json'))).to.be.true;
             });
 
             it('on the specified CWD', function () {
                 sinonSandBox.stub(Utils, 'readFile', () => Promise.reject());
-                VersionUtils.updateJsonFile(null, null, { 'file': 'bower.json', 'property': 'version' }, '/etc');
+                VersionUtils
+                    .updateJsonFile(null, null, { 'file': 'bower.json', 'property': 'version' }, '/etc')
+                    .catch(() => { });
 
                 expect(Utils.readFile.calledWithExactly(path.resolve(path.join('/etc', 'bower.json')))).to.be.true;
             });

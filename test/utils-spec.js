@@ -9,12 +9,10 @@
 
 'use strict';
 
-const importLib = require('./importLib');
-
-describe(`Utils${importLib.getContext()} - `, function () {
+describe('Utils  - ', function () {
     const expect = require('chai').expect;
     const sinon = require('sinon');
-    const Utils = importLib('utils');
+    const Utils =  require('../lib/utils');
 
     const fs = require('fs');
     const path = require('path');
@@ -108,13 +106,13 @@ describe(`Utils${importLib.getContext()} - `, function () {
                 callback(null);
                 return instance;
             });
-            Utils
+            return Utils
                 .promisedExec('ls -la', false)
                 .then(() => {
                     expect(instance.stderr.on.called);
-                    expect(stderrOnStub.withArgs('data', sinon.match.func)).to.be.true;
+                    expect(stderrOnStub.withArgs('data', sinon.match.func).calledOnce).to.be.true;
                     expect(instance.stdout.on.called);
-                    expect(instance.stdout.on.withArgs('data', sinon.match.func)).to.be.true;
+                    expect(instance.stdout.on.withArgs('data', sinon.match.func).calledOnce).to.be.true;
                 });
         });
     });
@@ -178,6 +176,7 @@ describe(`Utils${importLib.getContext()} - `, function () {
                 'read-only': false,
                 'u': false,
                 'unpreid': false,
+                'ignoreErrorJsonFile': false,
                 'jsonFiles': []
             });
         });
@@ -200,6 +199,7 @@ describe(`Utils${importLib.getContext()} - `, function () {
                 'read-only': false,
                 'u': false,
                 'unpreid': false,
+                'ignoreErrorJsonFile': false,
                 'jsonFiles': []
             });
         });
@@ -222,6 +222,7 @@ describe(`Utils${importLib.getContext()} - `, function () {
                 'read-only': false,
                 'u': false,
                 'unpreid': false,
+                'ignoreErrorJsonFile': false,
                 'jsonFiles': []
             });
         });
