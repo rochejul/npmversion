@@ -190,7 +190,8 @@ If you name it "npmversion", you commands will be executed twice: one before / a
     "git-commit-message": "Release version: %s",
     "git-tag-message": "v%s",
     "increment": "minor",
-    "defaultRemoteName": null,
+    "git-remote-name": null,
+    "ignoreErrorJsonFile": false,
     "jsonFiles": []
 }
 ````
@@ -207,7 +208,9 @@ An example which includes bower:
     "git-push": false,
     "git-commit-message": "Release version: %s",
     "git-tag-message": "v%s",
+    "git-remote-name": "origin",
     "increment": "minor",
+    "ignoreErrorJsonFile": false,
     "jsonFiles": [
         "bower.json"
     ]
@@ -224,7 +227,9 @@ Another way: declare a json object with the property to update:
     "git-push": false,
     "git-commit-message": "Release version: %s",
     "git-tag-message": "v%s",
+    "git-remote-name": "origin",
     "increment": "minor",
+    "ignoreErrorJsonFile": false,
     "jsonFiles": [
         { "file": "bower.json", "property": "version" }
     ]
@@ -241,7 +246,9 @@ And of course, both:
     "git-push": false,
     "git-commit-message": "Release version: %s",
     "git-tag-message": "v%s",
+    "git-remote-name": "origin",
     "increment": "minor",
+    "ignoreErrorJsonFile": false,
     "jsonFiles": [
         "component.json",
         { "file": "bower.json", "property": "version" }
