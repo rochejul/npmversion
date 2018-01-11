@@ -9,7 +9,7 @@
 
 'use strict';
 
-describe(`Utils  - `, function () {
+describe('Utils  - ', function () {
     const expect = require('chai').expect;
     const sinon = require('sinon');
     const Utils =  require('../lib/utils');

@@ -320,6 +320,7 @@ describe(`VersionUtils  - `, function () {
             it('and log a message if Git is not installed', function () {
                 sinonSandBox.stub(VersionUtils, 'checkForGitIfNeeded', () => Promise.reject(new VersionUtils.ERRORS.GitNotInstalledError()));
                 sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+                sinonSandBox.stub(Utils, 'promisedSpawn', () => Promise.resolve());
                 sinonSandBox.stub(process, 'exit', () => {});
                 let printErrorSpy = sinonSandBox.stub(VersionUtils, 'printGitNotInstalledError', noop);
 
@@ -337,6 +338,7 @@ describe(`VersionUtils  - `, function () {
             it('and log a message if we are not into a Git project', function () {
                 sinonSandBox.stub(VersionUtils, 'checkForGitIfNeeded', () => Promise.reject(new VersionUtils.ERRORS.NotAGitProjectError()));
                 sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+                sinonSandBox.stub(Utils, 'promisedSpawn', () => Promise.resolve());
                 sinonSandBox.stub(process, 'exit', () => {});
                 let printErrorSpy = sinonSandBox.stub(VersionUtils, 'printNotAGitProjectError', noop);
 
@@ -354,6 +356,7 @@ describe(`VersionUtils  - `, function () {
             it('and log a message if we have no remote', function () {
                 sinonSandBox.stub(VersionUtils, 'doPushGitIfNeeded', () => Promise.reject(new GitUtils.ERRORS.NoRemoteGitError()));
                 sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+                sinonSandBox.stub(Utils, 'promisedSpawn', () => Promise.resolve());
                 sinonSandBox.stub(process, 'exit', () => {});
                 let printErrorSpy = sinonSandBox.stub(VersionUtils, 'printNoRemoteGitError', noop);
 
@@ -371,6 +374,7 @@ describe(`VersionUtils  - `, function () {
             it('and log a message if we have multiple remotes', function () {
                 sinonSandBox.stub(VersionUtils, 'doPushGitIfNeeded', () => Promise.reject(new GitUtils.ERRORS.MultipleRemoteError()));
                 sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+                sinonSandBox.stub(Utils, 'promisedSpawn', () => Promise.resolve());
                 sinonSandBox.stub(process, 'exit', () => {});
                 let printErrorSpy = sinonSandBox.stub(VersionUtils, 'printMultipleRemoteError', noop);
 
@@ -388,6 +392,7 @@ describe(`VersionUtils  - `, function () {
             it('and log an error if needed', function () {
                 sinonSandBox.stub(VersionUtils, 'updatePackageVersion', () => Promise.reject('an error'));
                 sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+                sinonSandBox.stub(Utils, 'promisedSpawn', () => Promise.resolve());
                 sinonSandBox.stub(process, 'exit', () => {});
                 let printErrorSpy = sinonSandBox.stub(VersionUtils, 'printError', noop);
 
