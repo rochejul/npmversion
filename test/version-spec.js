@@ -1553,6 +1553,28 @@ describe(`VersionUtils  - `, function () {
         });
     });
 
+    describe('and the method "hasIgnoreErrorJsonFile" ', function () {
+        it('should exist', function () {
+            expect(VersionUtils.hasIgnoreErrorJsonFile).to.exist;
+        });
+
+        it('should return false if no options are passed', function () {
+            expect(VersionUtils.hasIgnoreErrorJsonFile()).to.be.false;
+        });
+
+        it('should return false if the option "ignoreErrorJsonFile" is omitted', function () {
+            expect(VersionUtils.hasIgnoreErrorJsonFile({ })).to.be.false;
+        });
+
+        it('should return false if the option "ignoreErrorJsonFile" is set to false', function () {
+            expect(VersionUtils.hasIgnoreErrorJsonFile({ 'ignoreErrorJsonFile': false })).to.be.false;
+        });
+
+        it('should return true otherwise', function () {
+            expect(VersionUtils.hasIgnoreErrorJsonFile({ 'ignoreErrorJsonFile': true })).to.be.true;
+        });
+    });
+
     describe('and the method "hashPushCommitsGit" ', function () {
         it('should exist', function () {
             expect(VersionUtils.hashPushCommitsGit).to.exist;
@@ -1751,17 +1773,44 @@ describe(`VersionUtils  - `, function () {
             expect(VersionUtils.updateJsonFile).to.exist;
         });
 
+        describe('should around error management, ', function () {
+           it('return the error if the option ignoreErrorJsonFile is not set to true', function () {
+               sinonSandBox.stub(Utils, 'readFile', () => Promise.reject());
+
+               return VersionUtils
+                    .updateJsonFile({ }, '1.0.0-beta.55', { 'file': 'bower.json', 'property': 'version' })
+                   .then(() => Promise.reject('The test should fail'))
+                   .catch(err => Promise.resolve('The test is a success'));
+           });
+
+            it('print a warn message if the option ignoreErrorJsonFile is set to true', function () {
+                let printIgnoredJsonFile = sinonSandBox.stub(VersionUtils, 'printIgnoredJsonFile', noop);
+                sinonSandBox.stub(Utils, 'readFile', () => Promise.reject());
+
+                return VersionUtils
+                    .updateJsonFile({ 'ignoreErrorJsonFile': true }, '1.0.0-beta.55', { 'file': 'bower.json', 'property': 'version' })
+                    .then(() => {
+                        expect(printIgnoredJsonFile.called).to.be.true;
+                        expect(printIgnoredJsonFile.calledOnce).to.be.true;
+                    })
+            });
+        });
+
         describe('should find the bower.json based ', function () {
             it('on the current CWD', function () {
                 sinonSandBox.stub(Utils, 'readFile', () => Promise.reject());
-                VersionUtils.updateJsonFile(null, null, { 'file': 'bower.json', 'property': 'version' });
+                VersionUtils
+                    .updateJsonFile(null, null, { 'file': 'bower.json', 'property': 'version' })
+                    .catch(() => { });
 
                 expect(Utils.readFile.calledWithExactly(path.resolve(process.cwd() + '/bower.json'))).to.be.true;
             });
 
             it('on the specified CWD', function () {
                 sinonSandBox.stub(Utils, 'readFile', () => Promise.reject());
-                VersionUtils.updateJsonFile(null, null, { 'file': 'bower.json', 'property': 'version' }, '/etc');
+                VersionUtils
+                    .updateJsonFile(null, null, { 'file': 'bower.json', 'property': 'version' }, '/etc')
+                    .catch(() => { });
 
                 expect(Utils.readFile.calledWithExactly(path.resolve(path.join('/etc', 'bower.json')))).to.be.true;
             });

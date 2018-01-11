@@ -176,6 +176,7 @@ describe(`Utils  - `, function () {
                 'read-only': false,
                 'u': false,
                 'unpreid': false,
+                'ignoreErrorJsonFile': false,
                 'jsonFiles': []
             });
         });
@@ -198,6 +199,7 @@ describe(`Utils  - `, function () {
                 'read-only': false,
                 'u': false,
                 'unpreid': false,
+                'ignoreErrorJsonFile': false,
                 'jsonFiles': []
             });
         });
@@ -220,6 +222,7 @@ describe(`Utils  - `, function () {
                 'read-only': false,
                 'u': false,
                 'unpreid': false,
+                'ignoreErrorJsonFile': false,
                 'jsonFiles': []
             });
         });

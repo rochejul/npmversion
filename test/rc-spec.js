@@ -27,6 +27,7 @@ describe(`RC retriever  - `, function () {
             'git-push': false,
             'git-tag-message': 'v%s',
             'increment': 'minor',
+            'ignoreErrorJsonFile': false,
             'jsonFiles': []
         });
     });
