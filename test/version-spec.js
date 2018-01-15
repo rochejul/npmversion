@@ -1526,6 +1526,47 @@ describe(`VersionUtils  - `, function () {
         });
     });
 
+    describe('and the method "isPreidLevel" ', function () {
+        it('should exist', function () {
+            expect(VersionUtils.isPreidLevel).to.exist;
+        });
+
+        it('should return false if not level is specified', function () {
+            expect(VersionUtils.isPreidLevel()).to.be.false;
+            expect(VersionUtils.isPreidLevel(null)).to.be.false;
+        });
+
+        describe('should return false if we are not in a pre-inc level ', function () {
+            it('with cases checking', function () {
+                expect(VersionUtils.isPreidLevel('major')).to.be.false;
+                expect(VersionUtils.isPreidLevel('minor')).to.be.false;
+                expect(VersionUtils.isPreidLevel('patch')).to.be.false;
+            });
+
+            it('without cases checking', function () {
+                expect(VersionUtils.isPreidLevel('MAJOR')).to.be.false;
+                expect(VersionUtils.isPreidLevel('MINOR')).to.be.false;
+                expect(VersionUtils.isPreidLevel('PATCH')).to.be.false;
+            });
+        });
+
+        describe('should return true if we are in a pre-inc level ', function () {
+            it('with cases checking', function () {
+                expect(VersionUtils.isPreidLevel('premajor')).to.be.true;
+                expect(VersionUtils.isPreidLevel('preminor')).to.be.true;
+                expect(VersionUtils.isPreidLevel('prepatch')).to.be.true;
+                expect(VersionUtils.isPreidLevel('prerelease')).to.be.true;
+            });
+
+            it('without cases checking', function () {
+                expect(VersionUtils.isPreidLevel('PREMAJOR')).to.be.true;
+                expect(VersionUtils.isPreidLevel('PREMINOR')).to.be.true;
+                expect(VersionUtils.isPreidLevel('PREPATCH')).to.be.true;
+                expect(VersionUtils.isPreidLevel('PRERELEASE')).to.be.true;
+            });
+        });
+    });
+
     describe('and the method "isPrenpmversionRunScriptDetectedInPackageJson" ', function () {
         it('should exist', function () {
             expect(VersionUtils.isPrenpmversionRunScriptDetectedInPackageJson).to.exist;
