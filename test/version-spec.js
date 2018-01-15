@@ -138,6 +138,46 @@ describe(`VersionUtils  - `, function () {
         });
     });
 
+    describe('and the method "getIncrementationLevel" ', function () {
+        it('should exist', function () {
+            expect(VersionUtils.getIncrementationLevel).to.exist;
+        });
+
+        it('should return patch if no options are provided', function () {
+            expect(VersionUtils.getIncrementationLevel()).equals('patch');
+        });
+
+        it('should return patch if no increment level is specified', function () {
+            expect(VersionUtils.getIncrementationLevel({ })).equals('patch');
+        });
+
+        it('should return patch if the increment level is not recognized', function () {
+            expect(VersionUtils.getIncrementationLevel({ 'increment': 'fake' })).equals('patch');
+        });
+
+        describe('should the specified level ', function () {
+            it('with cases checking', function () {
+                expect(VersionUtils.getIncrementationLevel({ 'increment': 'major' })).equals('major');
+                expect(VersionUtils.getIncrementationLevel({ 'increment': 'minor' })).equals('minor');
+                expect(VersionUtils.getIncrementationLevel({ 'increment': 'patch' })).equals('patch');
+                expect(VersionUtils.getIncrementationLevel({ 'increment': 'premajor' })).equals('premajor');
+                expect(VersionUtils.getIncrementationLevel({ 'increment': 'preminor' })).equals('preminor');
+                expect(VersionUtils.getIncrementationLevel({ 'increment': 'prepatch' })).equals('prepatch');
+                expect(VersionUtils.getIncrementationLevel({ 'increment': 'prerelease' })).equals('prerelease');
+            });
+
+            it('without cases checking', function () {
+                expect(VersionUtils.getIncrementationLevel({ 'increment': 'MAJOR' })).equals('major');
+                expect(VersionUtils.getIncrementationLevel({ 'increment': 'MINOR' })).equals('minor');
+                expect(VersionUtils.getIncrementationLevel({ 'increment': 'PATCH' })).equals('patch');
+                expect(VersionUtils.getIncrementationLevel({ 'increment': 'PREMAJOR' })).equals('premajor');
+                expect(VersionUtils.getIncrementationLevel({ 'increment': 'PREMINOR' })).equals('preminor');
+                expect(VersionUtils.getIncrementationLevel({ 'increment': 'PREPATCH' })).equals('prepatch');
+                expect(VersionUtils.getIncrementationLevel({ 'increment': 'PRERELEASE' })).equals('prerelease');
+            });
+        });
+    });
+
     describe('and the method "checkForGitIfNeeded" ', function () {
         it('should exist', function () {
             expect(VersionUtils.checkForGitIfNeeded).to.exist;
@@ -469,6 +509,53 @@ describe(`VersionUtils  - `, function () {
                         });
                 });
 
+                it('create the branch', function () {
+                    sinonSandBox.stub(VersionUtils, 'getCurrentPackageJson', () => {
+                        return { 'version': '1.2.0' };
+                    });
+
+                    return VersionUtils
+                        .doIt({ 'increment': 'fake', 'git-create-branch': true })
+                        .then(function () {
+                            expect(calls).deep.equals([
+                                [
+                                    "promisedExec",
+                                    "git --help",
+                                    true
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git status --porcelain",
+                                    true,
+                                    undefined
+                                ],
+                                [
+                                    "updatePackageVersion",
+                                    "1.2.1",
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git commit --all --message \"Release version: 1.2.1\"",
+                                    false,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git branch \"release/1.2.1\"",
+                                    false,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git tag \"v1.2.1\"",
+                                    false,
+                                    undefined
+                                ]
+                            ]);
+                        });
+                });
+
                 it('push the local branch, commit and the tag', function () {
                     sinonSandBox.stub(VersionUtils, 'getCurrentPackageJson', () => {
                         return { 'version': '1.2.0' };
@@ -587,7 +674,7 @@ describe(`VersionUtils  - `, function () {
                         });
                 });
 
-                it('push commit and the tag (because the local branch is associated to a remote branch', function () {
+                it('push commit and the tag (because the local branch is associated to a remote branch)', function () {
                     sinonSandBox.stub(GitUtils, 'isBranchUpstream', () => Promise.resolve(true));
                     sinonSandBox.stub(VersionUtils, 'getCurrentPackageJson', () => {
                         return { 'version': '1.2.0' };
@@ -622,6 +709,114 @@ describe(`VersionUtils  - `, function () {
                                 [
                                     "promisedExec",
                                     "git tag \"v1.2.1\"",
+                                    false,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git push && git push --tags",
+                                    false,
+                                    undefined
+                                ]
+                            ]);
+                        });
+                });
+
+                it('push commit, the branch and the tag (because the local branch is not associated to a remote branch)', function () {
+                    sinonSandBox.stub(GitUtils, 'isBranchUpstream', () => Promise.resolve(false));
+                    sinonSandBox.stub(VersionUtils, 'getCurrentPackageJson', () => {
+                        return { 'version': '1.2.0' };
+                    });
+
+                    return VersionUtils
+                        .doIt({ 'increment': 'fake', 'git-push': true })
+                        .then(function () {
+                            expect(calls).deep.equals([
+                                [
+                                    "promisedExec",
+                                    "git --help",
+                                    true
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git status --porcelain",
+                                    true,
+                                    undefined
+                                ],
+                                [
+                                    "updatePackageVersion",
+                                    "1.2.1",
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git commit --all --message \"Release version: 1.2.1\"",
+                                    false,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git tag \"v1.2.1\"",
+                                    false,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git push --set-upstream origin release/fakeBranch",
+                                    false,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git push && git push --tags",
+                                    false,
+                                    undefined
+                                ]
+                            ]);
+                        });
+                });
+
+                it('push using the specified remote name', function () {
+                    sinonSandBox.stub(GitUtils, 'isBranchUpstream', () => Promise.resolve(false));
+                    sinonSandBox.stub(VersionUtils, 'getCurrentPackageJson', () => {
+                        return { 'version': '1.2.0' };
+                    });
+
+                    return VersionUtils
+                        .doIt({ 'increment': 'fake', 'git-push': true, 'git-remote-name': 'anotherOrigin' })
+                        .then(function () {
+                            expect(calls).deep.equals([
+                                [
+                                    "promisedExec",
+                                    "git --help",
+                                    true
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git status --porcelain",
+                                    true,
+                                    undefined
+                                ],
+                                [
+                                    "updatePackageVersion",
+                                    "1.2.1",
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git commit --all --message \"Release version: 1.2.1\"",
+                                    false,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git tag \"v1.2.1\"",
+                                    false,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git push --set-upstream anotherOrigin release/fakeBranch",
                                     false,
                                     undefined
                                 ],
@@ -1486,6 +1681,47 @@ describe(`VersionUtils  - `, function () {
         });
     });
 
+    describe('and the method "isPreidLevel" ', function () {
+        it('should exist', function () {
+            expect(VersionUtils.isPreidLevel).to.exist;
+        });
+
+        it('should return false if not level is specified', function () {
+            expect(VersionUtils.isPreidLevel()).to.be.false;
+            expect(VersionUtils.isPreidLevel(null)).to.be.false;
+        });
+
+        describe('should return false if we are not in a pre-inc level ', function () {
+            it('with cases checking', function () {
+                expect(VersionUtils.isPreidLevel('major')).to.be.false;
+                expect(VersionUtils.isPreidLevel('minor')).to.be.false;
+                expect(VersionUtils.isPreidLevel('patch')).to.be.false;
+            });
+
+            it('without cases checking', function () {
+                expect(VersionUtils.isPreidLevel('MAJOR')).to.be.false;
+                expect(VersionUtils.isPreidLevel('MINOR')).to.be.false;
+                expect(VersionUtils.isPreidLevel('PATCH')).to.be.false;
+            });
+        });
+
+        describe('should return true if we are in a pre-inc level ', function () {
+            it('with cases checking', function () {
+                expect(VersionUtils.isPreidLevel('premajor')).to.be.true;
+                expect(VersionUtils.isPreidLevel('preminor')).to.be.true;
+                expect(VersionUtils.isPreidLevel('prepatch')).to.be.true;
+                expect(VersionUtils.isPreidLevel('prerelease')).to.be.true;
+            });
+
+            it('without cases checking', function () {
+                expect(VersionUtils.isPreidLevel('PREMAJOR')).to.be.true;
+                expect(VersionUtils.isPreidLevel('PREMINOR')).to.be.true;
+                expect(VersionUtils.isPreidLevel('PREPATCH')).to.be.true;
+                expect(VersionUtils.isPreidLevel('PRERELEASE')).to.be.true;
+            });
+        });
+    });
+
     describe('and the method "isPrenpmversionRunScriptDetectedInPackageJson" ', function () {
         it('should exist', function () {
             expect(VersionUtils.isPrenpmversionRunScriptDetectedInPackageJson).to.exist;
@@ -1558,6 +1794,28 @@ describe(`VersionUtils  - `, function () {
         });
     });
 
+    describe('and the method "hashCreateCommitGit" ', function () {
+        it('should exist', function () {
+            expect(VersionUtils.hashCreateBranchGit).to.exist;
+        });
+
+        it('should return false if no options are passed', function () {
+            expect(VersionUtils.hashCreateBranchGit()).to.be.false;
+        });
+
+        it('should return false if the option "git-create-branch" is omitted', function () {
+            expect(VersionUtils.hashCreateBranchGit({ })).to.be.false;
+        });
+
+        it('should return false if the option "git-create-branch" is set to false', function () {
+            expect(VersionUtils.hashCreateBranchGit({ 'git-create-branch': false })).to.be.false;
+        });
+
+        it('should return true otherwise', function () {
+            expect(VersionUtils.hashCreateBranchGit({ 'git-create-branch': true })).to.be.true;
+        });
+    });
+
     describe('and the method "hasIgnoreErrorJsonFile" ', function () {
         it('should exist', function () {
             expect(VersionUtils.hasIgnoreErrorJsonFile).to.exist;
@@ -1599,6 +1857,66 @@ describe(`VersionUtils  - `, function () {
 
         it('should return true otherwise', function () {
             expect(VersionUtils.hashPushCommitsGit({ 'git-push': true })).to.be.true;
+        });
+    });
+
+    describe('and the method "createBranchGitIfNeeded" ', function () {
+        it('should exist', function () {
+            expect(VersionUtils.createBranchGitIfNeeded).to.exist;
+        });
+
+        it('should not create the git commit', function () {
+            let hashCreateBranchGitSpy = sinonSandBox.stub(VersionUtils, 'hashCreateBranchGit', () => false);
+            let createBranchSpy = sinonSandBox.stub(GitUtils, 'createCommit', () => Promise.resolve());
+            let fakeOptions = { 'preid': true };
+
+            return VersionUtils
+                .createBranchGitIfNeeded('1.2.3', fakeOptions)
+                .then(() => {
+                    expect(hashCreateBranchGitSpy.called).to.be.true;
+                    expect(hashCreateBranchGitSpy.calledOnce).to.be.true;
+                    expect(hashCreateBranchGitSpy.calledWithExactly(fakeOptions)).to.be.true;
+
+                    expect(createBranchSpy.called).to.be.false;
+                });
+        });
+
+        describe('should create the commit git', function () {
+            it('with the default message', function () {
+                let hashCreateBranchGitSpy = sinonSandBox.stub(VersionUtils, 'hashCreateBranchGit', () => true);
+                let createBranchSpy = sinonSandBox.stub(GitUtils, 'createBranch', () => Promise.resolve());
+                let fakeOptions = { 'preid': true };
+
+                return VersionUtils
+                    .createBranchGitIfNeeded('1.2.3', fakeOptions)
+                    .then(() => {
+                        expect(hashCreateBranchGitSpy.called).to.be.true;
+                        expect(hashCreateBranchGitSpy.calledOnce).to.be.true;
+                        expect(hashCreateBranchGitSpy.calledWithExactly(fakeOptions)).to.be.true;
+
+                        expect(createBranchSpy.called).to.be.true;
+                        expect(createBranchSpy.calledOnce).to.be.true;
+                        expect(createBranchSpy.calledWithExactly('1.2.3', Messages.GIT_BRANCH_MESSAGE, undefined)).to.be.true;
+                    });
+            });
+
+            it('with the specified message', function () {
+                let hashCreateBranchGitSpy = sinonSandBox.stub(VersionUtils, 'hashCreateBranchGit', () => true);
+                let createBranchSpy = sinonSandBox.stub(GitUtils, 'createBranch', () => Promise.resolve());
+                let fakeOptions = { 'preid': true, 'git-branch-message': 'my custom message' };
+
+                return VersionUtils
+                    .createBranchGitIfNeeded('1.2.3', fakeOptions)
+                    .then(() => {
+                        expect(hashCreateBranchGitSpy.called).to.be.true;
+                        expect(hashCreateBranchGitSpy.calledOnce).to.be.true;
+                        expect(hashCreateBranchGitSpy.calledWithExactly(fakeOptions)).to.be.true;
+
+                        expect(createBranchSpy.called).to.be.true;
+                        expect(createBranchSpy.calledOnce).to.be.true;
+                        expect(createBranchSpy.calledWithExactly('1.2.3', 'my custom message', undefined)).to.be.true;
+                    });
+            });
         });
     });
 
