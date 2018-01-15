@@ -81,7 +81,7 @@ describe('Utils  - ', function () {
             return Utils
                 .promisedExec('ls -la', true)
                 .then(() => {
-                    expect(execStub.calledWithExactly('ls -la', { 'cwd': process.cwd() }, sinon.match.func)).to.be.true;
+                    expect(execStub.calledWithExactly('ls -la', { 'cwd': process.cwd(), 'maxBuffer': 20000000 }, sinon.match.func)).to.be.true;
                 });
         });
 
@@ -90,7 +90,7 @@ describe('Utils  - ', function () {
             return Utils
                 .promisedExec('ls -la', true, '/etc')
                 .then(() => {
-                    expect(execStub.calledWithExactly('ls -la', { 'cwd': '/etc' }, sinon.match.func)).to.be.true;
+                    expect(execStub.calledWithExactly('ls -la', { 'cwd': '/etc', 'maxBuffer': 20000000 }, sinon.match.func)).to.be.true;
                 });
         });
 
