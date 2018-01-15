@@ -674,7 +674,7 @@ describe(`VersionUtils  - `, function () {
                         });
                 });
 
-                it('push commit and the tag (because the local branch is associated to a remote branch', function () {
+                it('push commit and the tag (because the local branch is associated to a remote branch)', function () {
                     sinonSandBox.stub(GitUtils, 'isBranchUpstream', () => Promise.resolve(true));
                     sinonSandBox.stub(VersionUtils, 'getCurrentPackageJson', () => {
                         return { 'version': '1.2.0' };
@@ -709,6 +709,114 @@ describe(`VersionUtils  - `, function () {
                                 [
                                     "promisedExec",
                                     "git tag \"v1.2.1\"",
+                                    false,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git push && git push --tags",
+                                    false,
+                                    undefined
+                                ]
+                            ]);
+                        });
+                });
+
+                it('push commit, the branch and the tag (because the local branch is not associated to a remote branch)', function () {
+                    sinonSandBox.stub(GitUtils, 'isBranchUpstream', () => Promise.resolve(false));
+                    sinonSandBox.stub(VersionUtils, 'getCurrentPackageJson', () => {
+                        return { 'version': '1.2.0' };
+                    });
+
+                    return VersionUtils
+                        .doIt({ 'increment': 'fake', 'git-push': true })
+                        .then(function () {
+                            expect(calls).deep.equals([
+                                [
+                                    "promisedExec",
+                                    "git --help",
+                                    true
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git status --porcelain",
+                                    true,
+                                    undefined
+                                ],
+                                [
+                                    "updatePackageVersion",
+                                    "1.2.1",
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git commit --all --message \"Release version: 1.2.1\"",
+                                    false,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git tag \"v1.2.1\"",
+                                    false,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git push --set-upstream origin release/fakeBranch",
+                                    false,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git push && git push --tags",
+                                    false,
+                                    undefined
+                                ]
+                            ]);
+                        });
+                });
+
+                it('push using the specified remote name', function () {
+                    sinonSandBox.stub(GitUtils, 'isBranchUpstream', () => Promise.resolve(false));
+                    sinonSandBox.stub(VersionUtils, 'getCurrentPackageJson', () => {
+                        return { 'version': '1.2.0' };
+                    });
+
+                    return VersionUtils
+                        .doIt({ 'increment': 'fake', 'git-push': true, 'git-remote-name': 'anotherOrigin' })
+                        .then(function () {
+                            expect(calls).deep.equals([
+                                [
+                                    "promisedExec",
+                                    "git --help",
+                                    true
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git status --porcelain",
+                                    true,
+                                    undefined
+                                ],
+                                [
+                                    "updatePackageVersion",
+                                    "1.2.1",
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git commit --all --message \"Release version: 1.2.1\"",
+                                    false,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git tag \"v1.2.1\"",
+                                    false,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git push --set-upstream anotherOrigin release/fakeBranch",
                                     false,
                                     undefined
                                 ],
