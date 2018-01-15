@@ -37,8 +37,11 @@ Options:
         --nogit-tag
             No git tag
 
+        --git-create-branch
+            Create a new branch. Does not work if a preid is generated.
+
         --git-push
-            Push the commit and the tags if needed
+            Push the commit, the branch and the tags if needed
 
     -u  --unpreid
         Remove the prefix. The increment and preid option will be ignored.
@@ -55,5 +58,8 @@ Options:
        --nogit-tag
            No git tag
 
-       --git-push
-           Push the commit and the tags if needed
+        --git-create-branch
+            Create a new branch. Does not work if a preid is generated.
+
+        --git-push
+            Push the commit, the branch and the tags if needed

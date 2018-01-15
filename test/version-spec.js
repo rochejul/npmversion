@@ -509,6 +509,53 @@ describe(`VersionUtils  - `, function () {
                         });
                 });
 
+                it('create the branch', function () {
+                    sinonSandBox.stub(VersionUtils, 'getCurrentPackageJson', () => {
+                        return { 'version': '1.2.0' };
+                    });
+
+                    return VersionUtils
+                        .doIt({ 'increment': 'fake', 'git-create-branch': true })
+                        .then(function () {
+                            expect(calls).deep.equals([
+                                [
+                                    "promisedExec",
+                                    "git --help",
+                                    true
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git status --porcelain",
+                                    true,
+                                    undefined
+                                ],
+                                [
+                                    "updatePackageVersion",
+                                    "1.2.1",
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git commit --all --message \"Release version: 1.2.1\"",
+                                    false,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git branch \"release/1.2.1\"",
+                                    false,
+                                    undefined
+                                ],
+                                [
+                                    "promisedExec",
+                                    "git tag \"v1.2.1\"",
+                                    false,
+                                    undefined
+                                ]
+                            ]);
+                        });
+                });
+
                 it('push the local branch, commit and the tag', function () {
                     sinonSandBox.stub(VersionUtils, 'getCurrentPackageJson', () => {
                         return { 'version': '1.2.0' };
@@ -1639,6 +1686,28 @@ describe(`VersionUtils  - `, function () {
         });
     });
 
+    describe('and the method "hashCreateCommitGit" ', function () {
+        it('should exist', function () {
+            expect(VersionUtils.hashCreateBranchGit).to.exist;
+        });
+
+        it('should return false if no options are passed', function () {
+            expect(VersionUtils.hashCreateBranchGit()).to.be.false;
+        });
+
+        it('should return false if the option "git-create-branch" is omitted', function () {
+            expect(VersionUtils.hashCreateBranchGit({ })).to.be.false;
+        });
+
+        it('should return false if the option "git-create-branch" is set to false', function () {
+            expect(VersionUtils.hashCreateBranchGit({ 'git-create-branch': false })).to.be.false;
+        });
+
+        it('should return true otherwise', function () {
+            expect(VersionUtils.hashCreateBranchGit({ 'git-create-branch': true })).to.be.true;
+        });
+    });
+
     describe('and the method "hasIgnoreErrorJsonFile" ', function () {
         it('should exist', function () {
             expect(VersionUtils.hasIgnoreErrorJsonFile).to.exist;
@@ -1680,6 +1749,66 @@ describe(`VersionUtils  - `, function () {
 
         it('should return true otherwise', function () {
             expect(VersionUtils.hashPushCommitsGit({ 'git-push': true })).to.be.true;
+        });
+    });
+
+    describe('and the method "createBranchGitIfNeeded" ', function () {
+        it('should exist', function () {
+            expect(VersionUtils.createBranchGitIfNeeded).to.exist;
+        });
+
+        it('should not create the git commit', function () {
+            let hashCreateBranchGitSpy = sinonSandBox.stub(VersionUtils, 'hashCreateBranchGit', () => false);
+            let createBranchSpy = sinonSandBox.stub(GitUtils, 'createCommit', () => Promise.resolve());
+            let fakeOptions = { 'preid': true };
+
+            return VersionUtils
+                .createBranchGitIfNeeded('1.2.3', fakeOptions)
+                .then(() => {
+                    expect(hashCreateBranchGitSpy.called).to.be.true;
+                    expect(hashCreateBranchGitSpy.calledOnce).to.be.true;
+                    expect(hashCreateBranchGitSpy.calledWithExactly(fakeOptions)).to.be.true;
+
+                    expect(createBranchSpy.called).to.be.false;
+                });
+        });
+
+        describe('should create the commit git', function () {
+            it('with the default message', function () {
+                let hashCreateBranchGitSpy = sinonSandBox.stub(VersionUtils, 'hashCreateBranchGit', () => true);
+                let createBranchSpy = sinonSandBox.stub(GitUtils, 'createBranch', () => Promise.resolve());
+                let fakeOptions = { 'preid': true };
+
+                return VersionUtils
+                    .createBranchGitIfNeeded('1.2.3', fakeOptions)
+                    .then(() => {
+                        expect(hashCreateBranchGitSpy.called).to.be.true;
+                        expect(hashCreateBranchGitSpy.calledOnce).to.be.true;
+                        expect(hashCreateBranchGitSpy.calledWithExactly(fakeOptions)).to.be.true;
+
+                        expect(createBranchSpy.called).to.be.true;
+                        expect(createBranchSpy.calledOnce).to.be.true;
+                        expect(createBranchSpy.calledWithExactly('1.2.3', Messages.GIT_BRANCH_MESSAGE, undefined)).to.be.true;
+                    });
+            });
+
+            it('with the specified message', function () {
+                let hashCreateBranchGitSpy = sinonSandBox.stub(VersionUtils, 'hashCreateBranchGit', () => true);
+                let createBranchSpy = sinonSandBox.stub(GitUtils, 'createBranch', () => Promise.resolve());
+                let fakeOptions = { 'preid': true, 'git-branch-message': 'my custom message' };
+
+                return VersionUtils
+                    .createBranchGitIfNeeded('1.2.3', fakeOptions)
+                    .then(() => {
+                        expect(hashCreateBranchGitSpy.called).to.be.true;
+                        expect(hashCreateBranchGitSpy.calledOnce).to.be.true;
+                        expect(hashCreateBranchGitSpy.calledWithExactly(fakeOptions)).to.be.true;
+
+                        expect(createBranchSpy.called).to.be.true;
+                        expect(createBranchSpy.calledOnce).to.be.true;
+                        expect(createBranchSpy.calledWithExactly('1.2.3', 'my custom message', undefined)).to.be.true;
+                    });
+            });
         });
     });
 
