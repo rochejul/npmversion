@@ -336,13 +336,27 @@ anotherRemote`));
                 });
         });
 
+        it('should use the specified origin', function () {
+            let getBranchName =  sinonSandBox.stub(GitUtils, 'getBranchName', () => Promise.resolve('releases/1.0.0'));
+            let getRemoteName = sinonSandBox.stub(GitUtils, 'getRemoteName', () => Promise.resolve('origin'));
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+
+            return GitUtils
+                .isCurrentBranchUpstream('anotherOrigin', '/etc')
+                .then(function () {
+                    expect(promiseExecStub.calledWithExactly('git branch -rvv', true, '/etc')).to.be.true;
+                    expect(getBranchName.calledWithExactly('/etc')).to.be.true;
+                    expect(getRemoteName.calledWithExactly('/etc')).to.be.false;
+                });
+        });
+
         it('should use the specified cwd', function () {
             let getBranchName =  sinonSandBox.stub(GitUtils, 'getBranchName', () => Promise.resolve('releases/1.0.0'));
             let getRemoteName = sinonSandBox.stub(GitUtils, 'getRemoteName', () => Promise.resolve('origin'));
             let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
 
             return GitUtils
-                .isCurrentBranchUpstream('/etc')
+                .isCurrentBranchUpstream(null, '/etc')
                 .then(function () {
                     expect(promiseExecStub.calledWithExactly('git branch -rvv', true, '/etc')).to.be.true;
                     expect(getBranchName.calledWithExactly('/etc')).to.be.true;
@@ -417,12 +431,23 @@ anotherRemote`));
                 });
         });
 
+        it('should use the specified origine', function () {
+            let getRemoteName = sinonSandBox.stub(GitUtils, 'getRemoteName', () => Promise.resolve('origin'));
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
+
+            return GitUtils
+                .isBranchUpstream('releases/1.0.0', 'anotherOrigin')
+                .then(function () {
+                    expect(promiseExecStub.calledWithExactly('git branch -rvv', true, '/etc')).to.be.false;
+                });
+        });
+
         it('should use the specified cwd', function () {
             let getRemoteName = sinonSandBox.stub(GitUtils, 'getRemoteName', () => Promise.resolve('origin'));
             let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve());
 
             return GitUtils
-                .isBranchUpstream('releases/1.0.0', '/etc')
+                .isBranchUpstream('releases/1.0.0', null, '/etc')
                 .then(function () {
                     expect(promiseExecStub.calledWithExactly('git branch -rvv', true, '/etc')).to.be.true;
                     expect(getRemoteName.calledWithExactly('/etc')).to.be.true;
