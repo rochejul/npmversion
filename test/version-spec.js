@@ -138,6 +138,46 @@ describe(`VersionUtils  - `, function () {
         });
     });
 
+    describe('and the method "getIncrementationLevel" ', function () {
+        it('should exist', function () {
+            expect(VersionUtils.getIncrementationLevel).to.exist;
+        });
+
+        it('should return patch if no options are provided', function () {
+            expect(VersionUtils.getIncrementationLevel()).equals('patch');
+        });
+
+        it('should return patch if no increment level is specified', function () {
+            expect(VersionUtils.getIncrementationLevel({ })).equals('patch');
+        });
+
+        it('should return patch if the increment level is not recognized', function () {
+            expect(VersionUtils.getIncrementationLevel({ 'increment': 'fake' })).equals('patch');
+        });
+
+        describe('should the specified level ', function () {
+            it('with cases checking', function () {
+                expect(VersionUtils.getIncrementationLevel({ 'increment': 'major' })).equals('major');
+                expect(VersionUtils.getIncrementationLevel({ 'increment': 'minor' })).equals('minor');
+                expect(VersionUtils.getIncrementationLevel({ 'increment': 'patch' })).equals('patch');
+                expect(VersionUtils.getIncrementationLevel({ 'increment': 'premajor' })).equals('premajor');
+                expect(VersionUtils.getIncrementationLevel({ 'increment': 'preminor' })).equals('preminor');
+                expect(VersionUtils.getIncrementationLevel({ 'increment': 'prepatch' })).equals('prepatch');
+                expect(VersionUtils.getIncrementationLevel({ 'increment': 'prerelease' })).equals('prerelease');
+            });
+
+            it('without cases checking', function () {
+                expect(VersionUtils.getIncrementationLevel({ 'increment': 'MAJOR' })).equals('major');
+                expect(VersionUtils.getIncrementationLevel({ 'increment': 'MINOR' })).equals('minor');
+                expect(VersionUtils.getIncrementationLevel({ 'increment': 'PATCH' })).equals('patch');
+                expect(VersionUtils.getIncrementationLevel({ 'increment': 'PREMAJOR' })).equals('premajor');
+                expect(VersionUtils.getIncrementationLevel({ 'increment': 'PREMINOR' })).equals('preminor');
+                expect(VersionUtils.getIncrementationLevel({ 'increment': 'PREPATCH' })).equals('prepatch');
+                expect(VersionUtils.getIncrementationLevel({ 'increment': 'PRERELEASE' })).equals('prerelease');
+            });
+        });
+    });
+
     describe('and the method "checkForGitIfNeeded" ', function () {
         it('should exist', function () {
             expect(VersionUtils.checkForGitIfNeeded).to.exist;
