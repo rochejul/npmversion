@@ -165,6 +165,16 @@ describe(`GitUtils  - `, function () {
                 });
         });
 
+        it('should ignore some carriage return', function () {
+            let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve('releases/1.0.0\n'));
+
+            return GitUtils
+                .getBranchName()
+                .then(function (remoteName) {
+                    expect(remoteName).equals('releases/1.0.0');
+                });
+        });
+
         it('should raise the exception NoBranchGitError if no branch was detected', function () {
             let promiseExecStub = sinonSandBox.stub(Utils, 'promisedExec', () => Promise.resolve(''));
 
