@@ -79,7 +79,7 @@ Type the command "npm install --save-dev --save-exact npmversion
 {
   "name": "my-app",
   "version": "1.2.0",
-  "deveDependencies": {
+  "devDependencies": {
       "npmversion": "latest"
   }
 }
