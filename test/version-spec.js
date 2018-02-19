@@ -462,6 +462,11 @@ describe(`VersionUtils  - `, function () {
                         calls.push(['promisedExec'].concat(Array.from(arguments)));
                         return Promise.resolve();
                     });
+
+                    sinonSandBox.stub(Utils, 'promisedSpawn', function () {
+                        calls.push(['promisedSpawn'].concat(Array.from(arguments)));
+                        return Promise.resolve();
+                    });
                 });
 
                 afterEach(function () {
@@ -928,8 +933,12 @@ describe(`VersionUtils  - `, function () {
                                     undefined
                                 ],
                                 [
-                                    "promisedExec",
-                                    "npm run prenpmversion",
+                                    "promisedSpawn",
+                                    "npm",
+                                    [
+                                        "run",
+                                        "prenpmversion"
+                                    ],
                                     false,
                                     undefined
                                 ],
@@ -939,8 +948,12 @@ describe(`VersionUtils  - `, function () {
                                     undefined
                                 ],
                                 [
-                                    "promisedExec",
-                                    "npm run postnpmversion",
+                                    "promisedSpawn",
+                                    "npm",
+                                    [
+                                        "run",
+                                        "postnpmversion"
+                                    ],
                                     false,
                                     undefined
                                 ],
@@ -1073,8 +1086,12 @@ describe(`VersionUtils  - `, function () {
                                     '/etc'
                                 ],
                                 [
-                                    "promisedExec",
-                                    "npm run prenpmversion",
+                                    "promisedSpawn",
+                                    "npm",
+                                    [
+                                        "run",
+                                        "prenpmversion"
+                                    ],
                                     false,
                                     '/etc'
                                 ],
@@ -1084,8 +1101,12 @@ describe(`VersionUtils  - `, function () {
                                     '/etc'
                                 ],
                                 [
-                                    "promisedExec",
-                                    "npm run postnpmversion",
+                                    "promisedSpawn",
+                                    "npm",
+                                    [
+                                        "run",
+                                        "postnpmversion"
+                                    ],
                                     false,
                                     '/etc'
                                 ],
