@@ -612,7 +612,7 @@ describe(`VersionUtils  - `, function () {
                                 ],
                                 [
                                     "promisedExec",
-                                    "git push && git push --tags",
+                                    "git push && git push --tags --no-verify",
                                     false,
                                     undefined
                                 ]
@@ -671,7 +671,7 @@ describe(`VersionUtils  - `, function () {
                                 ],
                                 [
                                     "promisedExec",
-                                    "git push && git push --tags",
+                                    "git push && git push --tags --no-verify",
                                     false,
                                     undefined
                                 ]
@@ -719,7 +719,7 @@ describe(`VersionUtils  - `, function () {
                                 ],
                                 [
                                     "promisedExec",
-                                    "git push && git push --tags",
+                                    "git push && git push --tags --no-verify",
                                     false,
                                     undefined
                                 ]
@@ -773,7 +773,7 @@ describe(`VersionUtils  - `, function () {
                                 ],
                                 [
                                     "promisedExec",
-                                    "git push && git push --tags",
+                                    "git push && git push --tags --no-verify",
                                     false,
                                     undefined
                                 ]
@@ -827,7 +827,7 @@ describe(`VersionUtils  - `, function () {
                                 ],
                                 [
                                     "promisedExec",
-                                    "git push && git push --tags",
+                                    "git push && git push --tags --no-verify",
                                     false,
                                     undefined
                                 ]
@@ -983,7 +983,7 @@ describe(`VersionUtils  - `, function () {
                                 ],
                                 [
                                     "promisedExec",
-                                    "git push && git push --tags",
+                                    "git push && git push --tags --no-verify",
                                     false,
                                     undefined
                                 ]
@@ -1049,7 +1049,7 @@ describe(`VersionUtils  - `, function () {
                                 ],
                                 [
                                     "promisedExec",
-                                    "git push && git push --tags",
+                                    "git push && git push --tags --no-verify",
                                     false,
                                     undefined
                                 ]
@@ -1136,7 +1136,7 @@ describe(`VersionUtils  - `, function () {
                                 ],
                                 [
                                     "promisedExec",
-                                    "git push && git push --tags",
+                                    "git push && git push --tags --no-verify",
                                     false,
                                     '/etc'
                                 ]

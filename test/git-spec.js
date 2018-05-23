@@ -486,7 +486,7 @@ anotherRemote`));
             return GitUtils
                 .push(true)
                 .then(function () {
-                    expect(promiseExecStub.calledWithExactly('git push && git push --tags', false, undefined)).to.be.true;
+                    expect(promiseExecStub.calledWithExactly('git push && git push --tags --no-verify', false, undefined)).to.be.true;
                 });
         });
 
