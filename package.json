@@ -8,17 +8,31 @@
     "lib",
     "resources"
   ],
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "checkstyle": "npm run delete target/eslint-reporter-checkstyle.xml && (node node_modules/eslint/bin/eslint.js --config=.eslintrc --output-file ./target/eslint-reporter-checkstyle.xml --format checkstyle ./lib || exit 0)",
-    "delete": "node node_modules/rimraf/bin.js",
-    "documentation": "npm run delete target/doc && node ./node_modules/jsdoc/jsdoc.js --recurse --destination ./target/doc --verbose ./lib",
-    "freeze-dependencies": "npm shrinkwrap --only=prod",
-    "start": "node ./lib/index.js",
-    "test": "node ./node_modules/mocha/bin/mocha --recursive --ui bdd --colors ./test"
+    "dev:audit": "npm audit --workspaces --include-workspace-root",
+    "dev:check": "npm test && npm run dev:styling",
+    "dev:format": "prettier --check \"./**/*.{ts,tsx,js,mjs,cjs,md}\"",
+    "dev:format:check": "prettier --write \"./**/*.{ts,tsx,js,mjs,cjs,md}\"",
+    "dev:linting": "npm run dev:linting --workspaces --if-present",
+    "dev:styling": "npm run dev:format && npm run dev:linting",
+    "prepare": "husky && npx replace-in-file '#!/usr/bin/env sh' '#!/usr/bin/env bash' '.husky/_/husky.sh' --quiet && npx replace-in-file 'sh -e' 'bash -e' '.husky/_/husky.sh' --quiet",
+    "dev:publish": "npm publish --workspaces",
+    "test": "npm run test --workspaces --if-present",
+    "test:coverage": "npm run test:coverage --workspaces --if-present"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/rochejul/node-version.git"
+  "//": {
+    "dev:audit": "Checks we don't have vulnearbilities",
+    "dev:check": "Run tests and styling over packages",
+    "dev:format": "Format files over packages",
+    "dev:format:check": "Check files format over packages",
+    "dev:linting": "Lint files over packages",
+    "dev:publish": "Publish all the packages on npm registry",
+    "dev:styling": "Format and lint files over packages",
+    "test": "Run tests over packages",
+    "test:coverage": "Run tests over packages and see coverage reports"
   },
   "keywords": [
     "bump",
@@ -26,34 +40,49 @@
     "version",
     "cli"
   ],
-  "author": "Julien Roche",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/rochejul/node-version/issues"
+  "author": {
+    "name": "Julien Roche",
+    "email": "roche.jul@gmail.com",
+    "url": "https://julienroche.blogspot.com/"
   },
+  "license": "MIT",
   "homepage": "https://github.com/rochejul/node-version#readme",
+  "bugs": {
+    "url": "https://github.com/rochejul/node-version/issues",
+    "email": "roche.jul@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rochejul/node-version.git"
+  },
   "dependencies": {
-    "json5": "0.5.0",
-    "lodash": "4.17.10",
-    "minimist": "1.2.0",
-    "rc": "1.2.7",
-    "semver": "5.1.0"
+    "json5": "2.2.3",
+    "lodash": "4.17.21",
+    "minimist": "1.2.8",
+    "rc": "1.2.8",
+    "semver": "7.6.3"
   },
   "devDependencies": {
-    "chai": "3.5.0",
-    "eslint": "2.4.0",
-    "eslint-plugin-node": "2.0.0",
-    "eslint-plugin-promise": "3.4.1",
-    "jsdoc": "3.4.0",
-    "mocha": "2.4.5",
-    "rimraf": "2.5.2",
-    "sinon": "1.17.3"
+    "@commitlint/cli": "19.6.0",
+    "@commitlint/config-conventional": "19.6.0",
+    "eslint": "9.16.0",
+    "eslint-config-prettier": "9.1.0",
+    "eslint-plugin-jest": "28.9.0",
+    "eslint-plugin-prettier": "5.2.1",
+    "husky": "9.1.7",
+    "prettier": "3.4.2"
+  },
+  "overrides": {
+    "eslint": "$eslint"
   },
   "bin": {
     "npmversion": "./bin/npmversion"
   },
   "engines": {
-    "node": ">=4.0.0",
-    "npm": ">=2.0.0"
+    "node": "^16.10.0 || ^18.12.0 || >=20.0.0"
+  },
+  "volta": {
+    "node": "20.15.0",
+    "npm": "10.7.0"
   }
 }

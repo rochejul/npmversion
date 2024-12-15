@@ -4,9 +4,8 @@
 var semver = require('semver');
 
 if (semver.lt(process.version, '4.0.0')) {
-    module.exports = require('./lib-es5/index');
-
+  module.exports = require('./lib-es5/index');
 } else {
-    // Use ES6 modules
-    module.exports = require('./lib/index');
+  // Use ES6 modules
+  module.exports = require('./lib/index');
 }

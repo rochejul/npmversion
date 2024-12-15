@@ -11,12 +11,12 @@
 A command line node module to deal with "bumping" and "npm version"
 
 The "version" command will:
- - change the package version of the package.json file and in the npm-shrinkwrap.json file if this one exists
- - deal with the prenumber and the preid flag
- - create git commits and tags
- - push the git commits and tags
- 
- 
+
+- change the package version of the package.json file and in the npm-shrinkwrap.json file if this one exists
+- deal with the prenumber and the preid flag
+- create git commits and tags
+- push the git commits and tags
+
 ## Possible options
 
     --help
@@ -35,21 +35,21 @@ The "version" command will:
             Identifier to be used to prefix premajor, preminor,
             prepatch or prerelease version increments. It could
             be 'snapshot', 'beta' or 'alpha' for example.
-    
+
         --force-preid
             If specified, we force to add if needed the specified preid
-            
+
         --read-only
                 Print only the future version. Don't modify the package.json file,
                 nor the npm-shrinkwrap.json file, don't create a commit and don't
                 create a git tag
-        
+
         --nogit-commit
             No git commit
-    
+
         --nogit-tag
             No git tag
-    
+
         --git-push
             Push the commit and the tags if needed
 
@@ -61,13 +61,13 @@ The "version" command will:
                Print only the future version. Don't modify the package.json file,
                nor the npm-shrinkwrap.json file, don't create a commit and don't
                create a git tag
-       
+
        --nogit-commit
            No git commit
-   
+
        --nogit-tag
            No git tag
-   
+
        --git-push
            Push the commit and the tags if needed
 
@@ -75,71 +75,70 @@ The "version" command will:
 
 Type the command "npm install --save-dev --save-exact npmversion
 
-````json
+```json
 {
   "name": "my-app",
   "version": "1.2.0",
   "devDependencies": {
-      "npmversion": "latest"
+    "npmversion": "latest"
   }
 }
-````
+```
 
 ## Possible NPM-RUN configuration
 
-````json
+```json
 {
   "name": "my-app",
   "version": "0.0.1",
   "scripts": {
-      "test": "node ./node_modules/mocha/bin/mocha --recursive --ui bdd --colors ./test",
-      
-      "bump-release": "npm run test && npmversion --unpreid --git-push",
-  
-      "bump-major": "npm run test && npmversion --increment major --git-push",
-      "bump-minor": "npm run test && npmversion --increment minor --git-push",
-      "bump-patch": "npm run test && npmversion --increment patch --git-push",
-      
-      "bump-major-beta": "npmversion --increment major --preid beta --nogit-tag --git-push",
-      "bump-minor-beta": "npmversion --increment minor --preid beta --nogit-tag --git-push",
-      "bump-patch-beta": "npmversion --increment patch --preid beta --nogit-tag --git-push"
+    "test": "node ./node_modules/mocha/bin/mocha --recursive --ui bdd --colors ./test",
+
+    "bump-release": "npm run test && npmversion --unpreid --git-push",
+
+    "bump-major": "npm run test && npmversion --increment major --git-push",
+    "bump-minor": "npm run test && npmversion --increment minor --git-push",
+    "bump-patch": "npm run test && npmversion --increment patch --git-push",
+
+    "bump-major-beta": "npmversion --increment major --preid beta --nogit-tag --git-push",
+    "bump-minor-beta": "npmversion --increment minor --preid beta --nogit-tag --git-push",
+    "bump-patch-beta": "npmversion --increment patch --preid beta --nogit-tag --git-push"
   }
 }
-````
+```
 
 ## Pre and Post NPM-RUN
 
 As other base npm commands, you can have now a pre and a post npmversion command. The post command
 is called before create a git commit / tag and pushing.
 
-
-````json
+```json
 {
   "name": "my-app",
   "version": "0.0.1",
   "scripts": {
-      "test": "node ./node_modules/mocha/bin/mocha --recursive --ui bdd --colors ./test",
-      
-      "bump-release": "npm run test && npmversion --unpreid --git-push",
-  
-      "bump-major": "npm run test && npmversion --increment major --git-push",
-      "bump-minor": "npm run test && npmversion --increment minor --git-push",
-      "bump-patch": "npm run test && npmversion --increment major --git-push",
-      
-      "bump-major-beta": "npmversion --increment major --preid beta --nogit-tag --git-push",
-      "bump-minor-beta": "npmversion --increment minor --preid beta --nogit-tag --git-push",
-      "bump-patch-beta": "npmversion --increment major --preid beta --nogit-tag --git-push",
-      
-      "prenpmversion": "echo \"Pre npmversion\"",
-      "postnpmversion": "echo \"Post npmversion\""
+    "test": "node ./node_modules/mocha/bin/mocha --recursive --ui bdd --colors ./test",
+
+    "bump-release": "npm run test && npmversion --unpreid --git-push",
+
+    "bump-major": "npm run test && npmversion --increment major --git-push",
+    "bump-minor": "npm run test && npmversion --increment minor --git-push",
+    "bump-patch": "npm run test && npmversion --increment major --git-push",
+
+    "bump-major-beta": "npmversion --increment major --preid beta --nogit-tag --git-push",
+    "bump-minor-beta": "npmversion --increment minor --preid beta --nogit-tag --git-push",
+    "bump-patch-beta": "npmversion --increment major --preid beta --nogit-tag --git-push",
+
+    "prenpmversion": "echo \"Pre npmversion\"",
+    "postnpmversion": "echo \"Post npmversion\""
   }
 }
-````
+```
 
 Be aware that this pre / post are executed before and after the version bumping, and in all cases before pushing the git commit and tag.
 Internally, the workflow would be:
 
-````bash
+```bash
 > git --help
 > git status --porcelain
 > npm run prenpmversion
@@ -148,128 +147,122 @@ Internally, the workflow would be:
 > git commit --all --message \"Release version: 1.2.1\"
 > git tag \"v1.2.1\"
 > ...
-````
+```
 
 So if you run npmversion not with CLI tool, but as run-script, you must be carefull.
 If you name it "npmversion", you commands will be executed twice: one before / after the version bumping and one before / after the whole process. I suggest to call with anoter name like "bumping" or "versioning"
 
-````json
+```json
 {
   "name": "my-app",
   "version": "0.0.1",
   "scripts": {
-      "test": "node ./node_modules/mocha/bin/mocha --recursive --ui bdd --colors ./test",
-      
-      "bump-release": "npm run test && bumping --unpreid --git-push",
-  
-      "bump-major": "npm run test && bumping --increment major --git-push",
-      "bump-minor": "npm run test && bumping --increment minor --git-push",
-      "bump-patch": "npm run test && bumping --increment major --git-push",
-      
-      "bump-major-beta": "bumping --increment major --preid beta --nogit-tag --git-push",
-      "bump-minor-beta": "bumping --increment minor --preid beta --nogit-tag --git-push",
-      "bump-patch-beta": "bumping --increment major --preid beta --nogit-tag --git-push",
-      
-      "prenpmversion": "echo \"Pre npmversion\"",
-      "postnpmversion": "echo \"Post npmversion\"",
-      
-      "bumping": "node ./node_modules/npmversion/bin/npmversion"
+    "test": "node ./node_modules/mocha/bin/mocha --recursive --ui bdd --colors ./test",
+
+    "bump-release": "npm run test && bumping --unpreid --git-push",
+
+    "bump-major": "npm run test && bumping --increment major --git-push",
+    "bump-minor": "npm run test && bumping --increment minor --git-push",
+    "bump-patch": "npm run test && bumping --increment major --git-push",
+
+    "bump-major-beta": "bumping --increment major --preid beta --nogit-tag --git-push",
+    "bump-minor-beta": "bumping --increment minor --preid beta --nogit-tag --git-push",
+    "bump-patch-beta": "bumping --increment major --preid beta --nogit-tag --git-push",
+
+    "prenpmversion": "echo \"Pre npmversion\"",
+    "postnpmversion": "echo \"Post npmversion\"",
+
+    "bumping": "node ./node_modules/npmversion/bin/npmversion"
   }
 }
-````
-
+```
 
 ## Possible .npmversionrc configuration
 
-````json
+```json
 {
-    "force-preid": true,
-    "nogit-commit": false,
-    "nogit-tag": true,
-    "git-push": false,
-    "git-create-branch": false,
-    "git-branch-message": "release/%s",
-    "git-commit-message": "Release version: %s",
-    "git-tag-message": "v%s",
-    "increment": "minor",
-    "git-remote-name": null,
-    "ignoreErrorJsonFile": false,
-    "jsonFiles": []
+  "force-preid": true,
+  "nogit-commit": false,
+  "nogit-tag": true,
+  "git-push": false,
+  "git-create-branch": false,
+  "git-branch-message": "release/%s",
+  "git-commit-message": "Release version: %s",
+  "git-tag-message": "v%s",
+  "increment": "minor",
+  "git-remote-name": null,
+  "ignoreErrorJsonFile": false,
+  "jsonFiles": []
 }
-````
+```
 
 jsonFiles is a list of JSON files with the "version" property to update. The file path is relative to the package.json file.
 
 An example which includes bower:
 
-````json
+```json
 {
-    "force-preid": true,
-    "nogit-commit": false,
-    "nogit-tag": true,
-    "git-push": false,
-    "git-create-branch": false,
-    "git-branch-message": "release/%s",
-    "git-commit-message": "Release version: %s",
-    "git-tag-message": "v%s",
-    "git-remote-name": "origin",
-    "increment": "minor",
-    "ignoreErrorJsonFile": false,
-    "jsonFiles": [
-        "bower.json"
-    ]
+  "force-preid": true,
+  "nogit-commit": false,
+  "nogit-tag": true,
+  "git-push": false,
+  "git-create-branch": false,
+  "git-branch-message": "release/%s",
+  "git-commit-message": "Release version: %s",
+  "git-tag-message": "v%s",
+  "git-remote-name": "origin",
+  "increment": "minor",
+  "ignoreErrorJsonFile": false,
+  "jsonFiles": ["bower.json"]
 }
-````
+```
 
 Another way: declare a json object with the property to update:
 
-````json
+```json
 {
-    "force-preid": true,
-    "nogit-commit": false,
-    "nogit-tag": true,
-    "git-push": false,
-    "git-create-branch": false,
-    "git-branch-message": "release/%s",
-    "git-commit-message": "Release version: %s",
-    "git-tag-message": "v%s",
-    "git-remote-name": "origin",
-    "increment": "minor",
-    "ignoreErrorJsonFile": false,
-    "jsonFiles": [
-        { "file": "bower.json", "property": "version" }
-    ]
+  "force-preid": true,
+  "nogit-commit": false,
+  "nogit-tag": true,
+  "git-push": false,
+  "git-create-branch": false,
+  "git-branch-message": "release/%s",
+  "git-commit-message": "Release version: %s",
+  "git-tag-message": "v%s",
+  "git-remote-name": "origin",
+  "increment": "minor",
+  "ignoreErrorJsonFile": false,
+  "jsonFiles": [{ "file": "bower.json", "property": "version" }]
 }
-````
+```
 
 And of course, both:
 
-````json
+```json
 {
-    "force-preid": true,
-    "nogit-commit": false,
-    "nogit-tag": true,
-    "git-push": false,
-    "git-create-branch": false,
-    "git-branch-message": "release/%s",
-    "git-commit-message": "Release version: %s",
-    "git-tag-message": "v%s",
-    "git-remote-name": "origin",
-    "increment": "minor",
-    "ignoreErrorJsonFile": false,
-    "jsonFiles": [
-        "component.json",
-        { "file": "bower.json", "property": "version" }
-    ]
+  "force-preid": true,
+  "nogit-commit": false,
+  "nogit-tag": true,
+  "git-push": false,
+  "git-create-branch": false,
+  "git-branch-message": "release/%s",
+  "git-commit-message": "Release version: %s",
+  "git-tag-message": "v%s",
+  "git-remote-name": "origin",
+  "increment": "minor",
+  "ignoreErrorJsonFile": false,
+  "jsonFiles": [
+    "component.json",
+    { "file": "bower.json", "property": "version" }
+  ]
 }
-````
-
+```
 
 ## Possible outputs
 
 ### In a classical way
 
-````
+```
 > semver 1.2.3 --increment patch                             1.2.4
 > semver 1.2.3 --increment minor                             1.3.0
 > semver 1.2.3 --increment major                             2.0.0
@@ -334,11 +327,11 @@ And of course, both:
 > semver 1.2.3-beta.0 --preid beta --increment preminor       1.3.0-beta.0
 > semver 1.2.3-beta.0 --preid beta --increment premajor       2.0.0-beta.0
 
-````
+```
 
 ### With the force-preid option
 
-````
+```
 > semver 1.2.3 --increment patch                             1.2.4
 > semver 1.2.3 --increment minor                             1.3.0
 > semver 1.2.3 --increment major                             2.0.0
@@ -402,4 +395,4 @@ And of course, both:
 > semver 1.2.3-beta.0 --preid beta --increment prepatch       1.2.4-beta.0
 > semver 1.2.3-beta.0 --preid beta --increment preminor       1.3.0-beta.0
 > semver 1.2.3-beta.0 --preid beta --increment premajor       2.0.0-beta.0
-````
+```
