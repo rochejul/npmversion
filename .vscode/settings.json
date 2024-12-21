@@ -1,0 +1,35 @@
+{
+  "eslint.workingDirectories": [{ "mode": "location" }],
+  "eslint.useFlatConfig": true,
+  "jest.jestCommandLine": "npx jest --no-cache",
+  "jest.nodeEnv": {
+    "NODE_OPTIONS": "--experimental-vm-modules"
+  },
+  "jest.runMode": "on-save",
+  "jest.debugMode": true,
+  "jest.coverageFormatter": "DefaultFormatter",
+  "jest.coverageColors": {
+    "covered": "rgba(9, 156, 65, 0.4)",
+    "uncovered": "rgba(255,99,71, 0.2)",
+    "partially-covered": "rgba(255,215,0, 0.2)"
+  },
+  "jest.virtualFolders": [
+    { "name": "cli", "rootPath": "packages/cli" },
+    { "name": "core", "rootPath": "packages/core" },
+    { "name": "util", "rootPath": "packages/util" },
+    { "name": "workspace", "rootPath": "packages/workspace" }
+  ],
+  "jestrunner.jestCommand": "NODE_OPTIONS=\"--experimental-vm-modules\" npx jest",
+  "jestrunner.runOptions": ["--no-cache", "--coverage=false"],
+  "jestrunner.debugOptions": {
+    "env": { "NODE_OPTIONS": "--experimental-vm-modules" },
+    "args": [
+      "--runInBand",
+      "--no-cache",
+      "--coverage=false",
+      "--colors",
+      "--verbose",
+      "--watchAll=false"
+    ]
+  }
+}

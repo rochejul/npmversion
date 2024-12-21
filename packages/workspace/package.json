@@ -1,0 +1,49 @@
+{
+  "name": "@npmversion/workspace",
+  "version": "2.0.0",
+  "type": "module",
+  "description": "Workspace management for the npmversion library",
+  "main": "./src/index.js",
+  "files": [
+    "./src"
+  ],
+  "scripts": {
+    "dev:linting": "eslint --config=eslint.config.js",
+    "test": "NODE_OPTIONS=\"$NODE_OPTIONS --enable-source-maps --experimental-vm-modules\" npx jest --no-cache --config jest.config.json",
+    "test:coverage": "npm run test -- --coverage"
+  },
+  "//": {
+    "dev:linting": "Lint files",
+    "test": "Run Jest tests",
+    "test:coverage": "Run Jest tests and collect coverage"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": "^16.10.0 || ^18.12.0 || >=20.0.0"
+  },
+  "volta": {
+    "node": "20.15.0",
+    "npm": "10.7.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rochejul/npmversion.git",
+    "directory": "packages/workspace"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@npmversion/jest-utils": "*"
+  },
+  "dependencies": {},
+  "keywords": [
+    "npmversion",
+    "workspace"
+  ],
+  "author": {
+    "name": "Julien Roche",
+    "email": "roche.jul@gmail.com",
+    "url": "https://julienroche.blogspot.com/"
+  }
+}
