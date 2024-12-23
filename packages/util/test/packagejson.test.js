@@ -25,7 +25,11 @@ describe('@npmversion/util - packagejson', () => {
       expect(plainObject(packageJson)).toEqual({
         name: '@myModule/leaf',
         version: '2.0.0',
-        workspaces: undefined,
+        workspaces: [],
+        dependencies: {},
+        devDependencies: {},
+        peerDependencies: {},
+        optionalDependencies: {},
       });
     });
 
@@ -38,6 +42,10 @@ describe('@npmversion/util - packagejson', () => {
         name: 'myModule',
         version: '2.0.0',
         workspaces: ['packages/*'],
+        dependencies: {},
+        devDependencies: {},
+        peerDependencies: {},
+        optionalDependencies: {},
       });
     });
   });

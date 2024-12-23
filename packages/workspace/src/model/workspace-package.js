@@ -1,24 +1,7 @@
 import { WorkspacePackageDependency } from './workspace-package-dependency';
+import { mapToWorkspacePackageDependency } from './util.js';
 
 /** @import semver from 'semver' */
-
-/**
- *
- * @param {Map<string, string>} deps
- * @returns {WorkspacePackageDependency[]}
- */
-function mapToWorkspacePackageDependency(deps) {
-  return Array.from(deps.keys()).reduce(
-    (acc, depName) => [
-      ...acc,
-      new WorkspacePackageDependency({
-        name: depName,
-        range: deps.get(depName),
-      }),
-    ],
-    [],
-  );
-}
 
 /**
  * @module @npmversion/workspace

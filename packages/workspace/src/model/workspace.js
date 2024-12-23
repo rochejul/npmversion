@@ -1,5 +1,7 @@
 import { DepGraph } from 'dependency-graph';
 import { WorkspacePackage } from './workspace-package.js';
+import { WorkspacePackageDependency } from './workspace-package-dependency.js';
+import { mapToWorkspacePackageDependency } from './util.js';
 
 /** @import semver from 'semver' */
 
@@ -24,18 +26,62 @@ export class Workspace {
   #workspacePackages;
 
   /**
+   * @type {WorkspacePackageDependency[]}
+   */
+  #dependencies;
+
+  /**
+   * @type {WorkspacePackageDependency[]}
+   */
+  #devDependencies;
+
+  /**
+   * @type {WorkspacePackageDependency[]}
+   */
+  #peerDependencies;
+
+  /**
+   * @type {WorkspacePackageDependency[]}
+   */
+  #optionalDependencies;
+
+  /**
    * @type {DepGraph}
    */
   #graph;
 
   /**
    * @constructor
-   * @param {{ name: string, version: string | semver, workspacePackages: WorkspacePackage[] = [] }} param
+   * @param {{ name: string, version: string | semver, workspacePackages: WorkspacePackage[] = [], dependencies: Object = {}, devDependencies: Object = {}, peerDependencies: Object = {}, optionalDependencies: Object = {} }} param
    */
-  constructor({ name, version, workspacePackages = [] }) {
+  constructor({
+    name,
+    version,
+    workspacePackages = [],
+    dependencies = {},
+    devDependencies = {},
+    peerDependencies = {},
+    optionalDependencies = {},
+  }) {
     this.#name = name;
     this.#version = version;
     this.#workspacePackages = Object.freeze(workspacePackages);
+    this.#dependencies = Object.freeze(
+      mapToWorkspacePackageDependency(new Map(Object.entries(dependencies))),
+    );
+    this.#devDependencies = Object.freeze(
+      mapToWorkspacePackageDependency(new Map(Object.entries(devDependencies))),
+    );
+    this.#peerDependencies = Object.freeze(
+      mapToWorkspacePackageDependency(
+        new Map(Object.entries(peerDependencies)),
+      ),
+    );
+    this.#optionalDependencies = Object.freeze(
+      mapToWorkspacePackageDependency(
+        new Map(Object.entries(optionalDependencies)),
+      ),
+    );
 
     this.#graph = new DepGraph();
 
@@ -81,6 +127,34 @@ export class Workspace {
   }
 
   /**
+   * @returns {WorkspacePackageDependency[]}
+   */
+  get dependencies() {
+    return this.#dependencies;
+  }
+
+  /**
+   * @returns {WorkspacePackageDependency[]}
+   */
+  get devDependencies() {
+    return this.#devDependencies;
+  }
+
+  /**
+   * @returns {WorkspacePackageDependency[]}
+   */
+  get peerDependencies() {
+    return this.#peerDependencies;
+  }
+
+  /**
+   * @returns {WorkspacePackageDependency[]}
+   */
+  get optionalDependencies() {
+    return this.#optionalDependencies;
+  }
+
+  /**
    * @type {string[]}
    */
   dependenciesOrder() {
@@ -92,6 +166,10 @@ export class Workspace {
       name: this.name,
       version: this.version,
       workspacePackages: this.workspacePackages,
+      dependencies: this.dependencies,
+      devDependencies: this.devDependencies,
+      peerDependencies: this.peerDependencies,
+      optionalDependencies: this.optionalDependencies,
     });
   }
 }

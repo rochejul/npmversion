@@ -11,13 +11,27 @@ describe('@npmversion/workspace - index', () => {
   describe('computeWorkspace', () => {
     test('returns empty array if we are in a leaf module', async () => {
       const workspace = await computeWorkspace(
-        path.resolve(path.join(__dirname, '..')),
+        path.resolve(path.join(__dirname, './resources/packages/workspace')),
       );
 
       expect(workspace).toMatchPlainObject({
         name: '@npmversion/workspace',
         version: '2.0.0',
         workspacePackages: [],
+        dependencies: [
+          {
+            name: '@npmversion/util',
+            range: '2.0.0',
+          },
+        ],
+        devDependencies: [],
+        peerDependencies: [
+          {
+            name: '@npmversion/jest-utils',
+            range: '*',
+          },
+        ],
+        optionalDependencies: [],
       });
     });
 
@@ -29,6 +43,15 @@ describe('@npmversion/workspace - index', () => {
       expect(workspace).toMatchPlainObject({
         name: 'npmversion',
         version: '2.0.0',
+        dependencies: [
+          {
+            name: '@npmversion/cli',
+            range: '2.0.0',
+          },
+        ],
+        devDependencies: [],
+        peerDependencies: [],
+        optionalDependencies: [],
         workspacePackages: [
           {
             name: '@npmversion/cli',
