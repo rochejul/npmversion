@@ -1,8 +1,13 @@
 import { loadPackageJson } from '@npmversion/util';
 import { findPackages } from '@pnpm/fs.find-packages';
 
-import { WorkspacePackage, Workspace } from './model.js';
+import { WorkspacePackage, Workspace } from './model';
 
+/**
+ * @async
+ * @param {string} [cwd=process.cwd()]
+ * @returns {Workspace}
+ */
 export async function computeWorkspace(cwd = process.cwd()) {
   const packageJson = await loadPackageJson(cwd);
   const { name, version, workspaces } = packageJson;

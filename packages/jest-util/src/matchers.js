@@ -9,16 +9,16 @@ expect.extend({
     if (pass) {
       return {
         message: () =>
-          `Expected: ${this.utils.printExpected(expectedResult)}\nReceived: ${this.utils.printReceived(received)}`,
+          `Expected: ${this.utils.printExpected(expected)}\nReceived: ${this.utils.printReceived(receivedPlainObject)}`,
         pass: true,
       };
     }
 
     return {
       message: () =>
-        `Expected: ${this.utils.printExpected(expectedResult)}\nReceived: ${this.utils.printReceived(
-          received,
-        )}\n\n${this.utils.diff(expectedResult, received)}`,
+        `Expected: ${this.utils.printExpected(expected)}\nReceived: ${this.utils.printReceived(
+          receivedPlainObject,
+        )}\n\n${this.utils.diff(expected, receivedPlainObject)}`,
       pass: false,
     };
   },

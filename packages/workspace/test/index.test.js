@@ -33,17 +33,41 @@ describe('@npmversion/workspace - index', () => {
           {
             name: '@npmversion/cli',
             version: '2.0.0',
-            dependencies: ['@npmversion/core'],
+            dependencies: [
+              {
+                name: '@npmversion/core',
+                range: '2.0.0',
+              },
+            ],
             devDependencies: [],
-            peerDependencies: ['@npmversion/jest-utils'],
+            peerDependencies: [
+              {
+                name: '@npmversion/jest-utils',
+                range: '*',
+              },
+            ],
             optionalDependencies: [],
           },
           {
             name: '@npmversion/core',
             version: '2.0.0',
-            dependencies: ['@npmversion/util', '@npmversion/workspace'],
+            dependencies: [
+              {
+                name: '@npmversion/util',
+                range: '2.0.0',
+              },
+              {
+                name: '@npmversion/workspace',
+                range: '2.0.0',
+              },
+            ],
             devDependencies: [],
-            peerDependencies: ['@npmversion/jest-utils'],
+            peerDependencies: [
+              {
+                name: '@npmversion/jest-utils',
+                range: '*',
+              },
+            ],
             optionalDependencies: [],
           },
           {
@@ -59,19 +83,48 @@ describe('@npmversion/workspace - index', () => {
             version: '2.0.0',
             dependencies: [],
             devDependencies: [],
-            peerDependencies: ['@npmversion/jest-utils'],
+            peerDependencies: [
+              {
+                name: '@npmversion/jest-utils',
+                range: '*',
+              },
+            ],
             optionalDependencies: [],
           },
           {
             name: '@npmversion/workspace',
             version: '2.0.0',
-            dependencies: ['@npmversion/util'],
+            dependencies: [
+              {
+                name: '@npmversion/util',
+                range: '2.0.0',
+              },
+            ],
             devDependencies: [],
-            peerDependencies: ['@npmversion/jest-utils'],
+            peerDependencies: [
+              {
+                name: '@npmversion/jest-utils',
+                range: '*',
+              },
+            ],
             optionalDependencies: [],
           },
         ],
       });
+    });
+
+    test('returns the dependencies order if we are in a root module', async () => {
+      const workspace = await computeWorkspace(
+        path.resolve(path.join(__dirname, './resources')),
+      );
+
+      expect(workspace.dependenciesOrder()).toStrictEqual([
+        '@npmversion/jest-utils',
+        '@npmversion/util',
+        '@npmversion/workspace',
+        '@npmversion/core',
+        '@npmversion/cli',
+      ]);
     });
   });
 });
