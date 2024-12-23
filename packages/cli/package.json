@@ -40,7 +40,9 @@
     "@npmversion/jest-utils": "*"
   },
   "dependencies": {
-    "@npmversion/core": "2.0.0"
+    "@npmversion/core": "2.0.0",
+    "@types/minimist": "1.2.5",
+    "minimist": "1.2.8"
   },
   "keywords": [
     "npmversion",

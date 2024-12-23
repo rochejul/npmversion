@@ -5,7 +5,8 @@
   "description": "Core implementation of the npmversion library",
   "main": "./src/index.js",
   "files": [
-    "./src"
+    "./src",
+    "./resources"
   ],
   "scripts": {
     "dev:linting": "eslint --config=eslint.config.js",
@@ -38,7 +39,9 @@
   },
   "dependencies": {
     "@npmversion/util": "2.0.0",
-    "@npmversion/workspace": "2.0.0"
+    "@npmversion/workspace": "2.0.0",
+    "@types/rc": "1.2.4",
+    "rc": "1.2.8"
   },
   "keywords": [
     "npmversion",

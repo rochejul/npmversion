@@ -1,20 +1,5 @@
-/**
- * Cli parameters analyzer
- *
- * @module lib/cli-params
- * @exports versionOptionsAnalyzer
- * @author Julien Roche
- * @version 0.0.1
- * @since 0.0.1
- */
+import minimist from 'minimist';
 
-'use strict';
-
-// Imports
-const minimist = require('minimist');
-const _ = require('lodash');
-
-// Constants
 const MINIMIST_OPTIONS = {
   boolean: [
     'help',
@@ -46,16 +31,18 @@ const MINIMIST_OPTIONS = {
 };
 
 /**
- * @name versionOptionsAnalyzer
  * @param {string[]} cliParameters
  * @param {Object} [defaultOptions]
- * @returns {versionOptions}
+ * @returns {NpmVersionOptions}
  */
-module.exports = function (cliParameters, defaultOptions) {
+module.exports = function versionOptionsAnalyzer(
+  cliParameters,
+  defaultOptions,
+) {
   let options = MINIMIST_OPTIONS;
 
   if (defaultOptions) {
-    options = _.merge({}, MINIMIST_OPTIONS, { default: defaultOptions });
+    options = Object.assign({}, MINIMIST_OPTIONS, { default: defaultOptions });
   }
 
   return minimist(cliParameters, options);

@@ -1,6 +1,5 @@
 jest.unstable_mockModule('node:child_process', async () => ({
   exec: jest.fn(),
-  spawn: jest.fn(),
 }));
 
 import { describe, test, expect, jest } from '@jest/globals';
