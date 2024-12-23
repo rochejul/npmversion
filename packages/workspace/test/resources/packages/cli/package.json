@@ -1,0 +1,12 @@
+{
+  "name": "@npmversion/cli",
+  "version": "2.0.0",
+  "type": "module",
+  "description": "Cli over npmversion",
+  "peerDependencies": {
+    "@npmversion/jest-utils": "*"
+  },
+  "dependencies": {
+    "@npmversion/core": "2.0.0"
+  }
+}

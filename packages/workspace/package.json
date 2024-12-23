@@ -36,7 +36,10 @@
   "peerDependencies": {
     "@npmversion/jest-utils": "*"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@npmversion/util": "2.0.0",
+    "@pnpm/fs.find-packages": "1000.0.1"
+  },
   "keywords": [
     "npmversion",
     "workspace"

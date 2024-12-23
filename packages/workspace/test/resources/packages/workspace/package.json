@@ -1,0 +1,12 @@
+{
+  "name": "@npmversion/workspace",
+  "version": "2.0.0",
+  "type": "module",
+  "description": "Workspace management for the npmversion library",
+  "peerDependencies": {
+    "@npmversion/jest-utils": "*"
+  },
+  "dependencies": {
+    "@npmversion/util": "2.0.0"
+  }
+}

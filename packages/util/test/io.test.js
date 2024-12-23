@@ -104,7 +104,9 @@ describe('@npmversion/util - io', () => {
 
     test('it should return the content of the file', async () => {
       // Arrange
-      const filePath = path.resolve(path.join(__dirname, './file.txt'));
+      const filePath = path.resolve(
+        path.join(__dirname, './resources/file.txt'),
+      );
 
       // Act
       const content = await readFile(filePath);

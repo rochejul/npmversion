@@ -36,7 +36,10 @@
   "peerDependencies": {
     "@npmversion/jest-utils": "*"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@npmversion/util": "2.0.0",
+    "@npmversion/workspace": "2.0.0"
+  },
   "keywords": [
     "npmversion",
     "core"

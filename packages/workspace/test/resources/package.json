@@ -1,0 +1,20 @@
+{
+  "name": "npmversion",
+  "version": "2.0.0",
+  "description": "A command line node module to deal with \"bumping\" and \"npm version\"",
+  "main": "index.js",
+  "workspaces": [
+    "packages/*"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "@commitlint/cli": "19.6.0",
+    "@commitlint/config-conventional": "19.6.0",
+    "eslint": "9.16.0",
+    "eslint-config-prettier": "9.1.0",
+    "eslint-plugin-jest": "28.9.0",
+    "eslint-plugin-prettier": "5.2.1",
+    "husky": "9.1.7",
+    "prettier": "3.4.2"
+  }
+}
