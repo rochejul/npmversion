@@ -2,7 +2,9 @@
   "name": "npmversion",
   "version": "2.0.0",
   "description": "A command line node module to deal with \"bumping\" and \"npm version\"",
-  "main": "index.js",
+  "bin": {
+    "npmversion": "./bin/npmversion"
+  },
   "workspaces": [
     "packages/*"
   ],
@@ -51,10 +53,7 @@
     "url": "git+https://github.com/rochejul/node-version.git"
   },
   "dependencies": {
-    "json5": "2.2.3",
-    "minimist": "1.2.8",
-    "rc": "1.2.8",
-    "semver": "7.6.3"
+    "@npmversion/cli": "2.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "19.6.0",
@@ -68,9 +67,6 @@
   },
   "overrides": {
     "eslint": "$eslint"
-  },
-  "bin": {
-    "npmversion": "./bin/npmversion"
   },
   "engines": {
     "node": "^16.10.0 || ^18.12.0 || >=20.0.0"

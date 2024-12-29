@@ -10,10 +10,12 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 describe('@npmversion/workspace - index', () => {
   describe('computeWorkspace', () => {
     test('returns empty array if we are in a leaf module', async () => {
+      // Act
       const workspace = await computeWorkspace(
         path.resolve(path.join(__dirname, './resources/packages/workspace')),
       );
 
+      // Assert
       expect(workspace).toMatchPlainObject({
         name: '@npmversion/workspace',
         version: '2.0.0',
@@ -36,10 +38,12 @@ describe('@npmversion/workspace - index', () => {
     });
 
     test('returns the packages array if we are in a root module', async () => {
+      // Act
       const workspace = await computeWorkspace(
         path.resolve(path.join(__dirname, './resources')),
       );
 
+      // Assert
       expect(workspace).toMatchPlainObject({
         name: 'npmversion',
         version: '2.0.0',
@@ -137,10 +141,12 @@ describe('@npmversion/workspace - index', () => {
     });
 
     test('returns the dependencies order if we are in a root module', async () => {
+      // Act
       const workspace = await computeWorkspace(
         path.resolve(path.join(__dirname, './resources')),
       );
 
+      // Assert
       expect(workspace.dependenciesOrder()).toStrictEqual([
         '@npmversion/jest-utils',
         '@npmversion/util',

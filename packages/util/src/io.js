@@ -10,6 +10,9 @@ const MAX_BUFFER = 1000 * 1000 * 20; // 20 Mo
  * @returns {Promise.<string>}
  */
 export async function promisedExec(command, silent, cwd) {
+  // https://stackoverflow.com/questions/10232192/exec-display-stdout-live
+  // https://nodejs.org/api/process.html#processstdout
+  // https://github.com/nodejs/help/issues/4119
   return new Promise(function (resolve, reject) {
     let instance = exec(
       command,

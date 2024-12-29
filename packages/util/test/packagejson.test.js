@@ -1,5 +1,5 @@
 import { describe, test, expect, jest } from '@jest/globals';
-import { plainObject } from '@npmversion/jest-utils';
+import '@npmversion/jest-utils';
 import { loadPackageJson, PackageJson } from '../src/packagejson.js';
 
 import * as path from 'node:path';
@@ -10,19 +10,23 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 describe('@npmversion/util - packagejson', () => {
   describe('loadPackageJson', () => {
     test('returns the content of the package.json file in a model', async () => {
+      // Act
       const packageJson = await loadPackageJson(
         path.resolve(path.join(__dirname, './resources/packagejson/leaf')),
       );
 
+      // Assert
       expect(packageJson).toBeInstanceOf(PackageJson);
     });
 
     test('returns the content of the package.json file when we are a package', async () => {
+      // Act
       const packageJson = await loadPackageJson(
         path.resolve(path.join(__dirname, './resources/packagejson/leaf')),
       );
 
-      expect(plainObject(packageJson)).toEqual({
+      // Assert
+      expect(packageJson).toMatchPlainObject({
         name: '@myModule/leaf',
         version: '2.0.0',
         workspaces: [],
@@ -38,7 +42,7 @@ describe('@npmversion/util - packagejson', () => {
         path.resolve(path.join(__dirname, './resources/packagejson/root')),
       );
 
-      expect(plainObject(packageJson)).toEqual({
+      expect(packageJson).toMatchPlainObject({
         name: 'myModule',
         version: '2.0.0',
         workspaces: ['packages/*'],

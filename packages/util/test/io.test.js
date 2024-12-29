@@ -15,40 +15,51 @@ const { promisedExec, readFile } = await import('../src/io.js');
 describe('@npmversion/util - io', () => {
   describe('promisedExec', () => {
     test('it should resolve the promise when the execution is done', async () => {
+      // Arrange
       mockExec.mockImplementation((_command, _options, callback) =>
         callback(null),
       );
 
+      // Act
       const promise = await promisedExec('ls -la', true);
 
+      // Assert
       expect(promise).resolves;
     });
 
     test('it should return the command output', async () => {
+      // Arrange
       mockExec.mockImplementation((_command, _options, callback) =>
         callback(null, 'return of the command'),
       );
 
+      // Act
       const promise = await promisedExec('ls -la', true);
 
+      // Assert
       expect(promise).toStrictEqual('return of the command');
     });
 
     test('it should reject the promise when the execution is rejected', async () => {
+      // Arrange
       mockExec.mockImplementation((_command, _options, callback) =>
         callback(500),
       );
 
+      // Act & Assert
       await expect(async () => promisedExec('ls -la', true)).rejects.toBe(500);
     });
 
     test('it should use per default the process.cwd', async () => {
+      // Arrange
       mockExec.mockImplementation((_command, _options, callback) =>
         callback(null),
       );
 
+      // Act
       await promisedExec('ls -la', true);
 
+      // Assert
       expect(mockExec).toHaveBeenLastCalledWith(
         'ls -la',
         { cwd: process.cwd(), maxBuffer: 20000000 },
@@ -57,11 +68,15 @@ describe('@npmversion/util - io', () => {
     });
 
     test('it should use  the specified cwd', async () => {
+      // Arrange
       mockExec.mockImplementation((_command, _options, callback) =>
         callback(null),
       );
+
+      // Act
       await promisedExec('ls -la', true, '/etc');
 
+      // Assert
       expect(mockExec).toHaveBeenLastCalledWith(
         'ls -la',
         { cwd: '/etc', maxBuffer: 20000000 },
@@ -70,6 +85,7 @@ describe('@npmversion/util - io', () => {
     });
 
     test('it should log the ouput', async () => {
+      // Arrange
       const instance = {
         stderr: { on: () => {} },
         stdout: { on: () => {} },
@@ -83,8 +99,10 @@ describe('@npmversion/util - io', () => {
         return instance;
       });
 
+      // Act
       await promisedExec('ls -la', false);
 
+      // Assert
       expect(stderrOnStub).toHaveBeenCalledTimes(1);
       expect(stderrOnStub).toHaveBeenCalledWith('data', expect.any(Function));
 

@@ -11,6 +11,11 @@ export class PackageJson {
   #name;
 
   /**
+   * @type {string}
+   */
+  #description;
+
+  /**
    * @type {string | semver}
    */
   #version;
@@ -43,6 +48,7 @@ export class PackageJson {
   constructor({
     version,
     name,
+    description,
     workspaces = [],
     dependencies = {},
     devDependencies = {},
@@ -51,6 +57,7 @@ export class PackageJson {
   }) {
     this.#version = version;
     this.#name = name;
+    this.#description = description;
     this.#workspaces = workspaces;
     this.#dependencies = dependencies;
     this.#devDependencies = devDependencies;
@@ -63,6 +70,13 @@ export class PackageJson {
    */
   get name() {
     return this.#name;
+  }
+
+  /**
+   * @type {string}
+   */
+  get description() {
+    return this.#description;
   }
 
   /**
@@ -116,9 +130,10 @@ export class PackageJson {
 
   toJSON() {
     return Object.freeze({
-      name: this.#name,
-      version: this.#version,
-      workspaces: this.#workspaces,
+      name: this.name,
+      description: this.description,
+      version: this.version,
+      workspaces: this.workspaces,
       dependencies: this.dependencies,
       devDependencies: this.devDependencies,
       peerDependencies: this.peerDependencies,
