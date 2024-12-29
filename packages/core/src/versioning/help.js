@@ -33,7 +33,7 @@ export function printVersion(packageVersion) {
 
 /**
  *
- * @param {Error | null} err
+ * @param {Error | string | null} err
  */
 export function printError(err) {
   if (err instanceof GitNotInstalledError) {

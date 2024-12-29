@@ -1,4 +1,5 @@
 import minimist from 'minimist';
+import { VersionOptions } from '@npmversion/core';
 
 const MINIMIST_OPTIONS = {
   boolean: [
@@ -16,24 +17,14 @@ const MINIMIST_OPTIONS = {
     p: 'preid',
     u: 'unpreid',
   },
-  default: {
-    help: false,
-    unpreid: false,
-    'read-only': false,
-    'force-preid': false,
-    'nogit-commit': false,
-    'nogit-tag': false,
-    'git-push': false,
-    increment: 'patch',
-    preid: null,
-  },
+  default: VersionOptions.default(),
   stopEarly: true,
 };
 
 /**
  * @param {string[]} cliParameters
  * @param {Object} [defaultOptions]
- * @returns {NpmVersionOptions}
+ * @returns {VersionOptions}
  */
 module.exports = function versionOptionsAnalyzer(
   cliParameters,
@@ -45,5 +36,5 @@ module.exports = function versionOptionsAnalyzer(
     options = Object.assign({}, MINIMIST_OPTIONS, { default: defaultOptions });
   }
 
-  return minimist(cliParameters, options);
+  return new VersionOptions(minimist(cliParameters, options));
 };

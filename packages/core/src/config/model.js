@@ -1,38 +1,4 @@
-import rc from 'rc';
-import {
-  GIT_COMMIT_MESSAGE,
-  GIT_BRANCH_MESSAGE,
-  GIT_TAG_MESSAGE,
-} from './messages';
-import { LEVEL_ENUM } from './versioning/level';
-
-const CONFIG_NAME = 'npmversion';
-
-const RC_OPTIONS = {
-  'force-preid': false,
-  'nogit-commit': false,
-  'nogit-tag': false,
-  'git-push': false,
-  'git-create-branch': false,
-  'git-commit-message': GIT_COMMIT_MESSAGE,
-  'git-branch-message': GIT_BRANCH_MESSAGE,
-  'git-tag-message': GIT_TAG_MESSAGE,
-  'git-remote-name': null,
-  increment: LEVEL_ENUM.patch,
-};
-
-/**
- * @name rcOptionsRetriever
- * @returns {VersionOptions}
- */
-export function configRetriever() {
-  const { config, configs, ...versionOptions } = rc(
-    CONFIG_NAME,
-    RC_OPTIONS,
-    [],
-  );
-  return new VersionOptions(versionOptions);
-}
+import { DEFAULT_OPTIONS } from './default.js';
 
 /**
  * @module @npmversion/core
@@ -53,26 +19,26 @@ export class VersionOptions {
   #gitCommitMessage;
   #gitTagMessage;
 
-  constructor({ help = false, unpreid = false, preid = false, ...rest }) {
+  constructor({ help = false, unpreid = false, preid = false, ...rest } = {}) {
     this.#help = help;
     this.#unpreid = unpreid;
-    this.#forcePreid = rest['force-preid'] ?? RC_OPTIONS['force-preid'];
+    this.#forcePreid = rest['force-preid'] ?? DEFAULT_OPTIONS['force-preid'];
     this.#readOnly = rest['read-only'] ?? false;
-    this.#noGitCommit = rest['nogit-commit'] ?? RC_OPTIONS['nogit-commit'];
-    this.#noGitTag = rest['nogit-tag'] ?? RC_OPTIONS['nogit-tag'];
-    this.#gitPush = rest['git-push'] ?? RC_OPTIONS['git-push'];
+    this.#noGitCommit = rest['nogit-commit'] ?? DEFAULT_OPTIONS['nogit-commit'];
+    this.#noGitTag = rest['nogit-tag'] ?? DEFAULT_OPTIONS['nogit-tag'];
+    this.#gitPush = rest['git-push'] ?? DEFAULT_OPTIONS['git-push'];
     this.#gitCreateBranch =
-      rest['git-create-branch'] ?? RC_OPTIONS['git-create-branch'];
-    this.#increment = rest.increment ?? RC_OPTIONS.increment;
+      rest['git-create-branch'] ?? DEFAULT_OPTIONS['git-create-branch'];
+    this.#increment = rest.increment ?? DEFAULT_OPTIONS.increment;
     this.#preid = preid;
     this.#gitRemoteName =
-      rest['git-remote-name'] ?? RC_OPTIONS['git-remote-name'];
+      rest['git-remote-name'] ?? DEFAULT_OPTIONS['git-remote-name'];
     this.#gitBranchMessage =
-      rest['git-branch-message'] ?? RC_OPTIONS['git-branch-message'];
+      rest['git-branch-message'] ?? DEFAULT_OPTIONS['git-branch-message'];
     this.#gitCommitMessage =
-      rest['git-commit-message'] ?? RC_OPTIONS['git-commit-message'];
+      rest['git-commit-message'] ?? DEFAULT_OPTIONS['git-commit-message'];
     this.#gitTagMessage =
-      rest['git-tag-message'] ?? RC_OPTIONS['git-tag-message'];
+      rest['git-tag-message'] ?? DEFAULT_OPTIONS['git-tag-message'];
   }
 
   get help() {
@@ -137,8 +103,8 @@ export class VersionOptions {
       unpreid: this.#unpreid,
       'force-preid': this.#forcePreid,
       'read-only': this.#readOnly,
-      'no-git-commit': this.#noGitCommit,
-      'no-git-tag': this.#noGitTag,
+      'nogit-commit': this.#noGitCommit,
+      'nogit-tag': this.#noGitTag,
       'git-push': this.#gitPush,
       'git-create-branch': this.#gitCreateBranch,
       increment: this.#increment,
@@ -148,5 +114,9 @@ export class VersionOptions {
       'git-commit-message': this.#gitCommitMessage,
       'git-tag-message': this.#gitTagMessage,
     });
+  }
+
+  static default() {
+    return new VersionOptions().toJSON();
   }
 }

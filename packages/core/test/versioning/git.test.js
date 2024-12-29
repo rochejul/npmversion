@@ -19,7 +19,7 @@ import {
   NotAGitProjectError,
   GitNotInstalledError,
 } from '../../src/versioning/exception.js';
-import { VersionOptions } from '../../src/config.js';
+import { VersionOptions } from '../../src/config';
 
 const {
   hasGitInstalled,
