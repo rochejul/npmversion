@@ -161,6 +161,17 @@ export class Workspace {
     return this.#graph.overallOrder();
   }
 
+  getWorkspacePackage(packageName) {
+    return this.#workspacePackages.find(({ name }) => name === packageName);
+  }
+
+  /**
+   * @returns {boolean}
+   */
+  isLeaf() {
+    return this.#workspacePackages.length === 0;
+  }
+
   toJSON() {
     return Object.freeze({
       name: this.name,

@@ -14,7 +14,7 @@ import {
   createTagGitIfNeeded,
   doPushGitIfNeeded,
 } from './git.js';
-import { updatePackageVersion } from '../npm.js';
+import { updatePackageVersion } from '@npmversion/workspace';
 import { VersionOptions } from '../config';
 
 /**

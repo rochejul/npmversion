@@ -29,7 +29,12 @@ const DEFAULT_CWD = process.cwd();
 
 describe('@npmversion/core - await versioning', () => {
   beforeEach(() => {
-    loadPackageJson.mockResolvedValue({ version: '0.0.1' });
+    loadPackageJson.mockResolvedValue({
+      version: '0.0.1',
+      isLeaf() {
+        return true;
+      },
+    });
   });
 
   describe('should print the help', () => {
@@ -173,7 +178,12 @@ describe('@npmversion/core - await versioning', () => {
 
     describe('expecially ', () => {
       beforeEach(() => {
-        loadPackageJson.mockResolvedValue({ version: '1.2.0' });
+        loadPackageJson.mockResolvedValue({
+          version: '1.2.0',
+          isLeaf() {
+            return true;
+          },
+        });
       });
 
       test('create by default a commit and a tag', async () => {
@@ -194,7 +204,7 @@ describe('@npmversion/core - await versioning', () => {
           DEFAULT_CWD,
         );
         expect(promisedExec).toHaveBeenCalledWith(
-          'npm --no-git-tag-version --allow-same-version version 1.2.1',
+          'npm version 1.2.1 --no-git-tag-version --allow-same-version',
           false,
           DEFAULT_CWD,
         );
@@ -228,7 +238,7 @@ describe('@npmversion/core - await versioning', () => {
           DEFAULT_CWD,
         );
         expect(promisedExec).toHaveBeenCalledWith(
-          'npm --no-git-tag-version --allow-same-version version 1.2.1',
+          'npm version 1.2.1 --no-git-tag-version --allow-same-version',
           false,
           DEFAULT_CWD,
         );
@@ -282,7 +292,7 @@ describe('@npmversion/core - await versioning', () => {
           DEFAULT_CWD,
         );
         expect(promisedExec).toHaveBeenCalledWith(
-          'npm --no-git-tag-version --allow-same-version version 1.2.1',
+          'npm version 1.2.1 --no-git-tag-version --allow-same-version',
           false,
           DEFAULT_CWD,
         );
@@ -347,7 +357,7 @@ describe('@npmversion/core - await versioning', () => {
           DEFAULT_CWD,
         );
         expect(promisedExec).toHaveBeenCalledWith(
-          'npm --no-git-tag-version --allow-same-version version 1.2.1',
+          'npm version 1.2.1 --no-git-tag-version --allow-same-version',
           false,
           DEFAULT_CWD,
         );
@@ -410,7 +420,7 @@ describe('@npmversion/core - await versioning', () => {
           DEFAULT_CWD,
         );
         expect(promisedExec).toHaveBeenCalledWith(
-          'npm --no-git-tag-version --allow-same-version version 1.2.1',
+          'npm version 1.2.1 --no-git-tag-version --allow-same-version',
           false,
           DEFAULT_CWD,
         );
@@ -474,7 +484,7 @@ describe('@npmversion/core - await versioning', () => {
           DEFAULT_CWD,
         );
         expect(promisedExec).toHaveBeenCalledWith(
-          'npm --no-git-tag-version --allow-same-version version 1.2.1',
+          'npm version 1.2.1 --no-git-tag-version --allow-same-version',
           false,
           DEFAULT_CWD,
         );
@@ -539,7 +549,7 @@ describe('@npmversion/core - await versioning', () => {
           DEFAULT_CWD,
         );
         expect(promisedExec).toHaveBeenCalledWith(
-          'npm --no-git-tag-version --allow-same-version version 1.2.1',
+          'npm version 1.2.1 --no-git-tag-version --allow-same-version',
           false,
           DEFAULT_CWD,
         );
@@ -599,7 +609,7 @@ describe('@npmversion/core - await versioning', () => {
           DEFAULT_CWD,
         );
         expect(promisedExec).toHaveBeenCalledWith(
-          'npm --no-git-tag-version --allow-same-version version 1.2.1',
+          'npm version 1.2.1 --no-git-tag-version --allow-same-version',
           false,
           DEFAULT_CWD,
         );
@@ -652,7 +662,7 @@ describe('@npmversion/core - await versioning', () => {
           DEFAULT_CWD,
         );
         expect(promisedExec).toHaveBeenCalledWith(
-          'npm --no-git-tag-version --allow-same-version version 1.2.1',
+          'npm version 1.2.1 --no-git-tag-version --allow-same-version',
           false,
           DEFAULT_CWD,
         );
@@ -679,7 +689,7 @@ describe('@npmversion/core - await versioning', () => {
           '/etc',
         );
         expect(promisedExec).toHaveBeenCalledWith(
-          'npm --no-git-tag-version --allow-same-version version 1.2.1',
+          'npm version 1.2.1 --no-git-tag-version --allow-same-version',
           false,
           '/etc',
         );
@@ -689,7 +699,12 @@ describe('@npmversion/core - await versioning', () => {
 
   test('shoud deal with an arbitrary options set', async () => {
     // Arrange
-    loadPackageJson.mockResolvedValue({ version: '1.2.0' });
+    loadPackageJson.mockResolvedValue({
+      version: '1.2.0',
+      isLeaf() {
+        return true;
+      },
+    });
 
     promisedExec.mockImplementation((cmd) => {
       if (cmd === 'git remote') {
@@ -734,7 +749,7 @@ describe('@npmversion/core - await versioning', () => {
       DEFAULT_CWD,
     );
     expect(promisedExec).toHaveBeenCalledWith(
-      'npm --no-git-tag-version --allow-same-version version 1.2.1-beta',
+      'npm version 1.2.1-beta --no-git-tag-version --allow-same-version',
       false,
       DEFAULT_CWD,
     );

@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-describe('@npmversion/workspace - index', () => {
+describe('@npmversion/workspace - workspace', () => {
   describe('computeWorkspace', () => {
     test('returns empty array if we are in a leaf module', async () => {
       // Act
