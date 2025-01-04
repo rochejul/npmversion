@@ -15,7 +15,7 @@ import {
   doPushGitIfNeeded,
 } from './git.js';
 import { updatePackageVersion } from '@npmversion/workspace';
-import { VersionOptions } from '../config';
+import { VersionOptions } from '../config/index.js';
 
 /**
  * Analyze the options do the bumping / versionning

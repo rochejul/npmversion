@@ -5,10 +5,10 @@ import {
   NOT_INTO_GIT_PROJECT,
   NO_REMOTE_GIT,
   MULTIPLE_REMOTE_GIT,
-} from '../messages';
+} from '../messages.js';
 
 import { GitNotInstalledError, NotAGitProjectError } from './exception.js';
-import { NoRemoteGitError, MultipleRemoteError } from '../git';
+import { NoRemoteGitError, MultipleRemoteError } from '../git/index.js';
 
 /** @import { PackageJson } from '@npmversion/util' */
 

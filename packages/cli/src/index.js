@@ -1,5 +1,5 @@
 import { versioning, configRetriever } from '@npmversion/core';
-import { versionOptionsAnalyzer } from './cli';
+import { versionOptionsAnalyzer } from './cli.js';
 
 export async function cli() {
   const argv = process.argv.slice(2);

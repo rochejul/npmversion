@@ -1,2 +1,2 @@
 export * from './io.js';
-export * from './packagejson';
+export * from './packagejson/index.js';

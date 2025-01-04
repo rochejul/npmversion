@@ -12,7 +12,8 @@
     "./bin"
   ],
   "scripts": {
-    "dev:linting": "eslint --config=eslint.config.js"
+    "dev:linting": "eslint --config=eslint.config.js",
+    "start": "node ./bin/npmversion.js --read-only"
   },
   "//": {
     "dev:linting": "Lint files"

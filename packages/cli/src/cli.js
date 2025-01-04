@@ -26,10 +26,7 @@ const MINIMIST_OPTIONS = {
  * @param {Object} [defaultOptions]
  * @returns {VersionOptions}
  */
-module.exports = function versionOptionsAnalyzer(
-  cliParameters,
-  defaultOptions,
-) {
+export function versionOptionsAnalyzer(cliParameters, defaultOptions) {
   let options = MINIMIST_OPTIONS;
 
   if (defaultOptions) {
@@ -37,4 +34,4 @@ module.exports = function versionOptionsAnalyzer(
   }
 
   return new VersionOptions(minimist(cliParameters, options));
-};
+}

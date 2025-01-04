@@ -22,7 +22,11 @@ Cli module over ` @npmversion/core`
 
 ## Usage
 
-## Possible options
+### Method `cli`
+
+Simple method to load config files and to execute the tool
+
+### Possible options
 
     --help
         Print the help around the command

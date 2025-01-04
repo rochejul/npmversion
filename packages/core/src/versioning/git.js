@@ -12,7 +12,7 @@ import {
   isCurrentBranchUpstream,
   upstreamBranch,
   push,
-} from '../git';
+} from '../git/index.js';
 
 /** @import { VersionOptions } from '../config*/
 

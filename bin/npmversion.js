@@ -2,5 +2,6 @@
 
 'use strict';
 
-const { cli } = await import('../src/index.js');
+import { cli } from '@npmversion/cli';
+
 await cli();

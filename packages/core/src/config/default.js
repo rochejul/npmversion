@@ -2,9 +2,9 @@ import {
   GIT_COMMIT_MESSAGE,
   GIT_BRANCH_MESSAGE,
   GIT_TAG_MESSAGE,
-} from '../messages';
+} from '../messages.js';
 
-import { LEVEL_ENUM } from '../versioning/level';
+import { LEVEL_ENUM } from '../versioning/level.js';
 
 export const DEFAULT_OPTIONS = {
   'force-preid': false,

@@ -1,4 +1,4 @@
-import { WorkspacePackageDependency } from './workspace-package-dependency';
+import { WorkspacePackageDependency } from './workspace-package-dependency.js';
 
 /**
  *

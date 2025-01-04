@@ -4,7 +4,7 @@
   "description": "A command line node module to deal with \"bumping\" and \"npm version\"",
   "type": "module",
   "bin": {
-    "npmversion": "./bin/npmversion"
+    "npmversion": "./bin/npmversion.js"
   },
   "workspaces": [
     "packages/*"
@@ -18,6 +18,7 @@
     "dev:styling": "npm run dev:format && npm run dev:linting",
     "prepare": "husky && npx replace-in-file '#!/usr/bin/env sh' '#!/usr/bin/env bash' '.husky/_/husky.sh' --quiet && npx replace-in-file 'sh -e' 'bash -e' '.husky/_/husky.sh' --quiet",
     "dev:publish": "npm publish --workspaces",
+    "start": "node ./bin/npmversion.js --read-only",
     "test": "npm run test --workspaces --if-present",
     "test:coverage": "npm run test:coverage --workspaces --if-present"
   },
