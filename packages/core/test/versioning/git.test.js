@@ -43,16 +43,10 @@ describe('@npmversion/core - versioning/git', () => {
       // Arrange
       hasGitInstalled.mockResolvedValue(false);
 
-      try {
-        // Act
-        await checkForGitIfNeeded(new VersionOptions({ 'git-push': true }));
-
-        // Assert
-        jest.fail('We should not be able to be here');
-      } catch (e) {
-        // Assert
-        expect(e).toBeInstanceOf(GitNotInstalledError);
-      }
+      // Act && Assert
+      await expect(
+        checkForGitIfNeeded(new VersionOptions({ 'git-push': true })),
+      ).rejects.toThrow(GitNotInstalledError);
     });
 
     test('should raise a specific error if we are not into a git project', async () => {
@@ -60,16 +54,10 @@ describe('@npmversion/core - versioning/git', () => {
       hasGitInstalled.mockResolvedValue(true);
       hasGitProject.mockResolvedValue(false);
 
-      try {
-        // Act
-        await checkForGitIfNeeded(new VersionOptions({ 'git-push': true }));
-
-        // Assert
-        jest.fail('We should not be able to be here');
-      } catch (e) {
-        // Assert
-        expect(e).toBeInstanceOf(NotAGitProjectError);
-      }
+      // Act && Assert
+      await expect(
+        checkForGitIfNeeded(new VersionOptions({ 'git-push': true })),
+      ).rejects.toThrow(NotAGitProjectError);
     });
 
     test('should do nothing otherwise', async () => {
@@ -78,7 +66,9 @@ describe('@npmversion/core - versioning/git', () => {
       hasGitProject.mockResolvedValue(true);
 
       // Act & Assert
-      await checkForGitIfNeeded(new VersionOptions({ 'git-push': true }));
+      await expect(
+        checkForGitIfNeeded(new VersionOptions({ 'git-push': true })),
+      ).resolves.toBeUndefined();
     });
   });
 

@@ -10,11 +10,11 @@ const CONFIG_NAME = 'npmversion';
  * @returns {VersionOptions}
  */
 export function configRetriever() {
-  const { config, configs, ...versionOptions } = rc(
-    CONFIG_NAME,
-    DEFAULT_OPTIONS,
-    [],
-  );
+  const {
+    config: _config,
+    configs: _configs,
+    ...versionOptions
+  } = rc(CONFIG_NAME, DEFAULT_OPTIONS, []);
 
   return new VersionOptions(versionOptions);
 }

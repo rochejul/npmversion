@@ -1,4 +1,4 @@
-import { describe, test, expect, jest } from '@jest/globals';
+import { describe, test, expect, jest, beforeEach } from '@jest/globals';
 import '@npmversion/jest-utils';
 import {
   printError,

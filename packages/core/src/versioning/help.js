@@ -1,4 +1,3 @@
-import { PackageJson } from '@npmversion/util';
 import {
   HELP_TEXT,
   NOT_FOUND_PACKAGE_JSON_FILE,
@@ -10,6 +9,8 @@ import {
 
 import { GitNotInstalledError, NotAGitProjectError } from './exception.js';
 import { NoRemoteGitError, MultipleRemoteError } from '../git';
+
+/** @import { PackageJson } from '@npmversion/util' */
 
 /**
  * @param {PackageJson} packageJson

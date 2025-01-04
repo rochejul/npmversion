@@ -78,7 +78,7 @@ describe('@npmversion/core - git', () => {
       mockPromiseExec.mockRejectedValue('command not recognized');
 
       // Act & Assert
-      expect(await hasGitInstalled()).toBeFalsy();
+      await expect(hasGitInstalled()).resolves.toBeFalsy();
     });
 
     test('should return true otherwise', async () => {
@@ -86,7 +86,7 @@ describe('@npmversion/core - git', () => {
       mockPromiseExec.mockResolvedValue();
 
       // Act & Assert
-      expect(await hasGitInstalled()).toBeTruthy();
+      await expect(hasGitInstalled()).resolves.toBeTruthy();
     });
 
     test('should use the default cwd', async () => {
@@ -122,17 +122,21 @@ describe('@npmversion/core - git', () => {
 
   describe('hasGitProject', () => {
     test('should return false if the cwd is not into a git project', async () => {
+      // Arrange
       mockPromiseExec.mockRejectedValue(
         'fatal: Not a git repository (or any of the parent directories): .git',
       );
 
-      expect(await hasGitProject()).toBeFalsy();
+      // Act && Assert
+      await expect(hasGitProject()).resolves.toBeFalsy();
     });
 
     test('should return true otherwise', async () => {
+      // Arrange
       mockPromiseExec.mockResolvedValue();
 
-      expect(await hasGitProject()).toBeTruthy();
+      // Act && Assert
+      await expect(hasGitProject()).resolves.toBeTruthy();
     });
 
     test('should use the default cwd', async () => {
@@ -194,12 +198,7 @@ describe('@npmversion/core - git', () => {
       mockPromiseExec.mockResolvedValue('');
 
       // Act & Assert
-      try {
-        await getBranchName();
-        jest.fail('We should execute successfully this command');
-      } catch (e) {
-        expect(e).toBeInstanceOf(NoBranchGitError);
-      }
+      await expect(getBranchName()).rejects.toThrow(NoBranchGitError);
     });
 
     test('should use the specified cwd', async () => {
@@ -235,12 +234,7 @@ describe('@npmversion/core - git', () => {
       mockPromiseExec.mockResolvedValue('');
 
       // Act & Assert
-      try {
-        await getRemoteName();
-        jest.fail('We should execute successfully this command');
-      } catch (e) {
-        expect(e).toBeInstanceOf(NoRemoteGitError);
-      }
+      await expect(getRemoteName()).rejects.toThrow(NoRemoteGitError);
     });
 
     test('should raise the exception MultipleRemoteError if no remotes were detected', async () => {
@@ -248,12 +242,7 @@ describe('@npmversion/core - git', () => {
       mockPromiseExec.mockResolvedValue('origin\nanotherRemote');
 
       // Act & Assert
-      try {
-        await getRemoteName();
-        jest.fail('We should execute successfully this command');
-      } catch (e) {
-        expect(e).toBeInstanceOf(MultipleRemoteError);
-      }
+      await expect(getRemoteName()).rejects.toThrow(MultipleRemoteError);
     });
 
     test('should use the specified cwd', async () => {
@@ -340,12 +329,7 @@ describe('@npmversion/core - git', () => {
       mockPromiseExec.mockRejectedValue(new NoBranchGitError());
 
       // Act & Assert
-      try {
-        await isCurrentBranchUpstream();
-        jest.fail('We should execute successfully this command');
-      } catch (e) {
-        expect(e).toBeInstanceOf(NoBranchGitError);
-      }
+      await expect(isCurrentBranchUpstream()).rejects.toThrow(NoBranchGitError);
     });
 
     test('should return false if the current branch is not linked to a remote branch', async () => {

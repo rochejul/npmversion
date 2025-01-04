@@ -2,6 +2,7 @@
   "name": "npmversion",
   "version": "2.0.0",
   "description": "A command line node module to deal with \"bumping\" and \"npm version\"",
+  "type": "module",
   "bin": {
     "npmversion": "./bin/npmversion"
   },

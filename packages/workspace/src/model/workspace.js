@@ -1,9 +1,9 @@
 import { DepGraph } from 'dependency-graph';
-import { WorkspacePackage } from './workspace-package.js';
-import { WorkspacePackageDependency } from './workspace-package-dependency.js';
 import { mapToWorkspacePackageDependency } from './util.js';
 
 /** @import semver from 'semver' */
+/** @import { WorkspacePackage } from './workspace-package.js' */
+/** @import { WorkspacePackageDependency } from './workspace-package-dependency.js' */
 
 /**
  * @module @npmversion/workspace

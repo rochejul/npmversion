@@ -24,7 +24,7 @@ describe('@npmversion/util - io', () => {
       const promise = await promisedExec('ls -la', true);
 
       // Assert
-      expect(promise).resolves;
+      expect(promise).toBeUndefined();
     });
 
     test('it should return the command output', async () => {
@@ -37,7 +37,7 @@ describe('@npmversion/util - io', () => {
       const promise = await promisedExec('ls -la', true);
 
       // Assert
-      expect(promise).toStrictEqual('return of the command');
+      expect(promise).toBe('return of the command');
     });
 
     test('it should reject the promise when the execution is rejected', async () => {

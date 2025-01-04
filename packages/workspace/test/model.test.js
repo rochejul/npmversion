@@ -3,7 +3,7 @@ import '@npmversion/jest-utils';
 import { WorkspacePackageDependency } from '../src/model';
 
 describe('@npmversion/workspace - model', () => {
-  describe('WorkspacePackageDependency', () => {
+  describe('model WorkspacePackageDependency', () => {
     test('statisfies should return true if the range is aligned with the version (strict equals)', async () => {
       // Arrange
       const dep = new WorkspacePackageDependency({

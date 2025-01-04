@@ -1,3 +1,7 @@
-import { eslintRecommended, eslintWeb } from '../../eslint.config.js';
+import {
+  eslintRecommended,
+  eslintNodeJs,
+  eslintJest,
+} from '../../eslint.config.js';
 
-export default [eslintRecommended, eslintWeb];
+export default [eslintRecommended, eslintNodeJs, eslintJest];

@@ -3,7 +3,7 @@ import '@npmversion/jest-utils';
 import { VersionOptions } from '../../src/config/model';
 
 describe('@npmversion/core - config/model', () => {
-  describe('VersionOptions', () => {
+  describe('model VersionOptions', () => {
     test('should provide default values on instantiation whenno config provided', () => {
       // Act & Assert
       expect(new VersionOptions()).toMatchPlainObject({

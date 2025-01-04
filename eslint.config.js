@@ -7,7 +7,7 @@ import jest from 'eslint-plugin-jest';
 export const eslintRecommended = js.configs.recommended;
 
 export const eslintNodeJs = {
-  files: ['**/*.cjs'],
+  files: ['**/*.cjs', '**/*.js', '**/*.mjs'],
   languageOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
@@ -20,6 +20,7 @@ export const eslintNodeJs = {
   },
   rules: {
     'prettier/prettier': 'warn',
+    'no-unused-vars': ['off', { argsIgnorePattern: '^_' }],
   },
   ignores: [
     '**/.*',
@@ -43,6 +44,12 @@ export const eslintJest = {
     'jest/prefer-expect-assertions': 'off',
     'jest/consistent-test-it': ['error', { fn: 'test' }],
     'jest/no-hooks': 'off',
+    'jest/max-expects': [
+      'error',
+      {
+        max: 20,
+      },
+    ],
   },
 };
 

@@ -12,7 +12,7 @@ describe('@npmversion/core - versioning/increment', () => {
       expect(unpreidPackageVersion('1.2.3')).toBe('1.2.3');
     });
 
-    describe('should do something ', () => {
+    describe('should do something', () => {
       test('if prerelease / prepatch is detected', () => {
         // Act & Assert
         expect(unpreidPackageVersion('1.2.4-0')).toBe('1.2.4');
@@ -46,8 +46,8 @@ describe('@npmversion/core - versioning/increment', () => {
   });
 
   describe('incrementPackageVersion', () => {
-    describe('should classicaly increment with the following options: ', () => {
-      describe('Basics - ', () => {
+    describe('should classicaly increment with the following options:', () => {
+      describe('basics -', () => {
         test('1.2.3 --increment patch', () => {
           // Act & Assert
           expect(incrementPackageVersion('1.2.3', 'patch')).toBe('1.2.4');
@@ -86,7 +86,7 @@ describe('@npmversion/core - versioning/increment', () => {
         });
       });
 
-      describe('With prenumber - ', () => {
+      describe('with prenumber -', () => {
         test('1.2.3-0 --increment patch', () => {
           // Act & Assert
           expect(incrementPackageVersion('1.2.3-0', 'patch')).toBe('1.2.3');
@@ -131,7 +131,7 @@ describe('@npmversion/core - versioning/increment', () => {
         });
       });
 
-      describe('With preid - ', () => {
+      describe('with preid -', () => {
         test('1.2.3-beta --increment patch', () => {
           // Act & Assert
           expect(incrementPackageVersion('1.2.3-beta', 'patch')).toBe('1.2.3');
@@ -176,7 +176,7 @@ describe('@npmversion/core - versioning/increment', () => {
         });
       });
 
-      describe('With prenumber and preid - ', () => {
+      describe('with prenumber and preid -', () => {
         test('1.2.3-beta.0 --increment patch', () => {
           // Act & Assert
           expect(incrementPackageVersion('1.2.3-beta.0', 'patch')).toBe(
@@ -228,8 +228,8 @@ describe('@npmversion/core - versioning/increment', () => {
       });
     });
 
-    describe('should classicaly increment with the following options (where a preid flag to "beta" is set): ', () => {
-      describe('Basics - ', () => {
+    describe('should classicaly increment with the following options (where a preid flag to "beta" is set):', () => {
+      describe('basics -', () => {
         test('1.2.3 --preid beta --increment patch', () => {
           // Act & Assert
           expect(incrementPackageVersion('1.2.3', 'patch', 'beta')).toBe(
@@ -280,7 +280,7 @@ describe('@npmversion/core - versioning/increment', () => {
         });
       });
 
-      describe('With prenumber - ', () => {
+      describe('with prenumber -', () => {
         test('1.2.3-0 --preid beta --increment patch', () => {
           // Act & Assert
           expect(incrementPackageVersion('1.2.3-0', 'patch', 'beta')).toBe(
@@ -331,7 +331,7 @@ describe('@npmversion/core - versioning/increment', () => {
         });
       });
 
-      describe('With preid - ', () => {
+      describe('with preid -', () => {
         test('1.2.3-beta --preid beta --increment patch', () => {
           // Act & Assert
           expect(incrementPackageVersion('1.2.3-beta', 'patch', 'beta')).toBe(
@@ -382,7 +382,7 @@ describe('@npmversion/core - versioning/increment', () => {
         });
       });
 
-      describe('With prenumber and preid - ', () => {
+      describe('with prenumber and preid -', () => {
         test('1.2.3-beta.0 --preid beta --increment patch', () => {
           // Act & Assert
           expect(incrementPackageVersion('1.2.3-beta.0', 'patch', 'beta')).toBe(
@@ -434,8 +434,8 @@ describe('@npmversion/core - versioning/increment', () => {
       });
     });
 
-    describe('should increment with the following options (where a preid flag to "beta" is set) and where we force to add the preid if needed: ', () => {
-      describe('Basics - ', () => {
+    describe('should increment with the following options (where a preid flag to "beta" is set) and where we force to add the preid if needed:', () => {
+      describe('basics -', () => {
         test('1.2.3 --preid beta --increment patch', () => {
           // Act & Assert
           expect(incrementPackageVersion('1.2.3', 'patch', 'beta', true)).toBe(
@@ -486,7 +486,7 @@ describe('@npmversion/core - versioning/increment', () => {
         });
       });
 
-      describe('With prenumber - ', () => {
+      describe('with prenumber -', () => {
         test('1.2.3-0 --preid beta --increment patch', () => {
           // Act & Assert
           expect(
@@ -537,7 +537,7 @@ describe('@npmversion/core - versioning/increment', () => {
         });
       });
 
-      describe('With preid - ', () => {
+      describe('with preid -', () => {
         test('1.2.3-beta --preid beta --increment patch', () => {
           // Act & Assert
           expect(
@@ -588,7 +588,7 @@ describe('@npmversion/core - versioning/increment', () => {
         });
       });
 
-      describe('With prenumber and preid - ', () => {
+      describe('with prenumber and preid -', () => {
         test('1.2.3-beta.0 --preid beta --increment patch', () => {
           // Act & Assert
           expect(

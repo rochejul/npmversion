@@ -19,7 +19,7 @@ describe('@npmversion/core - versioning/level', () => {
       expect(getIncrementationLevel({ increment: 'fake' })).toBe('patch');
     });
 
-    describe('should the specified level ', () => {
+    describe('should the specified level', () => {
       const scenariiWithCasesChecking = [
         ['major', 'major'],
         ['minor', 'minor'],
@@ -29,6 +29,7 @@ describe('@npmversion/core - versioning/level', () => {
         ['prepatch', 'prepatch'],
         ['prerelease', 'prerelease'],
       ];
+
       test.each(scenariiWithCasesChecking)(
         'with cases checking (%s -> %s)',
         (increment, expected) => {
@@ -46,6 +47,7 @@ describe('@npmversion/core - versioning/level', () => {
         ['PREPATCH', 'prepatch'],
         ['PRERELEASE', 'prerelease'],
       ];
+
       test.each(scenariiWithoutCasesChecking)(
         'without cases checking (%s -> %s)',
         (increment, expected) => {

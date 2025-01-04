@@ -33,7 +33,7 @@ export async function versioning(providedOptions, cwd = process.cwd()) {
 
   try {
     packageJson = await loadPackageJson(cwd);
-  } catch (e) {
+  } catch (_e) {
     printNotFoundPackageJsonFile();
     return null;
   }

@@ -118,7 +118,7 @@ export async function hasGitInstalled(cwd = process.cwd()) {
   try {
     await promisedExec('git --help', true, cwd);
     return true;
-  } catch (e) {
+  } catch (_e) {
     return false;
   }
 }
@@ -132,7 +132,7 @@ export async function hasGitProject(cwd = process.cwd()) {
   try {
     await promisedExec('git status --porcelain', true, cwd);
     return true;
-  } catch (e) {
+  } catch (_e) {
     return false;
   }
 }
@@ -219,7 +219,7 @@ export async function isBranchUpstream(
     );
 
     return !!remoteBranchLine;
-  } catch (e) {
+  } catch (_e) {
     return false;
   }
 }

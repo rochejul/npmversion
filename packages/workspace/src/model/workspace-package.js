@@ -1,7 +1,7 @@
-import { WorkspacePackageDependency } from './workspace-package-dependency';
 import { mapToWorkspacePackageDependency } from './util.js';
 
 /** @import semver from 'semver' */
+/** @import { WorkspacePackageDependency } from './workspace-package-dependency.js' */
 
 /**
  * @module @npmversion/workspace

@@ -11,7 +11,7 @@ jest.unstable_mockModule('@npmversion/util', async () => ({
   readFile: jest.fn(),
 }));
 
-import { describe, test, expect, jest } from '@jest/globals';
+import { describe, test, expect, jest, beforeEach } from '@jest/globals';
 import '@npmversion/jest-utils';
 
 const { loadPackageJson, promisedExec } = await import('@npmversion/util');
@@ -27,6 +27,22 @@ const {
 
 const DEFAULT_CWD = process.cwd();
 
+function mockPromiseExecWhenNotRemote(cmd) {
+  if (cmd === 'git remote') {
+    return 'origin';
+  }
+}
+
+function mockPromisedExecWhenRemote(cmd) {
+  if (cmd === 'git remote') {
+    return 'origin';
+  }
+
+  if (cmd == 'git branch -rvv') {
+    return 'origin/master';
+  }
+}
+
 describe('@npmversion/core - await versioning', () => {
   beforeEach(() => {
     loadPackageJson.mockResolvedValue({
@@ -38,20 +54,20 @@ describe('@npmversion/core - await versioning', () => {
   });
 
   describe('should print the help', () => {
-    test('no options are passed ', async () => {
+    test('no options are passed', async () => {
       // Act
       await versioning();
 
       // Assert
-      expect(printHelp).toHaveBeenCalled();
+      expect(printHelp).toHaveBeenCalledWith(expect.anything());
     });
 
-    test('if the help option is passed ', async () => {
+    test('if the help option is passed', async () => {
       // Act
       await versioning({ help: true });
 
       // Assert
-      expect(printHelp).toHaveBeenCalled();
+      expect(printHelp).toHaveBeenCalledWith(expect.anything());
     });
   });
 
@@ -63,7 +79,7 @@ describe('@npmversion/core - await versioning', () => {
     await versioning({ increment: 'patch' });
 
     // Assert
-    expect(printNotFoundPackageJsonFile).toHaveBeenCalled();
+    expect(printNotFoundPackageJsonFile).toHaveBeenCalledWith();
   });
 
   test('should print the bump result if read only is set', async () => {
@@ -72,10 +88,10 @@ describe('@npmversion/core - await versioning', () => {
     await versioning({ increment: 'patch', 'read-only': true });
 
     // Assert
-    expect(printVersion).toHaveBeenCalled();
+    expect(printVersion).toHaveBeenCalledWith(expect.anything());
   });
 
-  describe('should increment the version ', () => {
+  describe('should increment the version', () => {
     test('if the option is set', async () => {
       // Act
       await versioning({ increment: 'patch', 'read-only': true });
@@ -120,7 +136,7 @@ describe('@npmversion/core - await versioning', () => {
     expect(printVersion).toHaveBeenCalledWith('0.0.1');
   });
 
-  describe('should use git, ', () => {
+  describe('should use git,', () => {
     test('and log a message if Git is not installed', async () => {
       // Arrange
       promisedExec.mockRejectedValue(new GitNotInstalledError());
@@ -129,7 +145,7 @@ describe('@npmversion/core - await versioning', () => {
       await versioning({ increment: 'fake' });
 
       // Assert
-      expect(printError).toHaveBeenCalled();
+      expect(printError).toHaveBeenCalledWith(expect.anything());
     });
 
     test('and log a message if we are not into a Git project', async () => {
@@ -140,7 +156,7 @@ describe('@npmversion/core - await versioning', () => {
       await versioning({ increment: 'fake' });
 
       // Assert
-      expect(printError).toHaveBeenCalled();
+      expect(printError).toHaveBeenCalledWith(expect.anything());
     });
 
     test('and log a message if we have no remote', async () => {
@@ -151,7 +167,7 @@ describe('@npmversion/core - await versioning', () => {
       await versioning({ increment: 'fake' });
 
       // Assert
-      expect(printError).toHaveBeenCalled();
+      expect(printError).toHaveBeenCalledWith(expect.anything());
     });
 
     test('and log a message if we have multiple remotes', async () => {
@@ -162,7 +178,7 @@ describe('@npmversion/core - await versioning', () => {
       await versioning({ increment: 'fake' });
 
       // Assert
-      expect(printError).toHaveBeenCalled();
+      expect(printError).toHaveBeenCalledWith(expect.anything());
     });
 
     test('and log an error if needed', async () => {
@@ -173,10 +189,10 @@ describe('@npmversion/core - await versioning', () => {
       await versioning({ increment: 'fake' });
 
       // Assert
-      expect(printError).toHaveBeenCalled();
+      expect(printError).toHaveBeenCalledWith(expect.anything());
     });
 
-    describe('expecially ', () => {
+    describe('expecially', () => {
       beforeEach(() => {
         loadPackageJson.mockResolvedValue({
           version: '1.2.0',
@@ -261,15 +277,7 @@ describe('@npmversion/core - await versioning', () => {
 
       test('push the local branch, commit and the tag', async () => {
         // Arrange
-        promisedExec.mockImplementation((cmd) => {
-          if (cmd === 'git remote') {
-            return 'origin';
-          }
-
-          if (cmd == 'git branch -rvv') {
-            return 'origin/master';
-          }
-        });
+        promisedExec.mockImplementation(mockPromisedExecWhenRemote);
 
         // Act
         await versioning({
@@ -330,11 +338,7 @@ describe('@npmversion/core - await versioning', () => {
 
       test('push the local branch on the specified origin, commit and the tag', async () => {
         // Arrange
-        promisedExec.mockImplementation((cmd) => {
-          if (cmd === 'git remote') {
-            return 'origin';
-          }
-        });
+        promisedExec.mockImplementation(mockPromiseExecWhenNotRemote);
 
         // Act
         await versioning({
@@ -390,15 +394,7 @@ describe('@npmversion/core - await versioning', () => {
 
       test('push commit and the tag (because the local branch is associated to a remote branch)', async () => {
         // Arrange
-        promisedExec.mockImplementation((cmd) => {
-          if (cmd === 'git remote') {
-            return 'origin';
-          }
-
-          if (cmd === 'git branch -rvv') {
-            return 'origin/master';
-          }
-        });
+        promisedExec.mockImplementation(mockPromisedExecWhenRemote);
 
         // Act
         await versioning({
@@ -458,11 +454,7 @@ describe('@npmversion/core - await versioning', () => {
 
       test('push commit, the branch and the tag (because the local branch is not associated to a remote branch)', async () => {
         // Arrange
-        promisedExec.mockImplementation((cmd) => {
-          if (cmd === 'git remote') {
-            return 'origin';
-          }
-        });
+        promisedExec.mockImplementation(mockPromiseExecWhenNotRemote);
 
         // Act
         await versioning({
@@ -522,11 +514,7 @@ describe('@npmversion/core - await versioning', () => {
 
       test('push using the specified remote name', async () => {
         // Arrange
-        promisedExec.mockImplementation((cmd) => {
-          if (cmd === 'git remote') {
-            return 'origin';
-          }
-        });
+        promisedExec.mockImplementation(mockPromiseExecWhenNotRemote);
 
         // Act
         await versioning({
@@ -582,11 +570,7 @@ describe('@npmversion/core - await versioning', () => {
 
       test('push only the commit if no tag is generated', async () => {
         // Arrange
-        promisedExec.mockImplementation((cmd) => {
-          if (cmd === 'git remote') {
-            return 'origin';
-          }
-        });
+        promisedExec.mockImplementation(mockPromiseExecWhenNotRemote);
 
         // Act
         await versioning({
@@ -706,11 +690,7 @@ describe('@npmversion/core - await versioning', () => {
       },
     });
 
-    promisedExec.mockImplementation((cmd) => {
-      if (cmd === 'git remote') {
-        return 'origin';
-      }
-    });
+    promisedExec.mockImplementation(mockPromiseExecWhenNotRemote);
 
     // Case:
     //  > npm run npmversion -- --increment patch --preid beta --nogit-tag --git-push
