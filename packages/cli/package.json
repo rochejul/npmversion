@@ -5,10 +5,11 @@
   "description": "Cli over npmversion",
   "main": "./src/index.js",
   "bin": {
-    "@npmversion/cli": "./bin/npmversion"
+    "npmversioncli": "./bin/npmversion.js"
   },
   "files": [
-    "./src"
+    "./src",
+    "./bin"
   ],
   "scripts": {
     "dev:linting": "eslint --config=eslint.config.js"

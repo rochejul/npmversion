@@ -1,119 +1,47 @@
 <p>
-    <a href="https://www.npmjs.com/package/@json-walker/core">
-    <img src="https://img.shields.io/npm/v/@json-walker/core" alt="npm version">
+    <a href="https://www.npmjs.com/package/@npmversion/util">
+    <img src="https://img.shields.io/npm/v/@npmversion/util" alt="npm version">
   </a>
 
-  <a href="https://packagephobia.now.sh/result?p=@json-walker/core">
-    <img src="https://packagephobia.now.sh/badge?p=@json-walker/core" alt="install size">
+  <a href="https://packagephobia.now.sh/result?p=@npmversion/util">
+    <img src="https://packagephobia.now.sh/badge?p=@npmversion/util" alt="install size">
   </a>
 
-  <a href="https://snyk.io/test/github/rochejul/json-walker">
-    <img src="https://snyk.io/test/github/rochejul/json-walker/badge.svg?targetFile=packages/core/package.json" alt="Known Vulnerabilities">
+  <a href="https://snyk.io/test/github/rochejul/npmversion">
+    <img src="https://snyk.io/test/github/rochejul/npmversion/badge.svg?targetFile=packages/core/package.json" alt="Known Vulnerabilities">
   </a>
 
-  <a href="https://github.com/rochejul/json-walker/blob/main/LICENSE">
-    <img src="https://img.shields.io/npm/l/@json-walker/core.svg" alt="license">
+  <a href="https://github.com/rochejul/npmversion/blob/main/LICENSE">
+    <img src="https://img.shields.io/npm/l/@npmversion/util.svg" alt="license">
   </a>
 </p>
 
-# @json-walker/core
+# @npmversion/util
 
-Core implementation of the walker
+Some utilities methods for the side packages
 
 ## Usage
 
-### Walker usage
+### Method `loadPackageJson`
 
-```js
-function grabProperties(value) {
-  const properties = [];
-  const walker = new Walker(value);
-  let optionalWalkerMetadata;
+It will load the `package.json` file of the current context and exposes important information from the [PackageJson model](./src/config/model.js)
+It allows one parameter:
 
-  do {
-    optionalWalkerMetadata = walker.nextStep();
+- cwd (`string`): optional parameter. Otherwise it uses `process.cwd()`
 
-    if (optionalWalkerMetadata.isSome()) {
-      properties.push({
-        path: optionalWalkerMetadata.value.propertyPath.toString(),
-        type: optionalWalkerMetadata.value.propertyType,
-        value: optionalWalkerMetadata.value.propertyValue,
-      });
-    }
-  } while (optionalWalkerMetadata.isSome());
+### Method `readFile`
 
-  return properties;
-}
+A simple method to load the content of a file
 
-const secondLevel = { label: 'foo' };
-const array = [secondLevel];
-const firstLevel = { records: array };
-const actual = grabProperties(firstLevel);
+- filePath (`string`): required parameter.
 
-/* actual content:
- * [
-    {
-      path: 'records',
-      type: 'array',
-      value: [{ label: 'foo' }],
-    },
-    {
-      path: 'records[0]',
-      type: 'object',
-      value: { label: 'foo' },
-    },
-    {
-      path: 'records[0].label',
-      type: 'string',
-      value: 'foo',
-    },
-  ]
- */
-```
+### Method `promisedExec`
 
-### IterableWalker usage
+It executes the provided command in a shell
 
-```js
-function grabProperties(value) {
-  const properties = [];
-  const walker = new IterableWalker(value);
-
-  for (const value of walker) {
-    properties.push({
-      path: value.propertyPath.toString(),
-      type: value.propertyType,
-      value: value.propertyValue,
-    });
-  }
-
-  return properties;
-}
-
-const secondLevel = { label: 'foo' };
-const array = [secondLevel];
-const firstLevel = { records: array };
-const actual = grabProperties(firstLevel);
-
-/* actual content:
- * [
-    {
-      path: 'records',
-      type: 'array',
-      value: [{ label: 'foo' }],
-    },
-    {
-      path: 'records[0]',
-      type: 'object',
-      value: { label: 'foo' },
-    },
-    {
-      path: 'records[0].label',
-      type: 'string',
-      value: 'foo',
-    },
-  ]
- */
-```
+- command (`string`): required parameter.
+- silent (`boolean`): optional parameter. If true it display in the console output the results of the command
+- cwd (`string`): optional parameter. Otherwise it uses `process.cwd()`
 
 ## Commands
 

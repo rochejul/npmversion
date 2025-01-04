@@ -1,119 +1,44 @@
 <p>
-    <a href="https://www.npmjs.com/package/@json-walker/core">
-    <img src="https://img.shields.io/npm/v/@json-walker/core" alt="npm version">
+    <a href="https://www.npmjs.com/package/@npmversion/workspace">
+    <img src="https://img.shields.io/npm/v/@npmversion/workspace" alt="npm version">
   </a>
 
-  <a href="https://packagephobia.now.sh/result?p=@json-walker/core">
-    <img src="https://packagephobia.now.sh/badge?p=@json-walker/core" alt="install size">
+  <a href="https://packagephobia.now.sh/result?p=@npmversion/workspace">
+    <img src="https://packagephobia.now.sh/badge?p=@npmversion/workspace" alt="install size">
   </a>
 
-  <a href="https://snyk.io/test/github/rochejul/json-walker">
-    <img src="https://snyk.io/test/github/rochejul/json-walker/badge.svg?targetFile=packages/core/package.json" alt="Known Vulnerabilities">
+  <a href="https://snyk.io/test/github/rochejul/npmversion">
+    <img src="https://snyk.io/test/github/rochejul/npmversion/badge.svg?targetFile=packages/core/package.json" alt="Known Vulnerabilities">
   </a>
 
-  <a href="https://github.com/rochejul/json-walker/blob/main/LICENSE">
-    <img src="https://img.shields.io/npm/l/@json-walker/core.svg" alt="license">
+  <a href="https://github.com/rochejul/npmversion/blob/main/LICENSE">
+    <img src="https://img.shields.io/npm/l/@npmversion/workspace.svg" alt="license">
   </a>
 </p>
 
-# @json-walker/core
+# @npmversion/workspace
 
-Core implementation of the walker
+This package deals with NPM packages for the tool
 
 ## Usage
 
-### Walker usage
+### Method `updatePackageVersion`
 
-```js
-function grabProperties(value) {
-  const properties = [];
-  const walker = new Walker(value);
-  let optionalWalkerMetadata;
+It will update the package version in the `package.json` from the current context.
+It will also update the NPM packages declared in the `package.json`.
 
-  do {
-    optionalWalkerMetadata = walker.nextStep();
+It allows the following parameters:
 
-    if (optionalWalkerMetadata.isSome()) {
-      properties.push({
-        path: optionalWalkerMetadata.value.propertyPath.toString(),
-        type: optionalWalkerMetadata.value.propertyType,
-        value: optionalWalkerMetadata.value.propertyValue,
-      });
-    }
-  } while (optionalWalkerMetadata.isSome());
+- packageVersion (`string`): required parameter.
+- cwd (`string`): optional parameter. Otherwise it uses `process.cwd()`
 
-  return properties;
-}
+### Method `computeWorkspace`
 
-const secondLevel = { label: 'foo' };
-const array = [secondLevel];
-const firstLevel = { records: array };
-const actual = grabProperties(firstLevel);
+It will read the NPM packages declared in the `package.json` and returns an appropriate [Workspace model](./src/model/workspace.js)
 
-/* actual content:
- * [
-    {
-      path: 'records',
-      type: 'array',
-      value: [{ label: 'foo' }],
-    },
-    {
-      path: 'records[0]',
-      type: 'object',
-      value: { label: 'foo' },
-    },
-    {
-      path: 'records[0].label',
-      type: 'string',
-      value: 'foo',
-    },
-  ]
- */
-```
+It allows the following parameters:
 
-### IterableWalker usage
-
-```js
-function grabProperties(value) {
-  const properties = [];
-  const walker = new IterableWalker(value);
-
-  for (const value of walker) {
-    properties.push({
-      path: value.propertyPath.toString(),
-      type: value.propertyType,
-      value: value.propertyValue,
-    });
-  }
-
-  return properties;
-}
-
-const secondLevel = { label: 'foo' };
-const array = [secondLevel];
-const firstLevel = { records: array };
-const actual = grabProperties(firstLevel);
-
-/* actual content:
- * [
-    {
-      path: 'records',
-      type: 'array',
-      value: [{ label: 'foo' }],
-    },
-    {
-      path: 'records[0]',
-      type: 'object',
-      value: { label: 'foo' },
-    },
-    {
-      path: 'records[0].label',
-      type: 'string',
-      value: 'foo',
-    },
-  ]
- */
-```
+- cwd (`string`): optional parameter. Otherwise it uses `process.cwd()`
 
 ## Commands
 

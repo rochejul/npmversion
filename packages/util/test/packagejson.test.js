@@ -1,6 +1,6 @@
 import { describe, test, expect, jest } from '@jest/globals';
 import '@npmversion/jest-utils';
-import { loadPackageJson, PackageJson } from '../src/packagejson.js';
+import { loadPackageJson, PackageJson } from '../src/packagejson';
 
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';

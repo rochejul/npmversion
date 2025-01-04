@@ -1,12 +1,26 @@
+<p>
+  <a href="https://www.npmjs.com/package/npmversion">
+    <img src="https://img.shields.io/npm/v/npmversion" alt="npm version">
+  </a>
+
+  <a href="https://github.com/rochejul/npmversionblob/main/LICENSE">
+    <img src="https://img.shields.io/npm/l/npmversion.svg" alt="license">
+  </a>
+
+  <a href="https://codeclimate.com/github/rochejul/npmversion">
+    <img src="https://codeclimate.com/github/rochejul/npmversion/badges/gpa.svg" alt="Code Climate">
+  </a>
+
+  <a href="https://snyk.io/test/github/rochejul/npmversion">
+    <img src="https://snyk.io/test/github/rochejul/npmversion/badge.svg?targetFile=package.json" alt="Known Vulnerabilities">
+  </a>
+
+  <a href="https://github.com/rochejul/npmversion/actions/workflows/node.js.yml">
+    <img src="https://github.com/rochejul/npmversion/actions/workflows/node.js.yml/badge.svg" alt="Node.js Unit Test">
+  </a>
+</p>
+
 # npmversion
-
-[![Build Status](https://travis-ci.org/rochejul/npmversion.svg?branch=master)](https://travis-ci.org/rochejul/npmversion)[![Dependency Status](https://david-dm.org/rochejul/npmversion.svg)](https://david-dm.org/rochejul/npmversion)
-[![devDependency Status](https://david-dm.org/rochejul/npmversion/dev-status.svg)](https://david-dm.org/rochejul/npmversion#info=devDependencies)
-
-[![Known Vulnerabilities](https://snyk.io/test/github/rochejul/npmversion/badge.svg)](https://snyk.io/test/github/rochejul/npmversion)
-
-[![NPM](https://nodei.co/npm/npmversion.png?downloads=true&downloadRank=true)](https://nodei.co/npm/npmversion/)
-[![NPM](https://nodei.co/npm-dl/npmversion.png?&months=6&height=3)](https://nodei.co/npm/npmversion/)
 
 A command line node module to deal with "bumping" and "npm version"
 
@@ -17,6 +31,16 @@ The "version" command will:
 - deal with the prenumber and the preid flag
 - create git commits and tags
 - push the git commits and tags
+
+## Breaking changes with 1.X
+
+- No more pre/post npm run scripts
+- No more json files modifications (except from NPM's ecosystem)
+- Deal with NPM packages
+- Split in packages
+  - [@npmversion/cli](./packages/cli/README.md): the new cli tool (we keep `npmversion` for posterity)
+  - [@npmversion/core](./packages/core/README.md): the core logic of the tool
+  - [@npmversion/workspace](./packages/workspace/README.md): the tool logic to deal with npm packages, dependencies order, etc...
 
 ## Possible options
 
@@ -263,3 +287,20 @@ Type the command "npm install --save-dev --save-exact npmversion
 > semver 1.2.3-beta.0 --preid beta --increment preminor       1.3.0-beta.0
 > semver 1.2.3-beta.0 --preid beta --increment premajor       2.0.0-beta.0
 ```
+
+## Commands
+
+- `npm run dev:check`: Run tests and styling over packages
+- `npm run dev:format`: Format files over packages
+- `npm run dev:format:check`: Check files format over packages
+- `npm run dev:linting`: Lint files over packages
+- `npm run dev:styling`: Format and lint files over packages
+- `npm run dev:publish`: Publish all the packages on npm registry
+- `npm test`: Run tests over packages
+- `npm run test:coverage`: Run tests over packages and see coverage reports
+
+## Contributing
+
+- [Guidelines](./docs/GUIDELINES.md)
+- [Contributing](./docs/CONTRIBUTING.md)
+- [Code of conducts](./docs/CODE_OF_CONDUCTS.md)

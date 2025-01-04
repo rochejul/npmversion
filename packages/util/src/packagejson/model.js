@@ -1,7 +1,3 @@
-import JSON5 from 'json5';
-import { resolve, join } from 'node:path';
-import { readFile } from './io.js';
-
 /** @import semver from 'semver' */
 
 export class PackageJson {
@@ -140,12 +136,4 @@ export class PackageJson {
       optionalDependencies: this.optionalDependencies,
     });
   }
-}
-
-export async function loadPackageJson(cwd = process.cwd()) {
-  const packageJsonPath = resolve(join(cwd, 'package.json'));
-  const packageJsonContent = await readFile(packageJsonPath);
-  const packageJson = JSON5.parse(packageJsonContent);
-
-  return new PackageJson(packageJson);
 }
