@@ -63,22 +63,22 @@ describe('@npmversion/workspace - npm', () => {
         treeWorkspacePath,
       );
       expect(promisedExec).toHaveBeenCalledWith(
-        'npm --workspace=@npmversion/workspace --save @npmversion/util@1.42.5',
+        'npm install --force --workspace=@npmversion/workspace --save @npmversion/util@1.42.5',
         false,
         treeWorkspacePath,
       );
       expect(promisedExec).toHaveBeenCalledWith(
-        'npm --workspace=@npmversion/core --save @npmversion/util@1.42.5',
+        'npm install --force --workspace=@npmversion/core --save @npmversion/util@1.42.5',
         false,
         treeWorkspacePath,
       );
       expect(promisedExec).toHaveBeenCalledWith(
-        'npm --workspace=@npmversion/core --save @npmversion/workspace@1.42.5',
+        'npm install --force --workspace=@npmversion/core --save @npmversion/workspace@1.42.5',
         false,
         treeWorkspacePath,
       );
       expect(promisedExec).toHaveBeenCalledWith(
-        'npm --workspace=@npmversion/cli --save @npmversion/core@1.42.5',
+        'npm install --force --workspace=@npmversion/cli --save @npmversion/core@1.42.5',
         false,
         treeWorkspacePath,
       );

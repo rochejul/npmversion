@@ -62,7 +62,7 @@ async function updateDependency(
     }
 
     await promisedExec(
-      `npm --workspace=${workspacePackage.name} --save${level ? '-' + level : ''} ${workspacePackageDependency.name}@${packageVersion}`,
+      `npm install --force --workspace=${workspacePackage.name} --save${level ? '-' + level : ''} ${workspacePackageDependency.name}@${packageVersion}`,
       false,
       cwd,
     );
