@@ -66,10 +66,10 @@ npm install --save @npmversion/core --workspace=packages/cli
 
 #### Private package
 
-If you need a private package on another one, please edit in the target package's `package.json` file the `peerDependencies` liek so:
+If you need a private package on another one, please edit in the target package's `package.json` file the `optionalDependencies` like so:
 
 ```json
-"peerDependencies": {
+"optionalDependencies": {
     "@npmversion/jest-utils": "*"
 }
 ```

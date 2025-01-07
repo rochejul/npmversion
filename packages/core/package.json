@@ -34,7 +34,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "peerDependencies": {
+  "optionalDependencies": {
     "@npmversion/jest-utils": "*"
   },
   "dependencies": {
