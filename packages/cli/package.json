@@ -1,6 +1,6 @@
 {
   "name": "@npmversion/cli",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "type": "module",
   "description": "Cli over npmversion",
   "main": "./src/index.js",
@@ -35,7 +35,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@npmversion/core": "2.0.0",
+    "@npmversion/core": "2.0.1",
     "@types/minimist": "1.2.5",
     "minimist": "1.2.8"
   },
