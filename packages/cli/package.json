@@ -34,9 +34,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "optionalDependencies": {
-    "@npmversion/jest-utils": "*"
-  },
   "dependencies": {
     "@npmversion/core": "2.0.0",
     "@types/minimist": "1.2.5",
