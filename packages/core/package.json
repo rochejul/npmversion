@@ -1,6 +1,6 @@
 {
   "name": "@npmversion/core",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "type": "module",
   "description": "Core implementation of the npmversion library",
   "main": "./src/index.js",
@@ -43,8 +43,8 @@
     }
   },
   "dependencies": {
-    "@npmversion/util": "2.0.1",
-    "@npmversion/workspace": "2.0.1",
+    "@npmversion/util": "2.0.2",
+    "@npmversion/workspace": "2.0.2",
     "@types/rc": "1.2.4",
     "@types/semver": "7.5.8",
     "rc": "1.2.8",

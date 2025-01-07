@@ -1,6 +1,6 @@
 {
   "name": "@npmversion/jest-utils",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "type": "module",
   "private": "true",
   "description": "Jest services for tests",

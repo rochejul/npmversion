@@ -1,6 +1,6 @@
 {
   "name": "@npmversion/workspace",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "type": "module",
   "description": "Workspace management for the npmversion library",
   "main": "./src/index.js",
@@ -42,7 +42,7 @@
     }
   },
   "dependencies": {
-    "@npmversion/util": "2.0.1",
+    "@npmversion/util": "2.0.2",
     "@pnpm/fs.find-packages": "1000.0.1",
     "@types/semver": "7.5.8",
     "dependency-graph": "1.0.0",
