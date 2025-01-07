@@ -56,9 +56,29 @@ describe('@npmversion/workspace - npm', () => {
       await updatePackageVersion('1.42.5', treeWorkspacePath);
 
       // Assert
-      expect(promisedExec).toHaveBeenCalledTimes(6);
+      expect(promisedExec).toHaveBeenCalledTimes(10);
       expect(promisedExec).toHaveBeenCalledWith(
-        'npm version 1.42.5 --workspaces --no-git-tag-version --allow-same-version',
+        'npm version 1.42.5 --no-git-tag-version --allow-same-version --workspace=@npmversion/jest-utils',
+        false,
+        treeWorkspacePath,
+      );
+      expect(promisedExec).toHaveBeenCalledWith(
+        'npm version 1.42.5 --no-git-tag-version --allow-same-version --workspace=@npmversion/util',
+        false,
+        treeWorkspacePath,
+      );
+      expect(promisedExec).toHaveBeenCalledWith(
+        'npm version 1.42.5 --no-git-tag-version --allow-same-version --workspace=@npmversion/workspace',
+        false,
+        treeWorkspacePath,
+      );
+      expect(promisedExec).toHaveBeenCalledWith(
+        'npm version 1.42.5 --no-git-tag-version --allow-same-version --workspace=@npmversion/core',
+        false,
+        treeWorkspacePath,
+      );
+      expect(promisedExec).toHaveBeenCalledWith(
+        'npm version 1.42.5 --no-git-tag-version --allow-same-version --workspace=@npmversion/cli',
         false,
         treeWorkspacePath,
       );

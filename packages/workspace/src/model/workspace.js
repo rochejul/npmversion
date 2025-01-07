@@ -85,6 +85,8 @@ export class Workspace {
 
     this.#graph = new DepGraph();
 
+    const packages = this.#workspacePackages.map(({ name }) => name);
+
     for (const workspacePackage of this.#workspacePackages) {
       if (!this.#graph.hasNode(workspacePackage.name)) {
         this.#graph.addNode(workspacePackage.name);
@@ -96,6 +98,10 @@ export class Workspace {
         ...workspacePackage.peerDependencies,
         ...workspacePackage.optionalDependencies,
       ]) {
+        if (!packages.includes(dependency.name)) {
+          continue;
+        }
+
         if (!this.#graph.hasNode(dependency.name)) {
           this.#graph.addNode(dependency.name);
         }
