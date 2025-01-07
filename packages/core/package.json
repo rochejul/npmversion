@@ -37,6 +37,11 @@
   "peerDependencies": {
     "@npmversion/jest-utils": "*"
   },
+  "peerDependenciesMeta": {
+    "@npmversion/jest-utils": {
+      "optional": true
+    }
+  },
   "dependencies": {
     "@npmversion/util": "2.0.1",
     "@npmversion/workspace": "2.0.1",

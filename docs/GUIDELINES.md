@@ -71,5 +71,10 @@ If you need a private package on another one, please edit in the target package'
 ```json
 "peerDependencies": {
     "@npmversion/jest-utils": "*"
+},
+"peerDependenciesMeta": {
+    "@npmversion/jest-utils": {
+        "optional": true
+    }
 }
 ```

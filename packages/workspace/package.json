@@ -36,6 +36,11 @@
   "peerDependencies": {
     "@npmversion/jest-utils": "*"
   },
+  "peerDependenciesMeta": {
+    "@npmversion/jest-utils": {
+      "optional": true
+    }
+  },
   "dependencies": {
     "@npmversion/util": "2.0.1",
     "@pnpm/fs.find-packages": "1000.0.1",
