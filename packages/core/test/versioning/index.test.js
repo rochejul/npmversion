@@ -11,10 +11,16 @@ jest.unstable_mockModule('@npmversion/util', async () => ({
   readFile: jest.fn(),
 }));
 
+jest.unstable_mockModule('@npmversion/workspace', async () => ({
+  computeWorkspace: jest.fn(),
+  updatePackageVersion: jest.fn(),
+}));
+
 import { describe, test, expect, jest, beforeEach } from '@jest/globals';
 import '@npmversion/jest-utils';
 
 const { loadPackageJson, promisedExec } = await import('@npmversion/util');
+const { updatePackageVersion } = await import('@npmversion/workspace');
 const { printHelp, printNotFoundPackageJsonFile, printVersion, printError } =
   await import('../../src/versioning/help.js');
 const {
@@ -208,7 +214,7 @@ describe('@npmversion/core - await versioning', () => {
 
         // Assert
         expect(printError).not.toHaveBeenCalled();
-        expect(promisedExec).toHaveBeenCalledTimes(5);
+        expect(promisedExec).toHaveBeenCalledTimes(4);
         expect(promisedExec).toHaveBeenCalledWith(
           'git --help',
           true,
@@ -219,11 +225,7 @@ describe('@npmversion/core - await versioning', () => {
           true,
           DEFAULT_CWD,
         );
-        expect(promisedExec).toHaveBeenCalledWith(
-          'npm version 1.2.1 --no-git-tag-version --allow-same-version',
-          false,
-          DEFAULT_CWD,
-        );
+        expect(updatePackageVersion).toHaveBeenCalledWith('1.2.1', DEFAULT_CWD);
         expect(promisedExec).toHaveBeenCalledWith(
           'git commit --all --message "Release version: 1.2.1"',
           false,
@@ -242,7 +244,7 @@ describe('@npmversion/core - await versioning', () => {
 
         // Assert
         expect(printError).not.toHaveBeenCalled();
-        expect(promisedExec).toHaveBeenCalledTimes(6);
+        expect(promisedExec).toHaveBeenCalledTimes(5);
         expect(promisedExec).toHaveBeenCalledWith(
           'git --help',
           true,
@@ -253,11 +255,7 @@ describe('@npmversion/core - await versioning', () => {
           true,
           DEFAULT_CWD,
         );
-        expect(promisedExec).toHaveBeenCalledWith(
-          'npm version 1.2.1 --no-git-tag-version --allow-same-version',
-          false,
-          DEFAULT_CWD,
-        );
+        expect(updatePackageVersion).toHaveBeenCalledWith('1.2.1', DEFAULT_CWD);
         expect(promisedExec).toHaveBeenCalledWith(
           'git branch "release/1.2.1"',
           false,
@@ -288,7 +286,7 @@ describe('@npmversion/core - await versioning', () => {
 
         // Assert
         expect(printError).not.toHaveBeenCalled();
-        expect(promisedExec).toHaveBeenCalledTimes(9);
+        expect(promisedExec).toHaveBeenCalledTimes(8);
         expect(promisedExec).toHaveBeenCalledWith(
           'git --help',
           true,
@@ -299,11 +297,7 @@ describe('@npmversion/core - await versioning', () => {
           true,
           DEFAULT_CWD,
         );
-        expect(promisedExec).toHaveBeenCalledWith(
-          'npm version 1.2.1 --no-git-tag-version --allow-same-version',
-          false,
-          DEFAULT_CWD,
-        );
+        expect(updatePackageVersion).toHaveBeenCalledWith('1.2.1', DEFAULT_CWD);
         expect(promisedExec).toHaveBeenCalledWith(
           'git commit --all --message "Release version: 1.2.1"',
           false,
@@ -349,7 +343,7 @@ describe('@npmversion/core - await versioning', () => {
 
         // Assert
         expect(printError).not.toHaveBeenCalled();
-        expect(promisedExec).toHaveBeenCalledTimes(8);
+        expect(promisedExec).toHaveBeenCalledTimes(7);
         expect(promisedExec).toHaveBeenCalledWith(
           'git --help',
           true,
@@ -360,11 +354,7 @@ describe('@npmversion/core - await versioning', () => {
           true,
           DEFAULT_CWD,
         );
-        expect(promisedExec).toHaveBeenCalledWith(
-          'npm version 1.2.1 --no-git-tag-version --allow-same-version',
-          false,
-          DEFAULT_CWD,
-        );
+        expect(updatePackageVersion).toHaveBeenCalledWith('1.2.1', DEFAULT_CWD);
         expect(promisedExec).toHaveBeenCalledWith(
           'git commit --all --message "Release version: 1.2.1"',
           false,
@@ -404,7 +394,7 @@ describe('@npmversion/core - await versioning', () => {
 
         // Assert
         expect(printError).not.toHaveBeenCalled();
-        expect(promisedExec).toHaveBeenCalledTimes(9);
+        expect(promisedExec).toHaveBeenCalledTimes(8);
         expect(promisedExec).toHaveBeenCalledWith(
           'git --help',
           true,
@@ -415,11 +405,7 @@ describe('@npmversion/core - await versioning', () => {
           true,
           DEFAULT_CWD,
         );
-        expect(promisedExec).toHaveBeenCalledWith(
-          'npm version 1.2.1 --no-git-tag-version --allow-same-version',
-          false,
-          DEFAULT_CWD,
-        );
+        expect(updatePackageVersion).toHaveBeenCalledWith('1.2.1', DEFAULT_CWD);
         expect(promisedExec).toHaveBeenCalledWith(
           'git commit --all --message "Release version: 1.2.1"',
           false,
@@ -464,7 +450,7 @@ describe('@npmversion/core - await versioning', () => {
 
         // Assert
         expect(printError).not.toHaveBeenCalled();
-        expect(promisedExec).toHaveBeenCalledTimes(9);
+        expect(promisedExec).toHaveBeenCalledTimes(8);
         expect(promisedExec).toHaveBeenCalledWith(
           'git --help',
           true,
@@ -475,11 +461,7 @@ describe('@npmversion/core - await versioning', () => {
           true,
           DEFAULT_CWD,
         );
-        expect(promisedExec).toHaveBeenCalledWith(
-          'npm version 1.2.1 --no-git-tag-version --allow-same-version',
-          false,
-          DEFAULT_CWD,
-        );
+        expect(updatePackageVersion).toHaveBeenCalledWith('1.2.1', DEFAULT_CWD);
         expect(promisedExec).toHaveBeenCalledWith(
           'git commit --all --message "Release version: 1.2.1"',
           false,
@@ -525,7 +507,7 @@ describe('@npmversion/core - await versioning', () => {
 
         // Assert
         expect(printError).not.toHaveBeenCalled();
-        expect(promisedExec).toHaveBeenCalledTimes(8);
+        expect(promisedExec).toHaveBeenCalledTimes(7);
         expect(promisedExec).toHaveBeenCalledWith(
           'git --help',
           true,
@@ -536,11 +518,7 @@ describe('@npmversion/core - await versioning', () => {
           true,
           DEFAULT_CWD,
         );
-        expect(promisedExec).toHaveBeenCalledWith(
-          'npm version 1.2.1 --no-git-tag-version --allow-same-version',
-          false,
-          DEFAULT_CWD,
-        );
+        expect(updatePackageVersion).toHaveBeenCalledWith('1.2.1', DEFAULT_CWD);
         expect(promisedExec).toHaveBeenCalledWith(
           'git commit --all --message "Release version: 1.2.1"',
           false,
@@ -581,7 +559,7 @@ describe('@npmversion/core - await versioning', () => {
 
         // Assert
         expect(printError).not.toHaveBeenCalled();
-        expect(promisedExec).toHaveBeenCalledTimes(8);
+        expect(promisedExec).toHaveBeenCalledTimes(7);
         expect(promisedExec).toHaveBeenCalledWith(
           'git --help',
           true,
@@ -592,11 +570,7 @@ describe('@npmversion/core - await versioning', () => {
           true,
           DEFAULT_CWD,
         );
-        expect(promisedExec).toHaveBeenCalledWith(
-          'npm version 1.2.1 --no-git-tag-version --allow-same-version',
-          false,
-          DEFAULT_CWD,
-        );
+        expect(updatePackageVersion).toHaveBeenCalledWith('1.2.1', DEFAULT_CWD);
         expect(promisedExec).toHaveBeenCalledWith(
           'git commit --all --message "Release version: 1.2.1"',
           false,
@@ -634,7 +608,7 @@ describe('@npmversion/core - await versioning', () => {
 
         // Assert
         expect(printError).not.toHaveBeenCalled();
-        expect(promisedExec).toHaveBeenCalledTimes(3);
+        expect(promisedExec).toHaveBeenCalledTimes(2);
         expect(promisedExec).toHaveBeenCalledWith(
           'git --help',
           true,
@@ -645,11 +619,7 @@ describe('@npmversion/core - await versioning', () => {
           true,
           DEFAULT_CWD,
         );
-        expect(promisedExec).toHaveBeenCalledWith(
-          'npm version 1.2.1 --no-git-tag-version --allow-same-version',
-          false,
-          DEFAULT_CWD,
-        );
+        expect(updatePackageVersion).toHaveBeenCalledWith('1.2.1', DEFAULT_CWD);
       });
 
       test('use the specified cwd', async () => {
@@ -665,18 +635,14 @@ describe('@npmversion/core - await versioning', () => {
 
         // Assert
         expect(printError).not.toHaveBeenCalled();
-        expect(promisedExec).toHaveBeenCalledTimes(3);
+        expect(promisedExec).toHaveBeenCalledTimes(2);
         expect(promisedExec).toHaveBeenCalledWith('git --help', true, '/etc');
         expect(promisedExec).toHaveBeenCalledWith(
           'git status --porcelain',
           true,
           '/etc',
         );
-        expect(promisedExec).toHaveBeenCalledWith(
-          'npm version 1.2.1 --no-git-tag-version --allow-same-version',
-          false,
-          '/etc',
-        );
+        expect(updatePackageVersion).toHaveBeenCalledWith('1.2.1', '/etc');
       });
     });
   });
@@ -721,16 +687,15 @@ describe('@npmversion/core - await versioning', () => {
 
     // Arrange
     expect(printError).not.toHaveBeenCalled();
-    expect(promisedExec).toHaveBeenCalledTimes(8);
+    expect(promisedExec).toHaveBeenCalledTimes(7);
     expect(promisedExec).toHaveBeenCalledWith('git --help', true, DEFAULT_CWD);
     expect(promisedExec).toHaveBeenCalledWith(
       'git status --porcelain',
       true,
       DEFAULT_CWD,
     );
-    expect(promisedExec).toHaveBeenCalledWith(
-      'npm version 1.2.1-beta --no-git-tag-version --allow-same-version',
-      false,
+    expect(updatePackageVersion).toHaveBeenCalledWith(
+      '1.2.1-beta',
       DEFAULT_CWD,
     );
     expect(promisedExec).toHaveBeenCalledWith(

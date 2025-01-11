@@ -1,6 +1,10 @@
 /** @import { VersionOptions } from '../config*/
 
-export const LEVEL_ENUM = {
+/**
+ * @readonly
+ * @enum {string}
+ */
+export const LEVEL_ENUM = Object.freeze({
   major: 'major',
   minor: 'minor',
   patch: 'patch',
@@ -8,7 +12,7 @@ export const LEVEL_ENUM = {
   preminor: 'preminor',
   prepatch: 'prepatch',
   prerelease: 'prerelease',
-};
+});
 
 /**
  * @param {VersionOptions} [options]

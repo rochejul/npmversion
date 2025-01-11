@@ -11,6 +11,11 @@ export class WorkspacePackage {
   /**
    * @type {string}
    */
+  #rootDir;
+
+  /**
+   * @type {string}
+   */
   #name;
 
   /**
@@ -40,9 +45,10 @@ export class WorkspacePackage {
 
   /**
    * @constructor
-   * @param {{ name: string, version: string | semver, dependencies: Object = {}, devDependencies: Object = {}, peerDependencies: Object = {}, optionalDependencies: Object = {} }} param
+   * @param {{ rootDir: string, name: string, version: string | semver, dependencies: Object = {}, devDependencies: Object = {}, peerDependencies: Object = {}, optionalDependencies: Object = {} }} param
    */
   constructor({
+    rootDir,
     name,
     version,
     dependencies = {},
@@ -50,6 +56,7 @@ export class WorkspacePackage {
     peerDependencies = {},
     optionalDependencies = {},
   }) {
+    this.#rootDir = rootDir;
     this.#name = name;
     this.#version = version;
     this.#dependencies = Object.freeze(
@@ -68,6 +75,13 @@ export class WorkspacePackage {
         new Map(Object.entries(optionalDependencies)),
       ),
     );
+  }
+
+  /**
+   * @returns {string}
+   */
+  get rootDir() {
+    return this.#rootDir;
   }
 
   /**
@@ -114,6 +128,7 @@ export class WorkspacePackage {
 
   toJSON() {
     return Object.freeze({
+      rootDir: this.rootDir,
       name: this.name,
       version: this.version,
       dependencies: this.dependencies,

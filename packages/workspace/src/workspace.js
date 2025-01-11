@@ -37,7 +37,12 @@ export async function computeWorkspace(cwd = process.cwd()) {
 
   const workspacePackages = packages.map(
     (packageDescriptor) =>
-      new WorkspacePackage({ name, version, ...packageDescriptor.manifest }),
+      new WorkspacePackage({
+        rootDir: packageDescriptor.rootDirRealPath,
+        name,
+        version,
+        ...packageDescriptor.manifest,
+      }),
   );
 
   return new Workspace({

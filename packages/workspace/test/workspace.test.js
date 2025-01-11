@@ -7,6 +7,8 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+const treeWorkspacePath = path.resolve(path.join(__dirname, './resources'));
+
 describe('@npmversion/workspace - workspace', () => {
   describe('computeWorkspace', () => {
     test('returns empty array if we are in a leaf module', async () => {
@@ -47,17 +49,9 @@ describe('@npmversion/workspace - workspace', () => {
       expect(workspace).toMatchPlainObject({
         name: 'npmversion',
         version: '2.0.0',
-        dependencies: [
-          {
-            name: '@npmversion/cli',
-            range: '2.0.0',
-          },
-        ],
-        devDependencies: [],
-        peerDependencies: [],
-        optionalDependencies: [],
         workspacePackages: [
           {
+            rootDir: `${treeWorkspacePath}/packages/cli`,
             name: '@npmversion/cli',
             version: '2.0.0',
             dependencies: [
@@ -76,6 +70,7 @@ describe('@npmversion/workspace - workspace', () => {
             optionalDependencies: [],
           },
           {
+            rootDir: `${treeWorkspacePath}/packages/core`,
             name: '@npmversion/core',
             version: '2.0.0',
             dependencies: [
@@ -98,6 +93,7 @@ describe('@npmversion/workspace - workspace', () => {
             optionalDependencies: [],
           },
           {
+            rootDir: `${treeWorkspacePath}/packages/jest-utils`,
             name: '@npmversion/jest-utils',
             version: '2.0.0',
             dependencies: [],
@@ -106,6 +102,7 @@ describe('@npmversion/workspace - workspace', () => {
             optionalDependencies: [],
           },
           {
+            rootDir: `${treeWorkspacePath}/packages/util`,
             name: '@npmversion/util',
             version: '2.0.0',
             dependencies: [],
@@ -119,6 +116,7 @@ describe('@npmversion/workspace - workspace', () => {
             optionalDependencies: [],
           },
           {
+            rootDir: `${treeWorkspacePath}/packages/workspace`,
             name: '@npmversion/workspace',
             version: '2.0.0',
             dependencies: [
@@ -137,6 +135,15 @@ describe('@npmversion/workspace - workspace', () => {
             optionalDependencies: [],
           },
         ],
+        dependencies: [
+          {
+            name: '@npmversion/cli',
+            range: '2.0.0',
+          },
+        ],
+        devDependencies: [],
+        peerDependencies: [],
+        optionalDependencies: [],
       });
     });
 

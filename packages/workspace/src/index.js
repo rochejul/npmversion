@@ -1,2 +1,2 @@
 export * from './workspace.js';
-export * from './npm.js';
+export * from './npm/index.js';

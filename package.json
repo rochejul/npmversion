@@ -10,7 +10,7 @@
     "packages/*"
   ],
   "scripts": {
-    "bump:patch": "node ./bin/npmversion.js --increment patch --nogit-commit --nogit-tag",
+    "bump:patch": "npm prune && node ./bin/npmversion.js --increment patch --nogit-commit --nogit-tag",
     "dev:audit": "npm audit --workspaces --include-workspace-root",
     "dev:check": "npm test && npm run dev:styling",
     "dev:format": "prettier --check \"./**/*.{ts,tsx,js,mjs,cjs,md}\"",
