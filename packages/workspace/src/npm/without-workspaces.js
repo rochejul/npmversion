@@ -7,7 +7,6 @@ import { updateRoot } from './command.js';
  * @param {Workspace} workspace
  * @param {string} packageVersion
  * @param {string} [cwd=process.cwd()]
- * @returns {Promise<string}
  */
 export async function updateRootVersion(
   workspace,

@@ -3,6 +3,7 @@ jest.unstable_mockModule('../src/npm/command.js', async () => ({
   updateWorkspaceRoot: jest.fn(),
   updateWorkspacePackage: jest.fn(),
   updateDependencyForWorkspace: jest.fn(),
+  updateDependencyForRoot: jest.fn(),
   DEPENDENCY_LEVEL: {
     none: 'none',
     peer: 'peer',
@@ -28,6 +29,7 @@ const {
   updateWorkspaceRoot,
   updateWorkspacePackage,
   updateDependencyForWorkspace,
+  updateDependencyForRoot,
 } = await import('../../src/npm/command.js');
 const { updatePackageVersion } = await import('../../src/index.js');
 
@@ -60,6 +62,11 @@ describe('@npmversion/workspace - npm', () => {
 
     updateDependencyForWorkspace.mockImplementation((...args) => {
       npmCommands.push(['updateDependencyForWorkspace', ...args]);
+      return Promise.resolve();
+    });
+
+    updateDependencyForRoot.mockImplementation((...args) => {
+      npmCommands.push(['updateDependencyForRoot', ...args]);
       return Promise.resolve();
     });
   });
@@ -159,6 +166,13 @@ describe('@npmversion/workspace - npm', () => {
           '@npmversion/cli',
           'none',
           '@npmversion/core',
+          '1.42.5',
+          treeWorkspacePath,
+        ],
+        [
+          'updateDependencyForRoot',
+          'none',
+          '@npmversion/cli',
           '1.42.5',
           treeWorkspacePath,
         ],

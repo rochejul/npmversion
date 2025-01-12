@@ -66,6 +66,28 @@ export async function updateWorkspacePackage(
 
 /**
  * @async
+ * @param {NpmDependencyLevel} dependencyLevel
+ * @param {string} dependencyName
+ * @param {string} dependencyVersion
+ * @param  {string} [cwd=process.cwd()]
+ */
+export async function updateDependencyForRoot(
+  dependencyLevel,
+  dependencyName,
+  dependencyVersion,
+  cwd = process.cwd(),
+) {
+  await uninstallDependencyForRoot(dependencyName, cwd);
+  await installDependencyForRoot(
+    dependencyLevel,
+    dependencyName,
+    dependencyVersion,
+    cwd,
+  );
+}
+
+/**
+ * @async
  * @param {string} workspaceName
  * @param {NpmDependencyLevel} dependencyLevel
  * @param {string} dependencyName
@@ -123,6 +145,34 @@ async function installDependencyForWorkspace(
 ) {
   await executeCommand(
     `npm install --workspace=${workspaceName} --save${dependencyLevel === DEPENDENCY_LEVEL.none ? '' : '-' + dependencyLevel} ${dependencyName}@${dependencyVersion}`,
+    cwd,
+  );
+}
+
+/**
+ * @async
+ * @param {string} dependencyName
+ * @param  {string} [cwd=process.cwd()]
+ */
+async function uninstallDependencyForRoot(dependencyName, cwd = process.cwd()) {
+  await executeCommand(`npm uninstall ${dependencyName}`, cwd);
+}
+
+/**
+ * @async
+ * @param {NpmDependencyLevel} dependencyLevel
+ * @param {string} dependencyName
+ * @param {string} dependencyVersion
+ * @param  {string} [cwd=process.cwd()]
+ */
+async function installDependencyForRoot(
+  dependencyLevel,
+  dependencyName,
+  dependencyVersion,
+  cwd = process.cwd(),
+) {
+  await executeCommand(
+    `npm install --save${dependencyLevel === DEPENDENCY_LEVEL.none ? '' : '-' + dependencyLevel} ${dependencyName}@${dependencyVersion}`,
     cwd,
   );
 }

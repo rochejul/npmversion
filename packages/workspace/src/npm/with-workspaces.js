@@ -2,6 +2,7 @@ import {
   updateWorkspaceRoot,
   updateWorkspacePackage,
   updateDependencyForWorkspace,
+  updateDependencyForRoot,
   DEPENDENCY_LEVEL,
 } from './command.js';
 
@@ -17,7 +18,7 @@ import {
  * @param {NpmDependencyLevel} level
  * @param {string} [cwd=process.cwd()]
  */
-async function updateDependency(
+async function updateDependencyForWorkspacePackage(
   workspace,
   workspacePackage,
   packageVersion,
@@ -46,13 +47,61 @@ async function updateDependency(
 }
 
 /**
+ * @param {Workspace} workspace
+ * @param {string} packageVersion
+ * @param {WorkspacePackageDependency[]} dependencies
+ * @param {NpmDependencyLevel} level
+ * @param {string} [cwd=process.cwd()]
+ */
+async function updateDependency(
+  workspace,
+  packageVersion,
+  dependencies,
+  level,
+  cwd = process.cwd(),
+) {
+  const packageNames = workspace.workspacePackages.map(({ name }) => name);
+
+  for (const workspacePackageDependency of dependencies) {
+    if (
+      !packageNames.includes(workspacePackageDependency.name) ||
+      workspacePackageDependency.satisfies(packageVersion)
+    ) {
+      continue;
+    }
+
+    await updateDependencyForRoot(
+      level,
+      workspacePackageDependency.name,
+      packageVersion,
+      cwd,
+    );
+  }
+}
+
+/**
  * Update the version of the whole workspace
  * @param {Workspace} workspace
  * @param {string} packageVersion
  * @param {string} [cwd=process.cwd()]
- * @returns {Promise<string}
  */
 export async function updateWorkspaceVersion(
+  workspace,
+  packageVersion,
+  cwd = process.cwd(),
+) {
+  await updatePackagesAndRootVersion(workspace, packageVersion, cwd);
+  await updateInterDependenciesInPackages(workspace, packageVersion, cwd);
+  await updateDependenciesInRoot(workspace, packageVersion, cwd);
+}
+
+/**
+ * @async
+ * @param {Workspace} workspace
+ * @param {string} packageVersion
+ * @param {string} [cwd=process.cwd()]
+ */
+async function updatePackagesAndRootVersion(
   workspace,
   packageVersion,
   cwd = process.cwd(),
@@ -64,11 +113,66 @@ export async function updateWorkspaceVersion(
   }
 
   await updateWorkspaceRoot(packageVersion, cwd);
+}
+
+/**
+ * @async
+ * @param {Workspace} workspace
+ * @param {string} packageVersion
+ * @param {string} [cwd=process.cwd()]
+ */
+async function updateDependenciesInRoot(
+  workspace,
+  packageVersion,
+  cwd = process.cwd(),
+) {
+  await updateDependency(
+    workspace,
+    packageVersion,
+    workspace.peerDependencies,
+    DEPENDENCY_LEVEL.peer,
+    cwd,
+  );
+  await updateDependency(
+    workspace,
+    packageVersion,
+    workspace.optionalDependencies,
+    DEPENDENCY_LEVEL.optional,
+    cwd,
+  );
+  await updateDependency(
+    workspace,
+    packageVersion,
+    workspace.devDependencies,
+    DEPENDENCY_LEVEL.dev,
+    cwd,
+  );
+  await updateDependency(
+    workspace,
+    packageVersion,
+    workspace.dependencies,
+    DEPENDENCY_LEVEL.none,
+    cwd,
+  );
+}
+
+/**
+ * @async
+ * @param {Workspace} workspace
+ * @param {string} packageVersion
+ * @param {string} [cwd=process.cwd()]
+ */
+async function updateInterDependenciesInPackages(
+  workspace,
+  packageVersion,
+  cwd = process.cwd(),
+) {
+  const dependenciesOrder = workspace.dependenciesOrder();
 
   for (const workspaceName of dependenciesOrder) {
     const workspacePackage = workspace.getWorkspacePackage(workspaceName);
 
-    await updateDependency(
+    await updateDependencyForWorkspacePackage(
       workspace,
       workspacePackage,
       packageVersion,
@@ -76,7 +180,7 @@ export async function updateWorkspaceVersion(
       DEPENDENCY_LEVEL.peer,
       cwd,
     );
-    await updateDependency(
+    await updateDependencyForWorkspacePackage(
       workspace,
       workspacePackage,
       packageVersion,
@@ -84,7 +188,7 @@ export async function updateWorkspaceVersion(
       DEPENDENCY_LEVEL.optional,
       cwd,
     );
-    await updateDependency(
+    await updateDependencyForWorkspacePackage(
       workspace,
       workspacePackage,
       packageVersion,
@@ -92,7 +196,7 @@ export async function updateWorkspaceVersion(
       DEPENDENCY_LEVEL.dev,
       cwd,
     );
-    await updateDependency(
+    await updateDependencyForWorkspacePackage(
       workspace,
       workspacePackage,
       packageVersion,

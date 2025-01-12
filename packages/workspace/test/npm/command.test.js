@@ -11,6 +11,7 @@ const {
   updateWorkspaceRoot,
   updateWorkspacePackage,
   updateDependencyForWorkspace,
+  updateDependencyForRoot,
 } = await import('../../src/npm/command.js');
 
 const DEFAULT_CWD = process.cwd();
@@ -260,6 +261,103 @@ describe('@npmversion/workspace - npm/command', () => {
           '--save',
           '@example/util@1.42.5',
         ],
+        '/etc/shell',
+      );
+    });
+  });
+
+  describe('updateDependencyForRoot', () => {
+    test('generates the appropriate npm command', async () => {
+      // Act
+      await updateDependencyForRoot('none', '@example/util', '1.42.5');
+
+      // Assert
+      expect(spawn).toHaveBeenCalledTimes(2);
+      expect(spawn).toHaveBeenCalledWith(
+        'npm',
+        ['uninstall', '@example/util'],
+        DEFAULT_CWD,
+      );
+      expect(spawn).toHaveBeenCalledWith(
+        'npm',
+        ['install', '--save', '@example/util@1.42.5'],
+        DEFAULT_CWD,
+      );
+    });
+
+    test('for dev dependencies', async () => {
+      // Act
+      await updateDependencyForRoot('dev', '@example/util', '1.42.5');
+
+      // Assert
+      expect(spawn).toHaveBeenCalledTimes(2);
+      expect(spawn).toHaveBeenCalledWith(
+        'npm',
+        ['uninstall', '@example/util'],
+        DEFAULT_CWD,
+      );
+      expect(spawn).toHaveBeenCalledWith(
+        'npm',
+        ['install', '--save-dev', '@example/util@1.42.5'],
+        DEFAULT_CWD,
+      );
+    });
+
+    test('for peer dependencies', async () => {
+      // Act
+      await updateDependencyForRoot('peer', '@example/util', '1.42.5');
+
+      // Assert
+      expect(spawn).toHaveBeenCalledTimes(2);
+      expect(spawn).toHaveBeenCalledWith(
+        'npm',
+        ['uninstall', '@example/util'],
+        DEFAULT_CWD,
+      );
+      expect(spawn).toHaveBeenCalledWith(
+        'npm',
+        ['install', '--save-peer', '@example/util@1.42.5'],
+        DEFAULT_CWD,
+      );
+    });
+
+    test('for optional dependencies', async () => {
+      // Act
+      await updateDependencyForRoot('optional', '@example/util', '1.42.5');
+
+      // Assert
+      expect(spawn).toHaveBeenCalledTimes(2);
+      expect(spawn).toHaveBeenCalledWith(
+        'npm',
+        ['uninstall', '@example/util'],
+        DEFAULT_CWD,
+      );
+      expect(spawn).toHaveBeenCalledWith(
+        'npm',
+        ['install', '--save-optional', '@example/util@1.42.5'],
+        DEFAULT_CWD,
+      );
+    });
+
+    test('consumes the provided cwd', async () => {
+      // Act
+      await updateDependencyForRoot(
+        'none',
+        '@example/util',
+        '1.42.5',
+        '/etc/shell',
+      );
+
+      // Assert
+      expect(spawn).toHaveBeenCalledTimes(2);
+      expect(spawn).toHaveBeenCalledWith(
+        'npm',
+        ['uninstall', '@example/util'],
+        '/etc/shell',
+      );
+      expect(spawn).toHaveBeenCalledWith(
+        'npm',
+        ['install', '--save', '@example/util@1.42.5'],
         '/etc/shell',
       );
     });
