@@ -52,5 +52,8 @@
     "name": "Julien Roche",
     "email": "roche.jul@gmail.com",
     "url": "https://julienroche.blogspot.com/"
+  },
+  "devDependencies": {
+    "@npm/types": "2.0.0"
   }
 }

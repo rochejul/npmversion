@@ -1,4 +1,5 @@
 /** @import semver from 'semver' */
+/** @import PackageJSON from '@npm/types' */
 
 export class PackageJson {
   /**
@@ -41,6 +42,9 @@ export class PackageJson {
    */
   #optionalDependencies;
 
+  /**
+   * @param {PackageJSON} packageJSONContent
+   */
   constructor({
     version,
     name,
