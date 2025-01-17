@@ -1,6 +1,6 @@
 {
   "name": "npmversion",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "A command line node module to deal with \"bumping\" and \"npm version\"",
   "type": "module",
   "bin": {
@@ -55,9 +55,6 @@
     "type": "git",
     "url": "git+https://github.com/rochejul/node-version.git"
   },
-  "dependencies": {
-    "@npmversion/cli": "2.0.2"
-  },
   "devDependencies": {
     "@commitlint/cli": "19.6.0",
     "@commitlint/config-conventional": "19.6.0",
@@ -77,5 +74,8 @@
   "volta": {
     "node": "20.15.0",
     "npm": "10.7.0"
+  },
+  "dependencies": {
+    "@npmversion/cli": "2.0.3"
   }
 }
