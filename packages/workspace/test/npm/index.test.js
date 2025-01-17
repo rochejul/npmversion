@@ -1,8 +1,25 @@
+const mockNpmPackageJsonUpdate = jest.fn();
+
+jest.unstable_mockModule('@npmcli/package-json', async () => ({
+  default: {
+    async load(path) {
+      const packageJson = await import(`${path}/package.json`);
+
+      return {
+        content: packageJson,
+        update: mockNpmPackageJsonUpdate,
+        save: jest.fn(),
+      };
+    },
+  },
+}));
+
 jest.unstable_mockModule('../src/npm/command.js', async () => ({
   updateRoot: jest.fn(),
   updateWorkspace: jest.fn(),
   updateDependencyForWorkspace: jest.fn(),
   updateDependencyForRoot: jest.fn(),
+  pruning: jest.fn(),
   DEPENDENCY_LEVEL: {
     none: 'none',
     peer: 'peer',
@@ -23,12 +40,8 @@ import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const { loadPackageJson } = await import('@npmversion/util');
-const {
-  updateRoot,
-  updateWorkspace,
-  updateDependencyForWorkspace,
-  updateDependencyForRoot,
-} = await import('../../src/npm/command.js');
+const { updateRoot, updateWorkspace, updateDependencyForRoot, pruning } =
+  await import('../../src/npm/command.js');
 const { updatePackageVersion } = await import('../../src/index.js');
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -48,18 +61,23 @@ describe('@example/workspace - npm', () => {
       return Promise.resolve();
     });
 
+    mockNpmPackageJsonUpdate.mockImplementation((...args) => {
+      npmCommands.push(['npmCliUpdate', ...args]);
+      return Promise.resolve();
+    });
+
     updateWorkspace.mockImplementation((...args) => {
       npmCommands.push(['updateWorkspace', ...args]);
       return Promise.resolve();
     });
 
-    updateDependencyForWorkspace.mockImplementation((...args) => {
-      npmCommands.push(['updateDependencyForWorkspace', ...args]);
+    updateDependencyForRoot.mockImplementation((...args) => {
+      npmCommands.push(['updateDependencyForRoot', ...args]);
       return Promise.resolve();
     });
 
-    updateDependencyForRoot.mockImplementation((...args) => {
-      npmCommands.push(['updateDependencyForRoot', ...args]);
+    pruning.mockImplementation((...args) => {
+      npmCommands.push(['pruning', ...args]);
       return Promise.resolve();
     });
   });
@@ -101,37 +119,62 @@ describe('@example/workspace - npm', () => {
       expect(npmCommands).toStrictEqual([
         ['updateWorkspace', '1.42.5', treeWorkspacePath],
         [
-          'updateDependencyForWorkspace',
-          '@example/workspace',
-          'none',
-          '@example/util',
-          '1.42.5',
-          treeWorkspacePath,
+          'npmCliUpdate',
+          {
+            dependencies: {
+              '@example/util': '1.42.5',
+            },
+          },
         ],
         [
-          'updateDependencyForWorkspace',
-          '@example/core',
-          'none',
-          '@example/util',
-          '1.42.5',
-          treeWorkspacePath,
+          'npmCliUpdate',
+          {
+            dependencies: {
+              '@example/util': '1.42.5',
+            },
+          },
         ],
         [
-          'updateDependencyForWorkspace',
-          '@example/core',
-          'none',
-          '@example/workspace',
-          '1.42.5',
-          treeWorkspacePath,
+          'npmCliUpdate',
+          {
+            dependencies: {
+              '@example/workspace': '1.42.5',
+            },
+          },
         ],
         [
-          'updateDependencyForWorkspace',
-          '@example/cli',
-          'none',
-          '@example/core',
-          '1.42.5',
-          treeWorkspacePath,
+          'npmCliUpdate',
+          {
+            peerDependencies: {
+              '@example/core': '1.42.5',
+            },
+          },
         ],
+        [
+          'npmCliUpdate',
+          {
+            optionalDependencies: {
+              '@example/core': '1.42.5',
+            },
+          },
+        ],
+        [
+          'npmCliUpdate',
+          {
+            devDependencies: {
+              '@example/core': '1.42.5',
+            },
+          },
+        ],
+        [
+          'npmCliUpdate',
+          {
+            dependencies: {
+              '@example/core': '1.42.5',
+            },
+          },
+        ],
+        ['pruning', treeWorkspacePath],
         [
           'updateDependencyForRoot',
           'none',

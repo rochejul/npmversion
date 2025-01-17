@@ -60,14 +60,28 @@ describe('@npmversion/workspace - workspace', () => {
                 range: '2.0.0',
               },
             ],
-            devDependencies: [],
+            devDependencies: [
+              {
+                name: '@example/core',
+                range: '2.0.0',
+              },
+            ],
             peerDependencies: [
+              {
+                name: '@example/core',
+                range: '2.0.0',
+              },
               {
                 name: '@example/jest-utils',
                 range: '*',
               },
             ],
-            optionalDependencies: [],
+            optionalDependencies: [
+              {
+                name: '@example/core',
+                range: '2.0.0',
+              },
+            ],
           },
           {
             rootDir: `${treeWorkspacePath}/packages/core`,

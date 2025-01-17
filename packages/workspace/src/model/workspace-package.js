@@ -1,4 +1,6 @@
+import NPMCliPackageJson from '@npmcli/package-json';
 import { mapToWorkspacePackageDependency } from './util.js';
+import PackageJsonLib from '@npmcli/package-json';
 
 /** @import semver from 'semver' */
 /** @import { WorkspacePackageDependency } from './workspace-package-dependency.js' */
@@ -124,6 +126,14 @@ export class WorkspacePackage {
    */
   get optionalDependencies() {
     return this.#optionalDependencies;
+  }
+
+  /**
+   * @async
+   * @returns {NPMCliPackageJson}
+   */
+  async loadPackageJson() {
+    return PackageJsonLib.load(this.rootDir);
   }
 
   toJSON() {

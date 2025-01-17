@@ -42,6 +42,7 @@
     }
   },
   "dependencies": {
+    "@npmcli/package-json": "6.1.0",
     "@npmversion/util": "2.0.2",
     "@pnpm/fs.find-packages": "1000.0.1",
     "@types/semver": "7.5.8",
@@ -56,5 +57,9 @@
     "name": "Julien Roche",
     "email": "roche.jul@gmail.com",
     "url": "https://julienroche.blogspot.com/"
+  },
+  "devDependencies": {
+    "@npm/types": "2.0.0",
+    "@types/npmcli__package-json": "4.0.4"
   }
 }

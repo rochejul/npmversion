@@ -4,9 +4,16 @@
   "type": "module",
   "description": "Cli over example",
   "peerDependencies": {
+    "@example/core": "2.0.0",
     "@example/jest-utils": "*"
   },
   "dependencies": {
+    "@example/core": "2.0.0"
+  },
+  "devDependencies": {
+    "@example/core": "2.0.0"
+  },
+  "optionalDependencies": {
     "@example/core": "2.0.0"
   }
 }

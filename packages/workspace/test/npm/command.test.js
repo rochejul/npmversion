@@ -6,12 +6,9 @@ import { describe, test, expect, jest } from '@jest/globals';
 import '@npmversion/jest-utils';
 
 const { spawn } = await import('../../src/npm/io.js');
-const {
-  updateRoot,
-  updateWorkspace,
-  updateDependencyForWorkspace,
-  updateDependencyForRoot,
-} = await import('../../src/npm/command.js');
+const { updateRoot, updateWorkspace, updateDependencyForRoot } = await import(
+  '../../src/npm/command.js'
+);
 
 const DEFAULT_CWD = process.cwd();
 
@@ -76,149 +73,6 @@ describe('@npmversion/workspace - npm/command', () => {
           '--allow-same-version',
           '--include-workspace-root',
           '--workspaces',
-        ],
-        '/etc/shell',
-      );
-    });
-  });
-
-  describe('updateDependencyForWorkspace', () => {
-    test('generates the appropriate npm command', async () => {
-      // Act
-      await updateDependencyForWorkspace(
-        '@example/some-package',
-        'none',
-        '@example/util',
-        '1.42.5',
-      );
-
-      // Assert
-      expect(spawn).toHaveBeenCalledTimes(2);
-      expect(spawn).toHaveBeenCalledWith(
-        'npm',
-        ['uninstall', '--workspace=@example/some-package', '@example/util'],
-        DEFAULT_CWD,
-      );
-      expect(spawn).toHaveBeenCalledWith(
-        'npm',
-        [
-          'install',
-          '--workspace=@example/some-package',
-          '--save',
-          '@example/util@1.42.5',
-        ],
-        DEFAULT_CWD,
-      );
-    });
-
-    test('for dev dependencies', async () => {
-      // Act
-      await updateDependencyForWorkspace(
-        '@example/some-package',
-        'dev',
-        '@example/util',
-        '1.42.5',
-      );
-
-      // Assert
-      expect(spawn).toHaveBeenCalledTimes(2);
-      expect(spawn).toHaveBeenCalledWith(
-        'npm',
-        ['uninstall', '--workspace=@example/some-package', '@example/util'],
-        DEFAULT_CWD,
-      );
-      expect(spawn).toHaveBeenCalledWith(
-        'npm',
-        [
-          'install',
-          '--workspace=@example/some-package',
-          '--save-dev',
-          '@example/util@1.42.5',
-        ],
-        DEFAULT_CWD,
-      );
-    });
-
-    test('for peer dependencies', async () => {
-      // Act
-      await updateDependencyForWorkspace(
-        '@example/some-package',
-        'peer',
-        '@example/util',
-        '1.42.5',
-      );
-
-      // Assert
-      expect(spawn).toHaveBeenCalledTimes(2);
-      expect(spawn).toHaveBeenCalledWith(
-        'npm',
-        ['uninstall', '--workspace=@example/some-package', '@example/util'],
-        DEFAULT_CWD,
-      );
-      expect(spawn).toHaveBeenCalledWith(
-        'npm',
-        [
-          'install',
-          '--workspace=@example/some-package',
-          '--save-peer',
-          '@example/util@1.42.5',
-        ],
-        DEFAULT_CWD,
-      );
-    });
-
-    test('for optional dependencies', async () => {
-      // Act
-      await updateDependencyForWorkspace(
-        '@example/some-package',
-        'optional',
-        '@example/util',
-        '1.42.5',
-      );
-
-      // Assert
-      expect(spawn).toHaveBeenCalledTimes(2);
-      expect(spawn).toHaveBeenCalledWith(
-        'npm',
-        ['uninstall', '--workspace=@example/some-package', '@example/util'],
-        DEFAULT_CWD,
-      );
-      expect(spawn).toHaveBeenCalledWith(
-        'npm',
-        [
-          'install',
-          '--workspace=@example/some-package',
-          '--save-optional',
-          '@example/util@1.42.5',
-        ],
-        DEFAULT_CWD,
-      );
-    });
-
-    test('consumes the provided cwd', async () => {
-      // Act
-      await updateDependencyForWorkspace(
-        '@example/some-package',
-        'none',
-        '@example/util',
-        '1.42.5',
-        '/etc/shell',
-      );
-
-      // Assert
-      expect(spawn).toHaveBeenCalledTimes(2);
-      expect(spawn).toHaveBeenCalledWith(
-        'npm',
-        ['uninstall', '--workspace=@example/some-package', '@example/util'],
-        '/etc/shell',
-      );
-      expect(spawn).toHaveBeenCalledWith(
-        'npm',
-        [
-          'install',
-          '--workspace=@example/some-package',
-          '--save',
-          '@example/util@1.42.5',
         ],
         '/etc/shell',
       );

@@ -178,6 +178,93 @@ export class Workspace {
     return this.#workspacePackages.length === 0;
   }
 
+  /**
+   * @async
+   * @param {string} packageVersion
+   */
+  async updateInterWorkspaceDependencies(packageVersion) {
+    const dependenciesOrder = this.dependenciesOrder();
+    const packageNames = this.workspacePackages.map(({ name }) => name);
+
+    for (const workspaceName of dependenciesOrder) {
+      const workspacePackage = this.getWorkspacePackage(workspaceName);
+      const packageJson = await workspacePackage.loadPackageJson();
+      let changed = false;
+
+      for (const workspacePackageDependency of workspacePackage.peerDependencies) {
+        if (
+          !packageNames.includes(workspacePackageDependency.name) ||
+          workspacePackageDependency.satisfies(packageVersion)
+        ) {
+          continue;
+        }
+
+        changed = true;
+        packageJson.update({
+          peerDependencies: {
+            ...packageJson.content.peerDependencies,
+            [workspacePackageDependency.name]: packageVersion,
+          },
+        });
+      }
+
+      for (const workspacePackageDependency of workspacePackage.optionalDependencies) {
+        if (
+          !packageNames.includes(workspacePackageDependency.name) ||
+          workspacePackageDependency.satisfies(packageVersion)
+        ) {
+          continue;
+        }
+
+        changed = true;
+        packageJson.update({
+          optionalDependencies: {
+            ...packageJson.content.optionalDependencies,
+            [workspacePackageDependency.name]: packageVersion,
+          },
+        });
+      }
+
+      for (const workspacePackageDependency of workspacePackage.devDependencies) {
+        if (
+          !packageNames.includes(workspacePackageDependency.name) ||
+          workspacePackageDependency.satisfies(packageVersion)
+        ) {
+          continue;
+        }
+
+        changed = true;
+        packageJson.update({
+          devDependencies: {
+            ...packageJson.content.devDependencies,
+            [workspacePackageDependency.name]: packageVersion,
+          },
+        });
+      }
+
+      for (const workspacePackageDependency of workspacePackage.dependencies) {
+        if (
+          !packageNames.includes(workspacePackageDependency.name) ||
+          workspacePackageDependency.satisfies(packageVersion)
+        ) {
+          continue;
+        }
+
+        changed = true;
+        packageJson.update({
+          dependencies: {
+            ...packageJson.content.dependencies,
+            [workspacePackageDependency.name]: packageVersion,
+          },
+        });
+      }
+
+      if (changed) {
+        await packageJson.save();
+      }
+    }
+  }
+
   toJSON() {
     return Object.freeze({
       name: this.name,
