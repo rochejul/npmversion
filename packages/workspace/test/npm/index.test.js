@@ -37,7 +37,7 @@ const leafWorkspacePath = path.resolve(
 );
 const treeWorkspacePath = path.resolve(path.join(__dirname, '../resources'));
 
-describe('@npmversion/workspace - npm', () => {
+describe('@example/workspace - npm', () => {
   let npmCommands;
 
   beforeEach(() => {
@@ -102,40 +102,40 @@ describe('@npmversion/workspace - npm', () => {
         ['updateWorkspace', '1.42.5', treeWorkspacePath],
         [
           'updateDependencyForWorkspace',
-          '@npmversion/workspace',
+          '@example/workspace',
           'none',
-          '@npmversion/util',
+          '@example/util',
           '1.42.5',
           treeWorkspacePath,
         ],
         [
           'updateDependencyForWorkspace',
-          '@npmversion/core',
+          '@example/core',
           'none',
-          '@npmversion/util',
+          '@example/util',
           '1.42.5',
           treeWorkspacePath,
         ],
         [
           'updateDependencyForWorkspace',
-          '@npmversion/core',
+          '@example/core',
           'none',
-          '@npmversion/workspace',
+          '@example/workspace',
           '1.42.5',
           treeWorkspacePath,
         ],
         [
           'updateDependencyForWorkspace',
-          '@npmversion/cli',
+          '@example/cli',
           'none',
-          '@npmversion/core',
+          '@example/core',
           '1.42.5',
           treeWorkspacePath,
         ],
         [
           'updateDependencyForRoot',
           'none',
-          '@npmversion/cli',
+          '@example/cli',
           '1.42.5',
           treeWorkspacePath,
         ],

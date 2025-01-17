@@ -1,10 +1,10 @@
 {
-  "name": "@npmversion/util",
+  "name": "@example/util",
   "version": "2.0.0",
   "type": "module",
-  "description": "Utilities of the npmversion library",
+  "description": "Utilities of the example library",
   "peerDependencies": {
-    "@npmversion/jest-utils": "*"
+    "@example/jest-utils": "*"
   },
   "dependencies": {}
 }

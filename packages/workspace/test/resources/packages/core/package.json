@@ -1,13 +1,13 @@
 {
-  "name": "@npmversion/core",
+  "name": "@example/core",
   "version": "2.0.0",
   "type": "module",
-  "description": "Core implementation of the npmversion library",
+  "description": "Core implementation of the a library",
   "peerDependencies": {
-    "@npmversion/jest-utils": "*"
+    "@example/jest-utils": "*"
   },
   "dependencies": {
-    "@npmversion/util": "2.0.0",
-    "@npmversion/workspace": "2.0.0"
+    "@example/util": "2.0.0",
+    "@example/workspace": "2.0.0"
   }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "npmversion",
+  "name": "example",
   "version": "2.0.0",
   "description": "A command line node module to deal with \"bumping\" and \"npm version\"",
   "main": "index.js",
@@ -7,7 +7,7 @@
     "packages/*"
   ],
   "dependencies": {
-    "@npmversion/cli": "2.0.0"
+    "@example/cli": "2.0.0"
   },
   "devDependencies": {}
 }

@@ -19,19 +19,19 @@ describe('@npmversion/workspace - workspace', () => {
 
       // Assert
       expect(workspace).toMatchPlainObject({
-        name: '@npmversion/workspace',
+        name: '@example/workspace',
         version: '2.0.0',
         workspacePackages: [],
         dependencies: [
           {
-            name: '@npmversion/util',
+            name: '@example/util',
             range: '2.0.0',
           },
         ],
         devDependencies: [],
         peerDependencies: [
           {
-            name: '@npmversion/jest-utils',
+            name: '@example/jest-utils',
             range: '*',
           },
         ],
@@ -47,23 +47,23 @@ describe('@npmversion/workspace - workspace', () => {
 
       // Assert
       expect(workspace).toMatchPlainObject({
-        name: 'npmversion',
+        name: 'example',
         version: '2.0.0',
         workspacePackages: [
           {
             rootDir: `${treeWorkspacePath}/packages/cli`,
-            name: '@npmversion/cli',
+            name: '@example/cli',
             version: '2.0.0',
             dependencies: [
               {
-                name: '@npmversion/core',
+                name: '@example/core',
                 range: '2.0.0',
               },
             ],
             devDependencies: [],
             peerDependencies: [
               {
-                name: '@npmversion/jest-utils',
+                name: '@example/jest-utils',
                 range: '*',
               },
             ],
@@ -71,22 +71,22 @@ describe('@npmversion/workspace - workspace', () => {
           },
           {
             rootDir: `${treeWorkspacePath}/packages/core`,
-            name: '@npmversion/core',
+            name: '@example/core',
             version: '2.0.0',
             dependencies: [
               {
-                name: '@npmversion/util',
+                name: '@example/util',
                 range: '2.0.0',
               },
               {
-                name: '@npmversion/workspace',
+                name: '@example/workspace',
                 range: '2.0.0',
               },
             ],
             devDependencies: [],
             peerDependencies: [
               {
-                name: '@npmversion/jest-utils',
+                name: '@example/jest-utils',
                 range: '*',
               },
             ],
@@ -94,7 +94,7 @@ describe('@npmversion/workspace - workspace', () => {
           },
           {
             rootDir: `${treeWorkspacePath}/packages/jest-utils`,
-            name: '@npmversion/jest-utils',
+            name: '@example/jest-utils',
             version: '2.0.0',
             dependencies: [],
             devDependencies: [],
@@ -103,13 +103,13 @@ describe('@npmversion/workspace - workspace', () => {
           },
           {
             rootDir: `${treeWorkspacePath}/packages/util`,
-            name: '@npmversion/util',
+            name: '@example/util',
             version: '2.0.0',
             dependencies: [],
             devDependencies: [],
             peerDependencies: [
               {
-                name: '@npmversion/jest-utils',
+                name: '@example/jest-utils',
                 range: '*',
               },
             ],
@@ -117,18 +117,18 @@ describe('@npmversion/workspace - workspace', () => {
           },
           {
             rootDir: `${treeWorkspacePath}/packages/workspace`,
-            name: '@npmversion/workspace',
+            name: '@example/workspace',
             version: '2.0.0',
             dependencies: [
               {
-                name: '@npmversion/util',
+                name: '@example/util',
                 range: '2.0.0',
               },
             ],
             devDependencies: [],
             peerDependencies: [
               {
-                name: '@npmversion/jest-utils',
+                name: '@example/jest-utils',
                 range: '*',
               },
             ],
@@ -137,7 +137,7 @@ describe('@npmversion/workspace - workspace', () => {
         ],
         dependencies: [
           {
-            name: '@npmversion/cli',
+            name: '@example/cli',
             range: '2.0.0',
           },
         ],
@@ -155,11 +155,11 @@ describe('@npmversion/workspace - workspace', () => {
 
       // Assert
       expect(workspace.dependenciesOrder()).toStrictEqual([
-        '@npmversion/jest-utils',
-        '@npmversion/util',
-        '@npmversion/workspace',
-        '@npmversion/core',
-        '@npmversion/cli',
+        '@example/jest-utils',
+        '@example/util',
+        '@example/workspace',
+        '@example/core',
+        '@example/cli',
       ]);
     });
   });

@@ -1,5 +1,5 @@
 {
-  "name": "@npmversion/jest-utils",
+  "name": "@example/jest-utils",
   "version": "2.0.0",
   "type": "module",
   "private": "true",
