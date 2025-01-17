@@ -1,6 +1,5 @@
 import {
-  updateWorkspaceRoot,
-  updateWorkspacePackage,
+  updateWorkspace,
   updateDependencyForWorkspace,
   updateDependencyForRoot,
   DEPENDENCY_LEVEL,
@@ -90,29 +89,9 @@ export async function updateWorkspaceVersion(
   packageVersion,
   cwd = process.cwd(),
 ) {
-  await updatePackagesAndRootVersion(workspace, packageVersion, cwd);
+  await updateWorkspace(packageVersion, cwd);
   await updateInterDependenciesInPackages(workspace, packageVersion, cwd);
   await updateDependenciesInRoot(workspace, packageVersion, cwd);
-}
-
-/**
- * @async
- * @param {Workspace} workspace
- * @param {string} packageVersion
- * @param {string} [cwd=process.cwd()]
- */
-async function updatePackagesAndRootVersion(
-  workspace,
-  packageVersion,
-  cwd = process.cwd(),
-) {
-  const dependenciesOrder = workspace.dependenciesOrder();
-
-  for (const workspaceName of dependenciesOrder) {
-    await updateWorkspacePackage(workspaceName, packageVersion, cwd);
-  }
-
-  await updateWorkspaceRoot(packageVersion, cwd);
 }
 
 /**

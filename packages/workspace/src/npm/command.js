@@ -40,26 +40,9 @@ export async function updateRoot(packageVersion, cwd = process.cwd()) {
  * @param {string} packageVersion
  * @param  {string} [cwd=process.cwd()]
  */
-export async function updateWorkspaceRoot(packageVersion, cwd = process.cwd()) {
+export async function updateWorkspace(packageVersion, cwd = process.cwd()) {
   await executeCommand(
-    `npm version ${packageVersion} --include-workspace-root --no-git-tag-version --allow-same-version`,
-    cwd,
-  );
-}
-
-/**
- * @async
- * @param {string} workspaceName
- * @param {string} packageVersion
- * @param  {string} [cwd=process.cwd()]
- */
-export async function updateWorkspacePackage(
-  workspaceName,
-  packageVersion,
-  cwd = process.cwd(),
-) {
-  await executeCommand(
-    `npm version ${packageVersion} --no-git-tag-version --allow-same-version --workspace=${workspaceName}`,
+    `npm version ${packageVersion} --no-git-tag-version --allow-same-version --include-workspace-root --workspaces`,
     cwd,
   );
 }

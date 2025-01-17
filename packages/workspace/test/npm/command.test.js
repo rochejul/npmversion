@@ -8,8 +8,7 @@ import '@npmversion/jest-utils';
 const { spawn } = await import('../../src/npm/io.js');
 const {
   updateRoot,
-  updateWorkspaceRoot,
-  updateWorkspacePackage,
+  updateWorkspace,
   updateDependencyForWorkspace,
   updateDependencyForRoot,
 } = await import('../../src/npm/command.js');
@@ -43,10 +42,10 @@ describe('@npmversion/workspace - npm/command', () => {
     });
   });
 
-  describe('updateWorkspaceRoot', () => {
+  describe('updateWorkspace', () => {
     test('generates the appropriate npm command', async () => {
       // Act
-      await updateWorkspaceRoot('1.42.5');
+      await updateWorkspace('1.42.5');
 
       // Assert
       expect(spawn).toHaveBeenCalledWith(
@@ -54,9 +53,10 @@ describe('@npmversion/workspace - npm/command', () => {
         [
           'version',
           '1.42.5',
-          '--include-workspace-root',
           '--no-git-tag-version',
           '--allow-same-version',
+          '--include-workspace-root',
+          '--workspaces',
         ],
         DEFAULT_CWD,
       );
@@ -64,7 +64,7 @@ describe('@npmversion/workspace - npm/command', () => {
 
     test('consumes the provided cwd', async () => {
       // Act
-      await updateWorkspaceRoot('1.42.5', '/etc/shell');
+      await updateWorkspace('1.42.5', '/etc/shell');
 
       // Assert
       expect(spawn).toHaveBeenCalledWith(
@@ -72,51 +72,10 @@ describe('@npmversion/workspace - npm/command', () => {
         [
           'version',
           '1.42.5',
+          '--no-git-tag-version',
+          '--allow-same-version',
           '--include-workspace-root',
-          '--no-git-tag-version',
-          '--allow-same-version',
-        ],
-        '/etc/shell',
-      );
-    });
-  });
-
-  describe('updateWorkspacePackage', () => {
-    test('generates the appropriate npm command', async () => {
-      // Act
-      await updateWorkspacePackage('@example/some-package', '1.42.5');
-
-      // Assert
-      expect(spawn).toHaveBeenCalledWith(
-        'npm',
-        [
-          'version',
-          '1.42.5',
-          '--no-git-tag-version',
-          '--allow-same-version',
-          '--workspace=@example/some-package',
-        ],
-        DEFAULT_CWD,
-      );
-    });
-
-    test('consumes the provided cwd', async () => {
-      // Act
-      await updateWorkspacePackage(
-        '@example/some-package',
-        '1.42.5',
-        '/etc/shell',
-      );
-
-      // Assert
-      expect(spawn).toHaveBeenCalledWith(
-        'npm',
-        [
-          'version',
-          '1.42.5',
-          '--no-git-tag-version',
-          '--allow-same-version',
-          '--workspace=@example/some-package',
+          '--workspaces',
         ],
         '/etc/shell',
       );

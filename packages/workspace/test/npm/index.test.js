@@ -1,7 +1,6 @@
 jest.unstable_mockModule('../src/npm/command.js', async () => ({
   updateRoot: jest.fn(),
-  updateWorkspaceRoot: jest.fn(),
-  updateWorkspacePackage: jest.fn(),
+  updateWorkspace: jest.fn(),
   updateDependencyForWorkspace: jest.fn(),
   updateDependencyForRoot: jest.fn(),
   DEPENDENCY_LEVEL: {
@@ -26,8 +25,7 @@ import { fileURLToPath } from 'node:url';
 const { loadPackageJson } = await import('@npmversion/util');
 const {
   updateRoot,
-  updateWorkspaceRoot,
-  updateWorkspacePackage,
+  updateWorkspace,
   updateDependencyForWorkspace,
   updateDependencyForRoot,
 } = await import('../../src/npm/command.js');
@@ -50,13 +48,8 @@ describe('@npmversion/workspace - npm', () => {
       return Promise.resolve();
     });
 
-    updateWorkspaceRoot.mockImplementation((...args) => {
-      npmCommands.push(['updateWorkspaceRoot', ...args]);
-      return Promise.resolve();
-    });
-
-    updateWorkspacePackage.mockImplementation((...args) => {
-      npmCommands.push(['updateWorkspacePackage', ...args]);
+    updateWorkspace.mockImplementation((...args) => {
+      npmCommands.push(['updateWorkspace', ...args]);
       return Promise.resolve();
     });
 
@@ -106,37 +99,7 @@ describe('@npmversion/workspace - npm', () => {
 
       // Assert
       expect(npmCommands).toStrictEqual([
-        [
-          'updateWorkspacePackage',
-          '@npmversion/jest-utils',
-          '1.42.5',
-          treeWorkspacePath,
-        ],
-        [
-          'updateWorkspacePackage',
-          '@npmversion/util',
-          '1.42.5',
-          treeWorkspacePath,
-        ],
-        [
-          'updateWorkspacePackage',
-          '@npmversion/workspace',
-          '1.42.5',
-          treeWorkspacePath,
-        ],
-        [
-          'updateWorkspacePackage',
-          '@npmversion/core',
-          '1.42.5',
-          treeWorkspacePath,
-        ],
-        [
-          'updateWorkspacePackage',
-          '@npmversion/cli',
-          '1.42.5',
-          treeWorkspacePath,
-        ],
-        ['updateWorkspaceRoot', '1.42.5', treeWorkspacePath],
+        ['updateWorkspace', '1.42.5', treeWorkspacePath],
         [
           'updateDependencyForWorkspace',
           '@npmversion/workspace',
