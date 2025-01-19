@@ -10,7 +10,14 @@
     "packages/*"
   ],
   "scripts": {
+    "bump:release": "npm prune && node ./bin/npmversion.js --unpreid --nogit-commit --nogit-tag",
+    "bump:major": "npm prune && node ./bin/npmversion.js --increment major --nogit-commit --nogit-tag",
+    "bump:minor": "npm prune && node ./bin/npmversion.js --increment minor --nogit-commit --nogit-tag",
     "bump:patch": "npm prune && node ./bin/npmversion.js --increment patch --nogit-commit --nogit-tag",
+    "bump:major:beta": "npm prune && node ./bin/npmversion.js --increment major --preid beta --nogit-commit --nogit-tag",
+    "bump:minor:beta": "npm prune && node ./bin/npmversion.js --increment minor --preid beta --nogit-commit --nogit-tag",
+    "bump:patch:beta": "npm prune && node ./bin/npmversion.js --increment patch --preid beta --nogit-commit --nogit-tag",
+    "bump:prerelease:beta": "npm prune && node ./bin/npmversion.js --increment prerelease --preid beta --nogit-commit --nogit-tag",
     "dev:audit": "npm audit --workspaces --include-workspace-root",
     "dev:check": "npm test && npm run dev:styling",
     "dev:format": "prettier --check \"./**/*.{ts,tsx,js,mjs,cjs,md}\"",
