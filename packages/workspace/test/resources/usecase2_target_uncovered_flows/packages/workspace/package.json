@@ -1,0 +1,12 @@
+{
+  "name": "@example2/workspace",
+  "version": "2.0.0",
+  "type": "module",
+  "description": "Workspace management for the example2 library",
+  "peerDependencies": {
+    "@example2/jest-utils": "*"
+  },
+  "dependencies": {
+    "@example2/util": "2.0.0"
+  }
+}

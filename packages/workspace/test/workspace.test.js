@@ -7,14 +7,16 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const treeWorkspacePath = path.resolve(path.join(__dirname, './resources'));
+const treeWorkspacePath = path.resolve(
+  path.join(__dirname, './resources/usecase1_usual_flow'),
+);
 
 describe('@npmversion/workspace - workspace', () => {
   describe('computeWorkspace', () => {
     test('returns empty array if we are in a leaf module', async () => {
       // Act
       const workspace = await computeWorkspace(
-        path.resolve(path.join(__dirname, './resources/packages/workspace')),
+        path.resolve(path.join(treeWorkspacePath, './packages/workspace')),
       );
 
       // Assert
@@ -41,9 +43,7 @@ describe('@npmversion/workspace - workspace', () => {
 
     test('returns the packages array if we are in a root module', async () => {
       // Act
-      const workspace = await computeWorkspace(
-        path.resolve(path.join(__dirname, './resources')),
-      );
+      const workspace = await computeWorkspace(treeWorkspacePath);
 
       // Assert
       expect(workspace).toMatchPlainObject({
@@ -163,9 +163,7 @@ describe('@npmversion/workspace - workspace', () => {
 
     test('returns the dependencies order if we are in a root module', async () => {
       // Act
-      const workspace = await computeWorkspace(
-        path.resolve(path.join(__dirname, './resources')),
-      );
+      const workspace = await computeWorkspace(treeWorkspacePath);
 
       // Assert
       expect(workspace.dependenciesOrder()).toStrictEqual([

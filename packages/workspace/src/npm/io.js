@@ -6,10 +6,10 @@ const MAX_BUFFER = 1000 * 1000 * 20; // 20 Mo
  * @async
  * @param {string} command
  * @param {string[]} [args=[]]
- * @param {string} [cwd=process.cwd()]
+ * @param {string} cwd
  * @returns {Promise<string} Output of the command
  */
-export async function spawn(command, args, cwd = process.cwd()) {
+export async function spawn(command, args, cwd) {
   return new Promise(function (resolve, reject) {
     let stdout = '';
     let instance = nodeSpawn(command, args, {

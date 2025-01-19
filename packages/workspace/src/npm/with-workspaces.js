@@ -13,14 +13,14 @@ import {
  * @param {string} packageVersion
  * @param {WorkspacePackageDependency[]} dependencies
  * @param {NpmDependencyLevel} level
- * @param {string} [cwd=process.cwd()]
+ * @param {string} cwd
  */
 async function updateDependency(
   workspace,
   packageVersion,
   dependencies,
   level,
-  cwd = process.cwd(),
+  cwd,
 ) {
   const packageNames = workspace.workspacePackages.map(({ name }) => name);
 
@@ -46,13 +46,9 @@ async function updateDependency(
  * @async
  * @param {Workspace} workspace
  * @param {string} packageVersion
- * @param {string} [cwd=process.cwd()]
+ * @param {string} cwd
  */
-export async function updateWorkspaceVersion(
-  workspace,
-  packageVersion,
-  cwd = process.cwd(),
-) {
+export async function updateWorkspaceVersion(workspace, packageVersion, cwd) {
   await updateWorkspace(packageVersion, cwd);
   await updateInterWorkspaceDependencies(workspace, packageVersion, cwd);
   await updateDependenciesInRoot(workspace, packageVersion, cwd);
@@ -61,7 +57,7 @@ export async function updateWorkspaceVersion(
 async function updateInterWorkspaceDependencies(
   workspace,
   packageVersion,
-  cwd = process.cwd(),
+  cwd,
 ) {
   await workspace.updateInterWorkspaceDependencies(packageVersion);
   await pruning(cwd);
@@ -71,13 +67,9 @@ async function updateInterWorkspaceDependencies(
  * @async
  * @param {Workspace} workspace
  * @param {string} packageVersion
- * @param {string} [cwd=process.cwd()]
+ * @param {string} cwd
  */
-async function updateDependenciesInRoot(
-  workspace,
-  packageVersion,
-  cwd = process.cwd(),
-) {
+async function updateDependenciesInRoot(workspace, packageVersion, cwd) {
   await updateDependency(
     workspace,
     packageVersion,

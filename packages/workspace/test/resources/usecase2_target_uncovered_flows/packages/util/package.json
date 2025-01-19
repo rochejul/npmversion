@@ -1,0 +1,10 @@
+{
+  "name": "@example2/util",
+  "version": "2.0.0",
+  "type": "module",
+  "description": "Utilities of the example2 library",
+  "peerDependencies": {
+    "@example2/jest-utils": "*"
+  },
+  "dependencies": {}
+}

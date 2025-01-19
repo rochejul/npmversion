@@ -3,10 +3,10 @@ import { spawn } from './io.js';
 /**
  * @async
  * @param {string} cmd
- * @param {string} [cwd=process.cwd()]
+ * @param {string} cwd
  * @returns {Promise<string}
  */
-async function executeCommand(cmd, cwd = process.cwd()) {
+async function executeCommand(cmd, cwd) {
   const [program, ...args] = cmd.split(' ');
   return spawn(program, args, cwd);
 }
@@ -25,18 +25,18 @@ export const DEPENDENCY_LEVEL = Object.freeze({
 
 /**
  * @async
- * @param  {string} [cwd=process.cwd()]
+ * @param  {string} cwd
  */
-export async function pruning(cwd = process.cwd()) {
+export async function pruning(cwd) {
   await executeCommand(`npm prune`, cwd);
 }
 
 /**
  * @async
  * @param {string} packageVersion
- * @param  {string} [cwd=process.cwd()]
+ * @param  {string} cwd
  */
-export async function updateRoot(packageVersion, cwd = process.cwd()) {
+export async function updateRoot(packageVersion, cwd) {
   await executeCommand(
     `npm version ${packageVersion} --no-git-tag-version --allow-same-version`,
     cwd,
@@ -46,9 +46,9 @@ export async function updateRoot(packageVersion, cwd = process.cwd()) {
 /**
  * @async
  * @param {string} packageVersion
- * @param  {string} [cwd=process.cwd()]
+ * @param  {string} cwd
  */
-export async function updateWorkspace(packageVersion, cwd = process.cwd()) {
+export async function updateWorkspace(packageVersion, cwd) {
   await executeCommand(
     `npm version ${packageVersion} --no-git-tag-version --allow-same-version --include-workspace-root --workspaces`,
     cwd,
@@ -60,13 +60,13 @@ export async function updateWorkspace(packageVersion, cwd = process.cwd()) {
  * @param {NpmDependencyLevel} dependencyLevel
  * @param {string} dependencyName
  * @param {string} dependencyVersion
- * @param  {string} [cwd=process.cwd()]
+ * @param  {string} cwd
  */
 export async function updateDependencyForRoot(
   dependencyLevel,
   dependencyName,
   dependencyVersion,
-  cwd = process.cwd(),
+  cwd,
 ) {
   await uninstallDependencyForRoot(dependencyName, cwd);
   await installDependencyForRoot(
@@ -80,9 +80,9 @@ export async function updateDependencyForRoot(
 /**
  * @async
  * @param {string} dependencyName
- * @param  {string} [cwd=process.cwd()]
+ * @param  {string} cwd
  */
-async function uninstallDependencyForRoot(dependencyName, cwd = process.cwd()) {
+async function uninstallDependencyForRoot(dependencyName, cwd) {
   await executeCommand(`npm uninstall ${dependencyName}`, cwd);
 }
 
@@ -91,13 +91,13 @@ async function uninstallDependencyForRoot(dependencyName, cwd = process.cwd()) {
  * @param {NpmDependencyLevel} dependencyLevel
  * @param {string} dependencyName
  * @param {string} dependencyVersion
- * @param  {string} [cwd=process.cwd()]
+ * @param  {string} cwd
  */
 async function installDependencyForRoot(
   dependencyLevel,
   dependencyName,
   dependencyVersion,
-  cwd = process.cwd(),
+  cwd,
 ) {
   await executeCommand(
     `npm install --save${dependencyLevel === DEPENDENCY_LEVEL.none ? '' : '-' + dependencyLevel} ${dependencyName}@${dependencyVersion}`,

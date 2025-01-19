@@ -1,0 +1,13 @@
+{
+  "name": "@example2/core",
+  "version": "2.0.0",
+  "type": "module",
+  "description": "Core implementation of the a library",
+  "peerDependencies": {
+    "@example2/jest-utils": "*"
+  },
+  "dependencies": {
+    "@example2/util": "2.0.0",
+    "@example2/workspace": "1.7.9"
+  }
+}

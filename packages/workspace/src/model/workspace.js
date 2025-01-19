@@ -191,78 +191,68 @@ export class Workspace {
       const packageJson = await workspacePackage.loadPackageJson();
       let changed = false;
 
-      for (const workspacePackageDependency of workspacePackage.peerDependencies) {
-        if (
-          !packageNames.includes(workspacePackageDependency.name) ||
-          workspacePackageDependency.satisfies(packageVersion)
-        ) {
-          continue;
-        }
-
-        changed = true;
-        packageJson.update({
-          peerDependencies: {
-            ...packageJson.content.peerDependencies,
-            [workspacePackageDependency.name]: packageVersion,
-          },
-        });
-      }
-
-      for (const workspacePackageDependency of workspacePackage.optionalDependencies) {
-        if (
-          !packageNames.includes(workspacePackageDependency.name) ||
-          workspacePackageDependency.satisfies(packageVersion)
-        ) {
-          continue;
-        }
-
-        changed = true;
-        packageJson.update({
-          optionalDependencies: {
-            ...packageJson.content.optionalDependencies,
-            [workspacePackageDependency.name]: packageVersion,
-          },
-        });
-      }
-
-      for (const workspacePackageDependency of workspacePackage.devDependencies) {
-        if (
-          !packageNames.includes(workspacePackageDependency.name) ||
-          workspacePackageDependency.satisfies(packageVersion)
-        ) {
-          continue;
-        }
-
-        changed = true;
-        packageJson.update({
-          devDependencies: {
-            ...packageJson.content.devDependencies,
-            [workspacePackageDependency.name]: packageVersion,
-          },
-        });
-      }
-
-      for (const workspacePackageDependency of workspacePackage.dependencies) {
-        if (
-          !packageNames.includes(workspacePackageDependency.name) ||
-          workspacePackageDependency.satisfies(packageVersion)
-        ) {
-          continue;
-        }
-
-        changed = true;
-        packageJson.update({
-          dependencies: {
-            ...packageJson.content.dependencies,
-            [workspacePackageDependency.name]: packageVersion,
-          },
-        });
-      }
+      changed |= this.#updateWorkspacePackageDependencies(
+        workspacePackage.peerDependencies,
+        packageVersion,
+        packageNames,
+        packageJson,
+        'peerDependencies',
+      );
+      changed |= this.#updateWorkspacePackageDependencies(
+        workspacePackage.optionalDependencies,
+        packageVersion,
+        packageNames,
+        packageJson,
+        'optionalDependencies',
+      );
+      changed |= this.#updateWorkspacePackageDependencies(
+        workspacePackage.devDependencies,
+        packageVersion,
+        packageNames,
+        packageJson,
+        'devDependencies',
+      );
+      changed |= this.#updateWorkspacePackageDependencies(
+        workspacePackage.dependencies,
+        packageVersion,
+        packageNames,
+        packageJson,
+        'dependencies',
+      );
 
       if (changed) {
         await packageJson.save();
       }
     }
+  }
+
+  #updateWorkspacePackageDependencies(
+    deps,
+    packageVersion,
+    packageNames,
+    packageJson,
+    depLevel,
+  ) {
+    let changed = false;
+
+    for (const workspacePackageDependency of deps) {
+      if (
+        !packageNames.includes(workspacePackageDependency.name) ||
+        workspacePackageDependency.satisfies(packageVersion)
+      ) {
+        continue;
+      }
+
+      changed = true;
+      packageJson.update({
+        [depLevel]: {
+          ...packageJson.content[depLevel],
+          [workspacePackageDependency.name]: packageVersion,
+        },
+      });
+    }
+
+    return changed;
   }
 
   toJSON() {

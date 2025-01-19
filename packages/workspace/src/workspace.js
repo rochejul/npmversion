@@ -5,10 +5,10 @@ import { WorkspacePackage, Workspace } from './model/index.js';
 
 /**
  * @async
- * @param {string} [cwd=process.cwd()]
+ * @param {string} cwd
  * @returns {Workspace}
  */
-export async function computeWorkspace(cwd = process.cwd()) {
+export async function computeWorkspace(cwd) {
   const packageJson = await loadPackageJson(cwd);
   const {
     name,

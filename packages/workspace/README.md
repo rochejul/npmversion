@@ -30,7 +30,7 @@ It will also update the NPM packages declared in the `package.json`.
 It allows the following parameters:
 
 - packageVersion (`string`): required parameter.
-- cwd (`string`): optional parameter. Otherwise it uses `process.cwd()`
+- cwd (`string`): required parameter.
 
 ### Method `computeWorkspace`
 
@@ -38,7 +38,7 @@ It will read the NPM packages declared in the `package.json` and returns an appr
 
 It allows the following parameters:
 
-- cwd (`string`): optional parameter. Otherwise it uses `process.cwd()`
+- cwd (`string`): required parameter.
 
 ## Commands
 

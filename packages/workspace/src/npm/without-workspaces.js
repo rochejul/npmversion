@@ -1,17 +1,10 @@
 import { updateRoot } from './command.js';
 
-/** @import { Workspace } from '../model/workspace.js' */
-
 /**
  * Update the version of the root level only
- * @param {Workspace} workspace
  * @param {string} packageVersion
- * @param {string} [cwd=process.cwd()]
+ * @param {string} cwd
  */
-export async function updateRootVersion(
-  workspace,
-  packageVersion,
-  cwd = process.cwd(),
-) {
+export async function updateRootVersion(packageVersion, cwd) {
   await updateRoot(packageVersion, cwd);
 }

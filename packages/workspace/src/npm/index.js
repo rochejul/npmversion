@@ -5,17 +5,14 @@ import { updateWorkspaceVersion } from './with-workspaces.js';
 /**
  * Update the package.json file, package=lock.json file and if needed workspaces
  * @param {string} packageVersion
- * @param {string} [cwd=process.cwd()]
+ * @param {string} cwd
  * @returns {Promise<string}
  */
-export async function updatePackageVersion(
-  packageVersion,
-  cwd = process.cwd(),
-) {
+export async function updatePackageVersion(packageVersion, cwd) {
   const workspace = await computeWorkspace(cwd);
 
   if (workspace.isLeaf()) {
-    await updateRootVersion(workspace, packageVersion, cwd);
+    await updateRootVersion(packageVersion, cwd);
   } else {
     await updateWorkspaceVersion(workspace, packageVersion, cwd);
   }

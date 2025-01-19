@@ -45,10 +45,15 @@ const { updateRoot, updateWorkspace, updateDependencyForRoot, pruning } =
 const { updatePackageVersion } = await import('../../src/index.js');
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const leafWorkspacePath = path.resolve(
-  path.join(__dirname, '../resources/packages/workspace'),
+const treeWorkspacePath = path.resolve(
+  path.join(__dirname, '../resources/usecase1_usual_flow'),
 );
-const treeWorkspacePath = path.resolve(path.join(__dirname, '../resources'));
+const leafWorkspacePath = path.resolve(
+  path.join(treeWorkspacePath, './packages/workspace'),
+);
+const treeSideCasesWorkspacePath = path.resolve(
+  path.join(__dirname, '../resources/usecase2_target_uncovered_flows'),
+);
 
 describe('@example/workspace - npm', () => {
   let npmCommands;
@@ -181,6 +186,90 @@ describe('@example/workspace - npm', () => {
           '@example/cli',
           '1.42.5',
           treeWorkspacePath,
+        ],
+      ]);
+    });
+
+    test('update the npm version when workspace case and ensure to satisfies the dependency range', async () => {
+      // Arrange
+      const packageJSON = await import(
+        `${treeSideCasesWorkspacePath}/package.json`
+      );
+      loadPackageJson.mockResolvedValue({
+        ...packageJSON.default,
+        isLeaf() {
+          return false;
+        },
+      });
+
+      // Act
+      await updatePackageVersion('1.42.5', treeSideCasesWorkspacePath);
+
+      // Assert
+      expect(npmCommands).toStrictEqual([
+        ['updateWorkspace', '1.42.5', treeSideCasesWorkspacePath],
+        [
+          'npmCliUpdate',
+          {
+            dependencies: {
+              '@example2/util': '1.42.5',
+            },
+          },
+        ],
+        [
+          'npmCliUpdate',
+          {
+            dependencies: {
+              '@example2/util': '1.42.5',
+            },
+          },
+        ],
+        [
+          'npmCliUpdate',
+          {
+            dependencies: {
+              '@example2/workspace': '1.42.5',
+            },
+          },
+        ],
+        [
+          'npmCliUpdate',
+          {
+            peerDependencies: {
+              '@example2/core': '1.42.5',
+            },
+          },
+        ],
+        [
+          'npmCliUpdate',
+          {
+            devDependencies: {
+              '@example2/core': '1.42.5',
+            },
+          },
+        ],
+        [
+          'npmCliUpdate',
+          {
+            dependencies: {
+              '@example2/core': '1.42.5',
+            },
+          },
+        ],
+        ['pruning', treeSideCasesWorkspacePath],
+        [
+          'updateDependencyForRoot',
+          'dev',
+          '@example2/core',
+          '1.42.5',
+          treeSideCasesWorkspacePath,
+        ],
+        [
+          'updateDependencyForRoot',
+          'none',
+          '@example2/cli',
+          '1.42.5',
+          treeSideCasesWorkspacePath,
         ],
       ]);
     });
