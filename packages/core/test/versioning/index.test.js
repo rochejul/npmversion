@@ -37,6 +37,10 @@ function mockPromiseExecWhenNotRemote(cmd) {
   if (cmd === 'git remote') {
     return 'origin';
   }
+
+  if (cmd == 'git rev-parse --abbrev-ref HEAD') {
+    return 'master';
+  }
 }
 
 function mockPromisedExecWhenRemote(cmd) {
@@ -46,6 +50,10 @@ function mockPromisedExecWhenRemote(cmd) {
 
   if (cmd == 'git branch -rvv') {
     return 'origin/master';
+  }
+
+  if (cmd == 'git rev-parse --abbrev-ref HEAD') {
+    return 'master';
   }
 }
 
@@ -273,6 +281,68 @@ describe('@npmversion/core - await versioning', () => {
         );
       });
 
+      test('create the branch and push it', async () => {
+        // Arrange
+        promisedExec.mockImplementation(mockPromisedExecWhenRemote);
+
+        // Act
+        await versioning({
+          increment: 'fake',
+          'git-create-branch': true,
+          'git-push': true,
+        });
+
+        // Assert
+        expect(printError).not.toHaveBeenCalled();
+        expect(promisedExec).toHaveBeenCalledTimes(9);
+        expect(promisedExec).toHaveBeenCalledWith(
+          'git --help',
+          true,
+          DEFAULT_CWD,
+        );
+        expect(promisedExec).toHaveBeenCalledWith(
+          'git status --porcelain',
+          true,
+          DEFAULT_CWD,
+        );
+        expect(updatePackageVersion).toHaveBeenCalledWith('1.2.1', DEFAULT_CWD);
+        expect(promisedExec).toHaveBeenCalledWith(
+          'git commit --all --message "Release version: 1.2.1"',
+          false,
+          DEFAULT_CWD,
+        );
+        expect(promisedExec).toHaveBeenCalledWith(
+          'git branch "release/1.2.1"',
+          false,
+          DEFAULT_CWD,
+        );
+        expect(promisedExec).toHaveBeenCalledWith(
+          'git tag "v1.2.1"',
+          false,
+          DEFAULT_CWD,
+        );
+        expect(promisedExec).toHaveBeenCalledWith(
+          'git remote',
+          true,
+          DEFAULT_CWD,
+        );
+        expect(promisedExec).toHaveBeenCalledWith(
+          'git branch -rvv',
+          true,
+          DEFAULT_CWD,
+        );
+        expect(promisedExec).toHaveBeenCalledWith(
+          'git push --set-upstream origin release/1.2.1',
+          false,
+          DEFAULT_CWD,
+        );
+        expect(promisedExec).toHaveBeenCalledWith(
+          'git push && git push --tags --no-verify',
+          false,
+          DEFAULT_CWD,
+        );
+      });
+
       test('push the local branch, commit and the tag', async () => {
         // Arrange
         promisedExec.mockImplementation(mockPromisedExecWhenRemote);
@@ -314,13 +384,13 @@ describe('@npmversion/core - await versioning', () => {
           DEFAULT_CWD,
         );
         expect(promisedExec).toHaveBeenCalledWith(
-          'git branch -rvv',
+          'git rev-parse --abbrev-ref HEAD',
           true,
           DEFAULT_CWD,
         );
         expect(promisedExec).toHaveBeenCalledWith(
-          'git push --set-upstream origin release/1.2.1',
-          false,
+          'git branch -rvv',
+          true,
           DEFAULT_CWD,
         );
         expect(promisedExec).toHaveBeenCalledWith(
@@ -343,7 +413,7 @@ describe('@npmversion/core - await versioning', () => {
 
         // Assert
         expect(printError).not.toHaveBeenCalled();
-        expect(promisedExec).toHaveBeenCalledTimes(7);
+        expect(promisedExec).toHaveBeenCalledTimes(9);
         expect(promisedExec).toHaveBeenCalledWith(
           'git --help',
           true,
@@ -366,12 +436,22 @@ describe('@npmversion/core - await versioning', () => {
           DEFAULT_CWD,
         );
         expect(promisedExec).toHaveBeenCalledWith(
+          'git rev-parse --abbrev-ref HEAD',
+          true,
+          DEFAULT_CWD,
+        );
+        expect(promisedExec).toHaveBeenCalledWith(
           'git branch -rvv',
           true,
           DEFAULT_CWD,
         );
         expect(promisedExec).toHaveBeenCalledWith(
-          'git push --set-upstream anotherOrigin release/1.2.1',
+          'git rev-parse --abbrev-ref HEAD',
+          true,
+          DEFAULT_CWD,
+        );
+        expect(promisedExec).toHaveBeenCalledWith(
+          'git push --set-upstream anotherOrigin master',
           false,
           DEFAULT_CWD,
         );
@@ -422,13 +502,13 @@ describe('@npmversion/core - await versioning', () => {
           DEFAULT_CWD,
         );
         expect(promisedExec).toHaveBeenCalledWith(
-          'git branch -rvv',
+          'git rev-parse --abbrev-ref HEAD',
           true,
           DEFAULT_CWD,
         );
         expect(promisedExec).toHaveBeenCalledWith(
-          'git push --set-upstream origin release/1.2.1',
-          false,
+          'git branch -rvv',
+          true,
           DEFAULT_CWD,
         );
         expect(promisedExec).toHaveBeenCalledWith(
@@ -450,7 +530,7 @@ describe('@npmversion/core - await versioning', () => {
 
         // Assert
         expect(printError).not.toHaveBeenCalled();
-        expect(promisedExec).toHaveBeenCalledTimes(8);
+        expect(promisedExec).toHaveBeenCalledTimes(10);
         expect(promisedExec).toHaveBeenCalledWith(
           'git --help',
           true,
@@ -478,13 +558,18 @@ describe('@npmversion/core - await versioning', () => {
           DEFAULT_CWD,
         );
         expect(promisedExec).toHaveBeenCalledWith(
+          'git rev-parse --abbrev-ref HEAD',
+          true,
+          DEFAULT_CWD,
+        );
+        expect(promisedExec).toHaveBeenCalledWith(
           'git branch -rvv',
           true,
           DEFAULT_CWD,
         );
         expect(promisedExec).toHaveBeenCalledWith(
-          'git push --set-upstream origin release/1.2.1',
-          false,
+          'git rev-parse --abbrev-ref HEAD',
+          true,
           DEFAULT_CWD,
         );
         expect(promisedExec).toHaveBeenCalledWith(
@@ -507,7 +592,7 @@ describe('@npmversion/core - await versioning', () => {
 
         // Assert
         expect(printError).not.toHaveBeenCalled();
-        expect(promisedExec).toHaveBeenCalledTimes(7);
+        expect(promisedExec).toHaveBeenCalledTimes(9);
         expect(promisedExec).toHaveBeenCalledWith(
           'git --help',
           true,
@@ -530,13 +615,18 @@ describe('@npmversion/core - await versioning', () => {
           DEFAULT_CWD,
         );
         expect(promisedExec).toHaveBeenCalledWith(
+          'git rev-parse --abbrev-ref HEAD',
+          true,
+          DEFAULT_CWD,
+        );
+        expect(promisedExec).toHaveBeenCalledWith(
           'git branch -rvv',
           true,
           DEFAULT_CWD,
         );
         expect(promisedExec).toHaveBeenCalledWith(
-          'git push --set-upstream anotherOrigin release/1.2.1',
-          false,
+          'git rev-parse --abbrev-ref HEAD',
+          true,
           DEFAULT_CWD,
         );
         expect(promisedExec).toHaveBeenCalledWith(
@@ -559,7 +649,7 @@ describe('@npmversion/core - await versioning', () => {
 
         // Assert
         expect(printError).not.toHaveBeenCalled();
-        expect(promisedExec).toHaveBeenCalledTimes(7);
+        expect(promisedExec).toHaveBeenCalledTimes(9);
         expect(promisedExec).toHaveBeenCalledWith(
           'git --help',
           true,
@@ -582,13 +672,18 @@ describe('@npmversion/core - await versioning', () => {
           DEFAULT_CWD,
         );
         expect(promisedExec).toHaveBeenCalledWith(
+          'git rev-parse --abbrev-ref HEAD',
+          true,
+          DEFAULT_CWD,
+        );
+        expect(promisedExec).toHaveBeenCalledWith(
           'git branch -rvv',
           true,
           DEFAULT_CWD,
         );
         expect(promisedExec).toHaveBeenCalledWith(
-          'git push --set-upstream origin release/1.2.1',
-          false,
+          'git rev-parse --abbrev-ref HEAD',
+          true,
           DEFAULT_CWD,
         );
         expect(promisedExec).toHaveBeenCalledWith(
@@ -687,7 +782,7 @@ describe('@npmversion/core - await versioning', () => {
 
     // Arrange
     expect(printError).not.toHaveBeenCalled();
-    expect(promisedExec).toHaveBeenCalledTimes(7);
+    expect(promisedExec).toHaveBeenCalledTimes(9);
     expect(promisedExec).toHaveBeenCalledWith('git --help', true, DEFAULT_CWD);
     expect(promisedExec).toHaveBeenCalledWith(
       'git status --porcelain',
@@ -705,13 +800,18 @@ describe('@npmversion/core - await versioning', () => {
     );
     expect(promisedExec).toHaveBeenCalledWith('git remote', true, DEFAULT_CWD);
     expect(promisedExec).toHaveBeenCalledWith(
+      'git rev-parse --abbrev-ref HEAD',
+      true,
+      DEFAULT_CWD,
+    );
+    expect(promisedExec).toHaveBeenCalledWith(
       'git branch -rvv',
       true,
       DEFAULT_CWD,
     );
     expect(promisedExec).toHaveBeenCalledWith(
-      'git push --set-upstream origin release/1.2.1-beta',
-      false,
+      'git rev-parse --abbrev-ref HEAD',
+      true,
       DEFAULT_CWD,
     );
     expect(promisedExec).toHaveBeenCalledWith('git push', false, DEFAULT_CWD);

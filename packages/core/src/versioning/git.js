@@ -111,7 +111,7 @@ export async function doPushGitIfNeeded(
   let isUpStreamPromise;
   let branchName = null;
 
-  if (options.gitCommitMessage) {
+  if (options.gitCreateBranch) {
     branchName = createBranchLabel(packageVersion, options.gitBranchMessage);
     isUpStreamPromise = isBranchUpstream(branchName, remoteName, cwd);
   } else {
