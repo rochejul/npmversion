@@ -1,6 +1,6 @@
 {
   "name": "npmversion",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "A command line node module to deal with \"bumping\" and \"npm version\"",
   "type": "module",
   "bin": {
@@ -76,6 +76,6 @@
     "npm": "10.7.0"
   },
   "dependencies": {
-    "@npmversion/cli": "2.0.3"
+    "@npmversion/cli": "2.0.4"
   }
 }
