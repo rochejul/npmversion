@@ -35,6 +35,7 @@ describe('@npmversion/workspace - workspace', () => {
 
       // Assert
       expect(workspace).toMatchPlainObject({
+        rootDir: `${treeWorkspacePath}/packages/workspace`,
         name: '@example/workspace',
         version: '2.0.0',
         workspacePackages: [],
@@ -61,6 +62,7 @@ describe('@npmversion/workspace - workspace', () => {
 
       // Assert
       expect(workspace).toMatchPlainObject({
+        rootDir: treeWorkspacePath,
         name: 'example',
         version: '2.0.0',
         workspacePackages: [

@@ -39,10 +39,11 @@ import '@npmversion/jest-utils';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const { loadPackageJson } = await import('@npmversion/util');
 const { updateRoot, updateWorkspace, updateDependencyForRoot, pruning } =
   await import('../../src/npm/command.js');
-const { updatePackageVersion } = await import('../../src/index.js');
+const { updatePackageVersion, computeWorkspace } = await import(
+  '../../src/index.js'
+);
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const treeWorkspacePath = path.resolve(
@@ -90,16 +91,10 @@ describe('@example/workspace - npm', () => {
   describe('updatePackageVersion', () => {
     test('update the npm version when leaf case', async () => {
       // Arrange
-      const packageJSON = await import(`${leafWorkspacePath}/package.json`);
-      loadPackageJson.mockResolvedValue({
-        ...packageJSON.default,
-        isLeaf() {
-          return true;
-        },
-      });
+      const workspace = await computeWorkspace(leafWorkspacePath);
 
       // Act
-      await updatePackageVersion('1.42.5', leafWorkspacePath);
+      await updatePackageVersion('1.42.5', workspace);
 
       // Assert
       expect(npmCommands).toStrictEqual([
@@ -109,16 +104,10 @@ describe('@example/workspace - npm', () => {
 
     test('update the npm version when workspace case', async () => {
       // Arrange
-      const packageJSON = await import(`${treeWorkspacePath}/package.json`);
-      loadPackageJson.mockResolvedValue({
-        ...packageJSON.default,
-        isLeaf() {
-          return false;
-        },
-      });
+      const workspace = await computeWorkspace(treeWorkspacePath);
 
       // Act
-      await updatePackageVersion('1.42.5', treeWorkspacePath);
+      await updatePackageVersion('1.42.5', workspace);
 
       // Assert
       expect(npmCommands).toStrictEqual([
@@ -192,18 +181,10 @@ describe('@example/workspace - npm', () => {
 
     test('update the npm version when workspace case and ensure to satisfies the dependency range', async () => {
       // Arrange
-      const packageJSON = await import(
-        `${treeSideCasesWorkspacePath}/package.json`
-      );
-      loadPackageJson.mockResolvedValue({
-        ...packageJSON.default,
-        isLeaf() {
-          return false;
-        },
-      });
+      const workspace = await computeWorkspace(treeSideCasesWorkspacePath);
 
       // Act
-      await updatePackageVersion('1.42.5', treeSideCasesWorkspacePath);
+      await updatePackageVersion('1.42.5', workspace);
 
       // Assert
       expect(npmCommands).toStrictEqual([

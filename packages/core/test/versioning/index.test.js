@@ -19,8 +19,10 @@ jest.unstable_mockModule('@npmversion/workspace', async () => ({
 import { describe, test, expect, jest, beforeEach } from '@jest/globals';
 import '@npmversion/jest-utils';
 
-const { loadPackageJson, promisedExec } = await import('@npmversion/util');
-const { updatePackageVersion } = await import('@npmversion/workspace');
+const { promisedExec } = await import('@npmversion/util');
+const { updatePackageVersion, computeWorkspace } = await import(
+  '@npmversion/workspace'
+);
 const { printHelp, printNotFoundPackageJsonFile, printVersion, printError } =
   await import('../../src/versioning/help.js');
 const {
@@ -59,10 +61,11 @@ function mockPromisedExecWhenRemote(cmd) {
 
 describe('@npmversion/core - await versioning', () => {
   beforeEach(() => {
-    loadPackageJson.mockResolvedValue({
-      version: '0.0.1',
-      isLeaf() {
-        return true;
+    computeWorkspace.mockResolvedValue({
+      toJSON() {
+        return {
+          version: '0.0.1',
+        };
       },
     });
   });
@@ -87,7 +90,7 @@ describe('@npmversion/core - await versioning', () => {
 
   test('should print an error message if no package.json file was detected', async () => {
     // Arrange
-    loadPackageJson.mockRejectedValue(new Error('An error occured'));
+    computeWorkspace.mockRejectedValue(new Error('An error occured'));
 
     // Act
     await versioning({ increment: 'patch' });
@@ -98,7 +101,6 @@ describe('@npmversion/core - await versioning', () => {
 
   test('should print the bump result if read only is set', async () => {
     // Act
-
     await versioning({ increment: 'patch', 'read-only': true });
 
     // Assert
@@ -138,7 +140,13 @@ describe('@npmversion/core - await versioning', () => {
 
   test('should unpreid the version if the option is specified', async () => {
     // Arrange
-    loadPackageJson.mockResolvedValue({ version: '0.0.1-snapshot' });
+    computeWorkspace.mockResolvedValue({
+      toJSON() {
+        return {
+          version: '0.0.1-snapshot',
+        };
+      },
+    });
 
     // Act
     await versioning({
@@ -208,10 +216,11 @@ describe('@npmversion/core - await versioning', () => {
 
     describe('expecially', () => {
       beforeEach(() => {
-        loadPackageJson.mockResolvedValue({
-          version: '1.2.0',
-          isLeaf() {
-            return true;
+        computeWorkspace.mockResolvedValue({
+          toJSON() {
+            return {
+              version: '1.2.0',
+            };
           },
         });
       });
@@ -233,7 +242,10 @@ describe('@npmversion/core - await versioning', () => {
           true,
           DEFAULT_CWD,
         );
-        expect(updatePackageVersion).toHaveBeenCalledWith('1.2.1', DEFAULT_CWD);
+        expect(updatePackageVersion).toHaveBeenCalledWith(
+          '1.2.1',
+          expect.anything(),
+        );
         expect(promisedExec).toHaveBeenCalledWith(
           'git commit --all --message "Release version: 1.2.1"',
           false,
@@ -263,7 +275,10 @@ describe('@npmversion/core - await versioning', () => {
           true,
           DEFAULT_CWD,
         );
-        expect(updatePackageVersion).toHaveBeenCalledWith('1.2.1', DEFAULT_CWD);
+        expect(updatePackageVersion).toHaveBeenCalledWith(
+          '1.2.1',
+          expect.anything(),
+        );
         expect(promisedExec).toHaveBeenCalledWith(
           'git branch "release/1.2.1"',
           false,
@@ -305,7 +320,10 @@ describe('@npmversion/core - await versioning', () => {
           true,
           DEFAULT_CWD,
         );
-        expect(updatePackageVersion).toHaveBeenCalledWith('1.2.1', DEFAULT_CWD);
+        expect(updatePackageVersion).toHaveBeenCalledWith(
+          '1.2.1',
+          expect.anything(),
+        );
         expect(promisedExec).toHaveBeenCalledWith(
           'git commit --all --message "Release version: 1.2.1"',
           false,
@@ -367,7 +385,10 @@ describe('@npmversion/core - await versioning', () => {
           true,
           DEFAULT_CWD,
         );
-        expect(updatePackageVersion).toHaveBeenCalledWith('1.2.1', DEFAULT_CWD);
+        expect(updatePackageVersion).toHaveBeenCalledWith(
+          '1.2.1',
+          expect.anything(),
+        );
         expect(promisedExec).toHaveBeenCalledWith(
           'git commit --all --message "Release version: 1.2.1"',
           false,
@@ -424,7 +445,10 @@ describe('@npmversion/core - await versioning', () => {
           true,
           DEFAULT_CWD,
         );
-        expect(updatePackageVersion).toHaveBeenCalledWith('1.2.1', DEFAULT_CWD);
+        expect(updatePackageVersion).toHaveBeenCalledWith(
+          '1.2.1',
+          expect.anything(),
+        );
         expect(promisedExec).toHaveBeenCalledWith(
           'git commit --all --message "Release version: 1.2.1"',
           false,
@@ -485,7 +509,10 @@ describe('@npmversion/core - await versioning', () => {
           true,
           DEFAULT_CWD,
         );
-        expect(updatePackageVersion).toHaveBeenCalledWith('1.2.1', DEFAULT_CWD);
+        expect(updatePackageVersion).toHaveBeenCalledWith(
+          '1.2.1',
+          expect.anything(),
+        );
         expect(promisedExec).toHaveBeenCalledWith(
           'git commit --all --message "Release version: 1.2.1"',
           false,
@@ -541,7 +568,10 @@ describe('@npmversion/core - await versioning', () => {
           true,
           DEFAULT_CWD,
         );
-        expect(updatePackageVersion).toHaveBeenCalledWith('1.2.1', DEFAULT_CWD);
+        expect(updatePackageVersion).toHaveBeenCalledWith(
+          '1.2.1',
+          expect.anything(),
+        );
         expect(promisedExec).toHaveBeenCalledWith(
           'git commit --all --message "Release version: 1.2.1"',
           false,
@@ -603,7 +633,10 @@ describe('@npmversion/core - await versioning', () => {
           true,
           DEFAULT_CWD,
         );
-        expect(updatePackageVersion).toHaveBeenCalledWith('1.2.1', DEFAULT_CWD);
+        expect(updatePackageVersion).toHaveBeenCalledWith(
+          '1.2.1',
+          expect.anything(),
+        );
         expect(promisedExec).toHaveBeenCalledWith(
           'git commit --all --message "Release version: 1.2.1"',
           false,
@@ -660,7 +693,10 @@ describe('@npmversion/core - await versioning', () => {
           true,
           DEFAULT_CWD,
         );
-        expect(updatePackageVersion).toHaveBeenCalledWith('1.2.1', DEFAULT_CWD);
+        expect(updatePackageVersion).toHaveBeenCalledWith(
+          '1.2.1',
+          expect.anything(),
+        );
         expect(promisedExec).toHaveBeenCalledWith(
           'git commit --all --message "Release version: 1.2.1"',
           false,
@@ -714,7 +750,10 @@ describe('@npmversion/core - await versioning', () => {
           true,
           DEFAULT_CWD,
         );
-        expect(updatePackageVersion).toHaveBeenCalledWith('1.2.1', DEFAULT_CWD);
+        expect(updatePackageVersion).toHaveBeenCalledWith(
+          '1.2.1',
+          expect.anything(),
+        );
       });
 
       test('use the specified cwd', async () => {
@@ -737,17 +776,21 @@ describe('@npmversion/core - await versioning', () => {
           true,
           '/etc',
         );
-        expect(updatePackageVersion).toHaveBeenCalledWith('1.2.1', '/etc');
+        expect(updatePackageVersion).toHaveBeenCalledWith(
+          '1.2.1',
+          expect.anything(),
+        );
       });
     });
   });
 
   test('shoud deal with an arbitrary options set', async () => {
     // Arrange
-    loadPackageJson.mockResolvedValue({
-      version: '1.2.0',
-      isLeaf() {
-        return true;
+    computeWorkspace.mockResolvedValue({
+      toJSON() {
+        return {
+          version: '1.2.0',
+        };
       },
     });
 
@@ -791,7 +834,7 @@ describe('@npmversion/core - await versioning', () => {
     );
     expect(updatePackageVersion).toHaveBeenCalledWith(
       '1.2.1-beta',
-      DEFAULT_CWD,
+      expect.anything(),
     );
     expect(promisedExec).toHaveBeenCalledWith(
       'git commit --all --message "Release version: 1.2.1-beta"',

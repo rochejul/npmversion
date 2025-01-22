@@ -13,6 +13,11 @@ export class Workspace {
   /**
    * @type {string}
    */
+  #rootDir;
+
+  /**
+   * @type {string}
+   */
   #name;
 
   /**
@@ -52,9 +57,10 @@ export class Workspace {
 
   /**
    * @constructor
-   * @param {{ name: string, version: string | semver, workspacePackages: WorkspacePackage[] = [], dependencies: Object = {}, devDependencies: Object = {}, peerDependencies: Object = {}, optionalDependencies: Object = {} }} param
+   * @param {{ rootDir: string, name: string, version: string | semver, workspacePackages: WorkspacePackage[] = [], dependencies: Object = {}, devDependencies: Object = {}, peerDependencies: Object = {}, optionalDependencies: Object = {} }} param
    */
   constructor({
+    rootDir,
     name,
     version,
     workspacePackages = [],
@@ -63,6 +69,7 @@ export class Workspace {
     peerDependencies = {},
     optionalDependencies = {},
   }) {
+    this.#rootDir = rootDir;
     this.#name = name;
     this.#version = version;
     this.#workspacePackages = Object.freeze(workspacePackages);
@@ -109,6 +116,13 @@ export class Workspace {
         this.#graph.addDependency(workspacePackage.name, dependency.name);
       }
     }
+  }
+
+  /**
+   * @type {string}
+   */
+  get rootDir() {
+    return this.#rootDir;
   }
 
   /**
@@ -257,6 +271,7 @@ export class Workspace {
 
   toJSON() {
     return Object.freeze({
+      rootDir: this.rootDir,
       name: this.name,
       version: this.version,
       workspacePackages: this.workspacePackages,

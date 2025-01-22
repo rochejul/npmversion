@@ -30,11 +30,11 @@ It will also update the NPM packages declared in the `package.json`.
 It allows the following parameters:
 
 - packageVersion (`string`): required parameter.
-- cwd (`string`): required parameter.
+- workspace (`Workspace`): required parameter. Based on the [Workspace model](./src/workspace/model/workspace.js)
 
 ### Method `computeWorkspace`
 
-It will read the NPM packages declared in the `package.json` and returns an appropriate [Workspace model](./src/model/workspace.js)
+It will read the NPM packages declared in the `package.json` and returns an appropriate [Workspace model](./src/workspace/model/workspace.js)
 
 It allows the following parameters:
 

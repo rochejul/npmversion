@@ -1,4 +1,3 @@
-import { loadPackageJson } from '@npmversion/util';
 import {
   printHelp,
   printNotFoundPackageJsonFile,
@@ -14,8 +13,10 @@ import {
   createTagGitIfNeeded,
   doPushGitIfNeeded,
 } from './git.js';
-import { updatePackageVersion } from '@npmversion/workspace';
+import { updatePackageVersion, computeWorkspace } from '@npmversion/workspace';
 import { VersionOptions } from '../config/index.js';
+
+/** import { Workspace } from '@npmversion/workspace' */
 
 /**
  * Analyze the options do the bumping / versionning
@@ -29,14 +30,16 @@ export async function versioning(providedOptions, cwd = process.cwd()) {
     providedOptions instanceof VersionOptions
       ? providedOptions
       : new VersionOptions(providedOptions ?? {});
-  let packageJson;
+  let workspace;
 
   try {
-    packageJson = await loadPackageJson(cwd);
+    workspace = await computeWorkspace(cwd);
   } catch (_e) {
     printNotFoundPackageJsonFile();
     return null;
   }
+
+  const packageJson = workspace.toJSON();
 
   if (!providedOptions || options.help) {
     printHelp(packageJson);
@@ -69,7 +72,7 @@ export async function versioning(providedOptions, cwd = process.cwd()) {
     // Bumping !!
     try {
       await checkForGitIfNeeded(cwd);
-      await updatePackageVersion(packageJsonVersion, cwd);
+      await updatePackageVersion(packageJsonVersion, workspace);
       await createCommitGitIfNeeded(packageJsonVersion, options, cwd);
       await createBranchGitIfNeeded(packageJsonVersion, options, cwd);
       await createTagGitIfNeeded(packageJsonVersion, options, cwd);
