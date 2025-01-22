@@ -1,4 +1,18 @@
-import { describe, test, expect } from '@jest/globals';
+jest.unstable_mockModule('@npmcli/package-json', async () => ({
+  default: {
+    async load(path) {
+      const packageJson = await import(`${path}/package.json`);
+
+      return {
+        content: packageJson,
+        update: jest.fn(),
+        save: jest.fn(),
+      };
+    },
+  },
+}));
+
+import { describe, test, expect, jest } from '@jest/globals';
 import '@npmversion/jest-utils';
 import { computeWorkspace } from '../src/index.js';
 

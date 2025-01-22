@@ -1,9 +1,9 @@
-import NPMCliPackageJson from '@npmcli/package-json';
 import { mapToWorkspacePackageDependency } from './util.js';
 import PackageJsonLib from '@npmcli/package-json';
 
 /** @import semver from 'semver' */
 /** @import { WorkspacePackageDependency } from './workspace-package-dependency.js' */
+/** @import NPMCliPackageJson from '@npmcli/package-json' */
 
 /**
  * @module @npmversion/workspace

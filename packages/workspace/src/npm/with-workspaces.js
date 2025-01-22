@@ -5,7 +5,8 @@ import {
   DEPENDENCY_LEVEL,
 } from './command.js';
 
-/** @import { Workspace } from '../model/workspace.js' */
+/** @import { Workspace } from '../workspace/model/workspace.js' */
+/** @import { WorkspacePackageDependency } from '../workspace/model/workspace-package-dependency.js' */
 /** @import { NpmDependencyLevel } from './command.js' */
 
 /**

@@ -1,4 +1,4 @@
-import { loadPackageJson } from '@npmversion/util';
+import { loadPackageJson } from '../packageJson/index.js';
 import { findPackages } from '@pnpm/fs.find-packages';
 
 import { WorkspacePackage, Workspace } from './model/index.js';

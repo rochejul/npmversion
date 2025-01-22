@@ -1,4 +1,4 @@
-import { computeWorkspace } from '../workspace.js';
+import { computeWorkspace } from '../workspace/index.js';
 import { updateRootVersion } from './without-workspaces.js';
 import { updateWorkspaceVersion } from './with-workspaces.js';
 import ProcLog from 'proc-log';

@@ -1,6 +1,6 @@
 import { describe, test, expect } from '@jest/globals';
 import '@npmversion/jest-utils';
-import { WorkspacePackageDependency } from '../src/model';
+import { WorkspacePackageDependency } from '../src/workspace/model';
 
 describe('@npmversion/workspace - model', () => {
   describe('model WorkspacePackageDependency', () => {
