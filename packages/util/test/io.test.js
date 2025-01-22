@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const { exec: mockExec } = await import('node:child_process');
-const { promisedExec, readFile } = await import('../src/io.js');
+const { promisedExec, readFile } = await import('../src/index.js');
 
 describe('@npmversion/util - io', () => {
   describe('promisedExec', () => {

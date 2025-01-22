@@ -22,13 +22,6 @@ Some utilities methods for the side packages
 
 ## Usage
 
-### Method `loadPackageJson`
-
-It will load the `package.json` file of the current context and exposes important information from the [PackageJson model](./src/config/model.js)
-It allows one parameter:
-
-- cwd (`string`): optional parameter. Otherwise it uses `process.cwd()`
-
 ### Method `readFile`
 
 A simple method to load the content of a file
