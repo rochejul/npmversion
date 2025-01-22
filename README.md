@@ -7,10 +7,6 @@
     <img src="https://img.shields.io/npm/l/npmversion.svg" alt="license">
   </a>
 
-  <a href="https://codeclimate.com/github/rochejul/npmversion">
-    <img src="https://codeclimate.com/github/rochejul/npmversion/badges/gpa.svg" alt="Code Climate">
-  </a>
-
   <a href="https://snyk.io/test/github/rochejul/npmversion">
     <img src="https://snyk.io/test/github/rochejul/npmversion/badge.svg?targetFile=package.json" alt="Known Vulnerabilities">
   </a>
