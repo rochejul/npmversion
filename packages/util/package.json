@@ -42,7 +42,8 @@
     }
   },
   "dependencies": {
-    "json5": "2.2.3"
+    "json5": "2.2.3",
+    "proc-log": "5.0.0"
   },
   "keywords": [
     "npmversion",

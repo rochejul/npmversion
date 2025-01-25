@@ -29,7 +29,16 @@ jest.unstable_mockModule('../src/npm/command.js', async () => ({
 }));
 
 jest.unstable_mockModule('@npmversion/util', async () => ({
-  loadPackageJson: jest.fn(),
+  createLogger: jest.fn().mockImplementation(() => {
+    const logger = {
+      info() {},
+      subLogger() {
+        return logger;
+      },
+    };
+
+    return logger;
+  }),
   promisedExec: jest.fn(),
   readFile: jest.fn(),
 }));

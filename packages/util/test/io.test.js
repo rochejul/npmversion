@@ -3,6 +3,7 @@ jest.unstable_mockModule('node:child_process', async () => ({
 }));
 
 import { describe, test, expect, jest } from '@jest/globals';
+import '@npmversion/jest-utils';
 
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';

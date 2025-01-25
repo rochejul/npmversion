@@ -1,4 +1,7 @@
 import { spawn } from './io.js';
+import { LOGGER } from './logger.js';
+
+const logger = LOGGER.subLogger('commands');
 
 /**
  * @async
@@ -28,6 +31,7 @@ export const DEPENDENCY_LEVEL = Object.freeze({
  * @param  {string} cwd
  */
 export async function pruning(cwd) {
+  logger.info(`npm prune`);
   await executeCommand(`npm prune`, cwd);
 }
 
@@ -37,6 +41,9 @@ export async function pruning(cwd) {
  * @param  {string} cwd
  */
 export async function updateRoot(packageVersion, cwd) {
+  logger.info(
+    `npm version ${packageVersion} --no-git-tag-version --allow-same-version`,
+  );
   await executeCommand(
     `npm version ${packageVersion} --no-git-tag-version --allow-same-version`,
     cwd,
@@ -49,6 +56,9 @@ export async function updateRoot(packageVersion, cwd) {
  * @param  {string} cwd
  */
 export async function updateWorkspace(packageVersion, cwd) {
+  logger.info(
+    `npm version ${packageVersion} --no-git-tag-version --allow-same-version --include-workspace-root --workspaces`,
+  );
   await executeCommand(
     `npm version ${packageVersion} --no-git-tag-version --allow-same-version --include-workspace-root --workspaces`,
     cwd,
@@ -83,6 +93,7 @@ export async function updateDependencyForRoot(
  * @param  {string} cwd
  */
 async function uninstallDependencyForRoot(dependencyName, cwd) {
+  logger.info(`npm uninstall ${dependencyName}`);
   await executeCommand(`npm uninstall ${dependencyName}`, cwd);
 }
 
@@ -99,6 +110,9 @@ async function installDependencyForRoot(
   dependencyVersion,
   cwd,
 ) {
+  logger.info(
+    `npm install --save${dependencyLevel === DEPENDENCY_LEVEL.none ? '' : '-' + dependencyLevel} ${dependencyName}@${dependencyVersion}`,
+  );
   await executeCommand(
     `npm install --save${dependencyLevel === DEPENDENCY_LEVEL.none ? '' : '-' + dependencyLevel} ${dependencyName}@${dependencyVersion}`,
     cwd,
